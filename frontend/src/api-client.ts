@@ -1,6 +1,7 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-
+import { DiscussionData } from "./pages/NewDiscussion";
+import { DiscussionType } from "../../backend/src/shared/types";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL as string | "";
 
 export const register = async (formData: RegisterFormData) => {
@@ -47,4 +48,27 @@ export const signOut = async () => {
     method: "POST",
   });
   if (!response.ok) throw new Error("Error during Signout");
+};
+
+export const newDiscussion = async (discussionData: DiscussionData) => {
+  const response = await fetch(`${BASE_URL}/api/discussions/new`, {
+    credentials: "include",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(discussionData),
+  });
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.message);
+  return body;
+};
+
+export const allDiscussions = async (): Promise<DiscussionType[]> => {
+  const response = await fetch(`${BASE_URL}/api/discussions`, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Error fetching discussions");
+  // console.log(response.json());
+  return response.json();
 };

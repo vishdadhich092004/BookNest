@@ -20,9 +20,9 @@ function Register() {
     register,
     watch,
     handleSubmit,
-    formState: { errors, isSubmitted },
+    formState: { errors, isSubmitSuccessful },
   } = useForm<RegisterFormData>();
-  const buttonStyles = isSubmitted
+  const buttonStyles = isSubmitSuccessful
     ? "w-full bg-gray-400 text-white py-2 rounded-md"
     : "w-full bg-indigo-600 text-white py-2 rounded-md shadow-md hover:bg-indigo-700 transition-transform transform hover:scale-105";
 
@@ -128,7 +128,11 @@ function Register() {
             )}
           </label>
 
-          <button type="submit" disabled={isSubmitted} className={buttonStyles}>
+          <button
+            type="submit"
+            disabled={isSubmitSuccessful}
+            className={buttonStyles}
+          >
             Create Account
           </button>
         </form>

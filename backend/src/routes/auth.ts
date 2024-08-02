@@ -43,12 +43,7 @@ router.post(
 
       // Return the full user details
       res.status(200).json({
-        user: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          userId: user._id,
-        },
+        userId: user._id,
       });
     } catch (e) {
       res.status(500).json({ message: "Something went wrong" });
@@ -68,9 +63,6 @@ router.get(
 
       res.status(200).json({
         user: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
           userId: user._id,
         },
       });
