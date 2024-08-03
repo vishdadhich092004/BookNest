@@ -1,6 +1,6 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-import { DiscussionData } from "./pages/NewDiscussion";
+import { DiscussionData } from "./pages/Discussion/NewDiscussion";
 import { DiscussionType } from "../../backend/src/shared/types";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL as string | "";
 
@@ -69,6 +69,14 @@ export const allDiscussions = async (): Promise<DiscussionType[]> => {
     credentials: "include",
   });
   if (!response.ok) throw new Error("Error fetching discussions");
-  // console.log(response.json());
+  return response.json();
+};
+
+export const singleDiscussion = async (id: string): Promise<DiscussionType> => {
+  const response = await fetch(`${BASE_URL}/api/discussions/${id}`, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Error fetching discussion.");
+  console.log(response);
   return response.json();
 };

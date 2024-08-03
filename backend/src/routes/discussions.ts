@@ -39,4 +39,15 @@ router.get("/", async (req: Request, res: Response) => {
     res.status(501).json({ message: "Something went wrong" });
   }
 });
+router.get("/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const discussion = await Discussion.findById(id);
+    if (!discussion) res.status(404).json({ message: "No discussion found" });
+    res.status(200).send(discussion);
+  } catch (e) {
+    res.status(501).json({ message: "Something went wrong" });
+  }
+});
+
 export default router;

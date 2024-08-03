@@ -2,9 +2,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./layouts/Layout";
 import Register from "./pages/Register";
 import SignIn from "./pages/SignIn";
-import NewDiscussion from "./pages/NewDiscussion";
-import AllDiscussions from "./pages/AllDiscussions";
+import NewDiscussion from "./pages/Discussion/NewDiscussion";
+import AllDiscussions from "./pages/Discussion/AllDiscussions";
 import PrivateRoute from "./components/PrivateRoute";
+import SingleDiscussion from "./pages/Discussion/SingleDiscussion";
 function App() {
   return (
     <BrowserRouter>
@@ -50,6 +51,14 @@ function App() {
           element={
             <Layout>
               <AllDiscussions />
+            </Layout>
+          }
+        />
+        <Route
+          path="/discussions/:id"
+          element={
+            <Layout>
+              <SingleDiscussion />
             </Layout>
           }
         />

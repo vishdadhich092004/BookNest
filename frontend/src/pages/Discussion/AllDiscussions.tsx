@@ -1,10 +1,10 @@
 import { useQuery } from "react-query";
-import * as apiClient from "../api-client";
-import { useAppContext } from "../contexts/AppContext";
+import * as apiClient from "../../api-client";
+import { useAppContext } from "../../contexts/AppContext";
 import { Link } from "react-router-dom";
 function AllDiscussions() {
   const { showToast, isLoggedIn } = useAppContext();
-  const { isLoading, data } = useQuery(
+  const { isLoading, data, isError } = useQuery(
     "allDiscussions",
     apiClient.allDiscussions,
     {
@@ -14,6 +14,9 @@ function AllDiscussions() {
     }
   );
 
+  if (isError || !data) {
+    return <div>404 Not found</div>;
+  }
   if (isLoading)
     return (
       <div className="text-2xl font-bold flex justify-center items-center">
@@ -44,7 +47,11 @@ function AllDiscussions() {
       <div>
         <ul>
           {data.map((data) => (
-            <li key={data.title}>{data.title}</li>
+            <div>
+              <Link to={`/discussions/${data._id}`} key={data.title}>
+                {data.title}
+              </Link>
+            </div>
           ))}
         </ul>
       </div>
