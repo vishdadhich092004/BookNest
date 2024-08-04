@@ -2,7 +2,7 @@ import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
 import { DiscussionData } from "./pages/Discussion/NewDiscussion";
 import { DiscussionType } from "../../backend/src/shared/types";
-const BASE_URL = import.meta.env.VITE_API_BASE_URL as string | "";
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
 export const register = async (formData: RegisterFormData) => {
   const response = await fetch(`${BASE_URL}/api/users/register`, {

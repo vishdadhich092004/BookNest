@@ -6,6 +6,7 @@ import userRoutes from "./routes/users";
 import authRoutes from "./routes/auth";
 import discussionRoutes from "./routes/discussions";
 import cookieParser from "cookie-parser";
+import path from "path";
 const app = express();
 
 mongoose
@@ -25,6 +26,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
