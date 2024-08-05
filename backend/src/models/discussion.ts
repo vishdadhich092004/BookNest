@@ -1,26 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { DiscussionType } from "../shared/types";
-
-const commentSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  text: {
-    type: String,
-    required: true,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-  },
-  likes: {
-    type: Number,
-    default: 0,
-  },
-});
-
+import { commentSchema } from "./comment";
 const discussionSchema = new Schema({
   title: {
     type: String,
@@ -36,14 +16,19 @@ const discussionSchema = new Schema({
     required: true,
   },
   createdAt: {
-    type: Number,
+    type: Date,
     required: true,
   },
   updatedAt: {
-    type: Number,
+    type: Date,
     required: true,
   },
-  comments: [commentSchema],
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
 });
 
 const Discussion = mongoose.model<DiscussionType>(

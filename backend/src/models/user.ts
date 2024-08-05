@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { UserType } from "../shared/types";
 import bcrypt from "bcrypt";
 const userSchema = new mongoose.Schema({
@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
   lastName: {
     type: String,
     required: true,
+  },
+  comments: {
+    type: Schema.Types.ObjectId,
+    ref: "Comment",
   },
 });
 

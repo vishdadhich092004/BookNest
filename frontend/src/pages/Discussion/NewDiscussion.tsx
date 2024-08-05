@@ -3,7 +3,7 @@ import { useMutation } from "react-query";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
-export type DiscussionData = {
+export type DiscussionFormData = {
   title: string;
   description: string;
 };
@@ -15,7 +15,7 @@ function NewDiscussion() {
     register,
     formState: { errors, isSubmitSuccessful },
     handleSubmit,
-  } = useForm<DiscussionData>();
+  } = useForm<DiscussionFormData>();
 
   const onSubmit = handleSubmit((data) => {
     mutation.mutate(data);
@@ -66,6 +66,7 @@ function NewDiscussion() {
               {...register("description", {
                 required: "This field is required",
               })}
+              rows={4}
             ></textarea>
             {errors.description && (
               <span className="text-red-500 text-sm">

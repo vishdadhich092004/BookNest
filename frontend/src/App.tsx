@@ -6,6 +6,7 @@ import NewDiscussion from "./pages/Discussion/NewDiscussion";
 import AllDiscussions from "./pages/Discussion/AllDiscussions";
 import PrivateRoute from "./components/PrivateRoute";
 import SingleDiscussion from "./pages/Discussion/SingleDiscussion";
+import NewComment from "./pages/Comment/NewComment";
 function App() {
   return (
     <BrowserRouter>
@@ -59,6 +60,14 @@ function App() {
           element={
             <Layout>
               <SingleDiscussion />
+            </Layout>
+          }
+        />
+        <Route
+          path="/discussions/:discussionId/comments"
+          element={
+            <Layout>
+              <NewComment />
             </Layout>
           }
         />

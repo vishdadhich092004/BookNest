@@ -1,7 +1,8 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
-import { DiscussionData } from "./pages/Discussion/NewDiscussion";
+import { DiscussionFormData } from "./pages/Discussion/NewDiscussion";
 import { DiscussionType } from "../../backend/src/shared/types";
+import { CommentFormData } from "./pages/Comment/NewComment";
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
 export const register = async (formData: RegisterFormData) => {
@@ -50,14 +51,14 @@ export const signOut = async () => {
   if (!response.ok) throw new Error("Error during Signout");
 };
 
-export const newDiscussion = async (discussionData: DiscussionData) => {
+export const newDiscussion = async (discussionFormData: DiscussionFormData) => {
   const response = await fetch(`${BASE_URL}/api/discussions/new`, {
     credentials: "include",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(discussionData),
+    body: JSON.stringify(discussionFormData),
   });
   const body = await response.json();
   if (!response.ok) throw new Error(body.message);
@@ -72,11 +73,41 @@ export const allDiscussions = async (): Promise<DiscussionType[]> => {
   return response.json();
 };
 
-export const singleDiscussion = async (id: string): Promise<DiscussionType> => {
-  const response = await fetch(`${BASE_URL}/api/discussions/${id}`, {
+export const singleDiscussion = async (
+  discussionId: string
+): Promise<DiscussionType> => {
+  const response = await fetch(`${BASE_URL}/api/discussions/${discussionId}`, {
     credentials: "include",
   });
   if (!response.ok) throw new Error("Error fetching discussion.");
-  console.log(response);
-  return response.json();
+  const data = await response.json();
+  return data as DiscussionType;
 };
+
+export const newComment = async (
+  commentFormData: CommentFormData,
+  discussionId: string
+) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/comments`,
+    {
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(commentFormData),
+    }
+  );
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.message);
+  return body;
+};
+
+// export const getUserById = async (userId: string): Promise<UserType> => {
+//   const response = await fetch(`${BASE_URL}/api/users/${userId}`, {
+//     credentials: "include",
+//   });
+//   if (!response.ok) throw new Error("Error fetching user");
+//   return response.json();
+// };

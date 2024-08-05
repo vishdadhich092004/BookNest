@@ -4,12 +4,15 @@ export type UserType = {
   firstName: string;
   lastName: string;
   password: string;
+  comments: string;
 };
 
-export type Comment = {
+export type CommentType = {
+  _id: string;
   user: string;
   text: string;
   timestamp: Date;
+  likes: number;
 };
 
 export type DiscussionType = {
@@ -17,7 +20,7 @@ export type DiscussionType = {
   title: string;
   description: string;
   createdBy: string;
-  comments: Comment[];
-  createdAt?: number;
-  updatedAt?: number;
+  comments: CommentType[];
+  createdAt: Date;
+  updatedAt: Date;
 };
