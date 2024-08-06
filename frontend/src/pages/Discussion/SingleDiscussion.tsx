@@ -12,8 +12,8 @@ function SingleDiscussion() {
   const { id } = useParams<{ id: string }>(); // Get the ID from the route params
 
   const { isLoading, data, isError } = useQuery(
-    ["singleDiscussion", id],
-    () => apiClient.singleDiscussion(id as string), // Ensure the ID is passed as a string
+    ["fetchDiscussionById", id],
+    () => apiClient.fetchDiscussionById(id as string), // Ensure the ID is passed as a string
     {
       onError: () => {
         showToast({ message: "Error fetching discussion", type: "ERROR" });
@@ -44,7 +44,15 @@ function SingleDiscussion() {
     <div className="container mx-auto px-4 py-6">
       <div className="bg-white shadow-md rounded-lg p-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-4">{title}</h1>
-        <p className="text-gray-600 mb-6">{description}</p>
+        <div className=" flex justify-between">
+          <p className="text-gray-600 mb-6">{description}</p>
+          <Link
+            className="text-indigo-600 hover:text-indigo-800 transition-colors duration-300"
+            to={`/discussions/${id}/edit`}
+          >
+            Edit Discussion
+          </Link>
+        </div>
         <div className="text-sm text-gray-500">
           <p>
             <span className="font-semibold">Created by:</span> {createdBy}

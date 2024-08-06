@@ -73,7 +73,7 @@ export const allDiscussions = async (): Promise<DiscussionType[]> => {
   return response.json();
 };
 
-export const singleDiscussion = async (
+export const fetchDiscussionById = async (
   discussionId: string
 ): Promise<DiscussionType> => {
   const response = await fetch(`${BASE_URL}/api/discussions/${discussionId}`, {
@@ -104,10 +104,22 @@ export const newComment = async (
   return body;
 };
 
-// export const getUserById = async (userId: string): Promise<UserType> => {
-//   const response = await fetch(`${BASE_URL}/api/users/${userId}`, {
-//     credentials: "include",
-//   });
-//   if (!response.ok) throw new Error("Error fetching user");
-//   return response.json();
-// };
+export const updateDiscussion = async (
+  discussionId: string,
+  editDiscussionFormData: DiscussionFormData
+): Promise<DiscussionType> => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/edit`,
+    {
+      credentials: "include",
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(editDiscussionFormData),
+    }
+  );
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.message);
+  return body;
+};
