@@ -123,3 +123,15 @@ export const updateDiscussion = async (
   if (!response.ok) throw new Error(body.message);
   return body;
 };
+
+// BOOKS:
+export const fetchBooks = async () => {
+  const response = await fetch(`${BASE_URL}/api/books`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    const body = await response.json();
+    throw new Error(body.message || "Failed to fetch books");
+  }
+  return response.json();
+};

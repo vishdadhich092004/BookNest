@@ -24,3 +24,13 @@ export type DiscussionType = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type BookType = {
+  _id: string;
+  title: string;
+  description: string;
+  author: string;
+  genre: string;
+  pdfName: string;
+  pdfUrl: string;
+};

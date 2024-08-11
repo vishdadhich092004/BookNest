@@ -8,6 +8,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import SingleDiscussion from "./pages/Discussion/SingleDiscussion";
 import NewComment from "./pages/Comment/NewComment";
 import EditDiscussion from "./pages/Discussion/EditDiscussion";
+import NewBook from "./pages/Book/NewBook";
+import AllBooks from "./pages/Book/AllBooks";
 function App() {
   return (
     <BrowserRouter>
@@ -77,6 +79,22 @@ function App() {
           element={
             <Layout>
               <EditDiscussion />
+            </Layout>
+          }
+        />
+        <Route
+          path="/books/new"
+          element={
+            <Layout>
+              <NewBook />
+            </Layout>
+          }
+        />
+        <Route
+          path="/books/"
+          element={
+            <Layout>
+              <AllBooks />
             </Layout>
           }
         />
