@@ -36,7 +36,7 @@ const DeleteButton = ({ id, toBeDeleted }: DeleteButtonProps) => {
       });
       navigate(`/${toBeDeleted}`);
     } catch (err) {
-      setError(`Failed to delete ${toBeDeleted}`);
+      setError(`Failed to delete ${toBeDeleted} ${error}`);
       showToast({ message: `Error deleting ${toBeDeleted}`, type: "ERROR" });
     } finally {
       setLoading(false);
