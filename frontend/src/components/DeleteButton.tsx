@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
 
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
+
 type DeleteButtonProps = {
   id: string;
   toBeDeleted: string;
@@ -17,12 +19,9 @@ const DeleteButton = ({ id, toBeDeleted }: DeleteButtonProps) => {
     setLoading(true);
     setError(null); // Clear any previous errors
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/${toBeDeleted}/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/${toBeDeleted}/${id}`, {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to delete ${toBeDeleted}`);
@@ -36,8 +35,11 @@ const DeleteButton = ({ id, toBeDeleted }: DeleteButtonProps) => {
       });
       navigate(`/${toBeDeleted}`);
     } catch (err) {
-      setError(`Failed to delete ${toBeDeleted} ${error}`);
-      showToast({ message: `Error deleting ${toBeDeleted}`, type: "ERROR" });
+      setError(`Failed to delete ${toBeDeleted}`);
+      showToast({
+        message: `Error deleting ${toBeDeleted}${error}`,
+        type: "ERROR",
+      });
     } finally {
       setLoading(false);
     }
