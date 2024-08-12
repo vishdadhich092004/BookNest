@@ -33,4 +33,6 @@ export type BookType = {
   genre: string;
   pdfName: string;
   pdfUrl: string;
+  coverPageName: string;
+  coverPageUrl: string;
 };

@@ -44,19 +44,29 @@ function BooksList() {
       <h1 className="text-2xl font-bold mb-4">Books List</h1>
       <ul className="space-y-4">
         {books.map((book) => (
-          <li key={book._id} className="border p-4 rounded-lg shadow">
-            <h2 className="text-xl font-semibold">{book.title}</h2>
-            <p className="text-gray-600">by {book.author}</p>
-            <p className="text-gray-800">{book.description}</p>
-            <p className="text-gray-600">Genre: {book.genre}</p>
-            <a
-              href={book.pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-indigo-600 hover:underline"
-            >
-              Read PDF
-            </a>
+          <li
+            key={book._id}
+            className="border p-4 rounded-lg shadow flex flex-col md:flex-row"
+          >
+            <img
+              src={book.coverPageUrl}
+              alt={`${book.title} cover`}
+              className="w-full md:w-32 h-48 object-cover rounded-md mb-4 md:mb-0 md:mr-4"
+            />
+            <div>
+              <h2 className="text-xl font-semibold">{book.title}</h2>
+              <p className="text-gray-600">by {book.author}</p>
+              <p className="text-gray-800">{book.description}</p>
+              <p className="text-gray-600">Genre: {book.genre}</p>
+              <a
+                href={book.pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-600 hover:underline"
+              >
+                Read PDF
+              </a>
+            </div>
           </li>
         ))}
       </ul>

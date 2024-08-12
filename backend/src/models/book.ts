@@ -19,9 +19,11 @@ const bookSchema = new Schema({
   },
   pdfName: {
     type: String,
-    required: true,
   },
   pdfUrl: {
+    type: String,
+  },
+  coverPageUrl: {
     type: String,
   },
 });

@@ -7,17 +7,30 @@ const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 export default function NewBook() {
   const navigate = useNavigate();
   const { showToast } = useAppContext();
-  const [file, setFile] = useState<File | undefined>(undefined);
+  const [pdfFile, setPdfFile] = useState<File | undefined>(undefined);
+  const [coverImage, setCoverImage] = useState<File | undefined>(undefined);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [author, setAuthor] = useState<string>("");
   const [genre, setGenre] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
 
+    if (!pdfFile || !coverImage) {
+      showToast({
+        message: "Please upload both PDF and cover image.",
+        type: "ERROR",
+      });
+      return;
+    }
+
+    setLoading(true);
+
     const formData = new FormData();
-    if (file) formData.append("pdfFile", file);
+    formData.append("pdfFile", pdfFile);
+    formData.append("coverImage", coverImage);
     formData.append("title", title);
     formData.append("description", description);
     formData.append("author", author);
@@ -33,15 +46,13 @@ export default function NewBook() {
         throw new Error(`Error: ${response.statusText}`);
       }
 
-      // Handle success (e.g., display a success message, clear form, etc.)
-      // alert("Book added successfully!");
-      showToast({ message: "Book Uploaded Succesfully", type: "SUCCESS" });
+      showToast({ message: "Book Uploaded Successfully", type: "SUCCESS" });
       navigate("/books");
     } catch (error) {
-      // Handle error
       console.error("There was a problem with the request:", error);
-      // alert("Failed to add the book.");
       showToast({ message: "Book Upload Failed", type: "ERROR" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,8 +61,11 @@ export default function NewBook() {
       <h1 className="text-2xl font-bold mb-4">Add New Book</h1>
       <form onSubmit={submit} className="space-y-4">
         <div className="flex flex-col">
-          <label className="mb-2 font-semibold text-gray-700">Title</label>
+          <label htmlFor="title" className="mb-2 font-semibold text-gray-700">
+            Title
+          </label>
           <input
+            id="title"
             value={title}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setTitle(e.target.value)
@@ -62,10 +76,14 @@ export default function NewBook() {
           />
         </div>
         <div className="flex flex-col">
-          <label className="mb-2 font-semibold text-gray-700">
+          <label
+            htmlFor="description"
+            className="mb-2 font-semibold text-gray-700"
+          >
             Description
           </label>
           <textarea
+            id="description"
             value={description}
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
               setDescription(e.target.value)
@@ -75,8 +93,11 @@ export default function NewBook() {
           />
         </div>
         <div className="flex flex-col">
-          <label className="mb-2 font-semibold text-gray-700">Author</label>
+          <label htmlFor="author" className="mb-2 font-semibold text-gray-700">
+            Author
+          </label>
           <input
+            id="author"
             value={author}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setAuthor(e.target.value)
@@ -87,8 +108,11 @@ export default function NewBook() {
           />
         </div>
         <div className="flex flex-col">
-          <label className="mb-2 font-semibold text-gray-700">Genre</label>
+          <label htmlFor="genre" className="mb-2 font-semibold text-gray-700">
+            Genre
+          </label>
           <input
+            id="genre"
             value={genre}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setGenre(e.target.value)
@@ -99,22 +123,45 @@ export default function NewBook() {
           />
         </div>
         <div className="flex flex-col">
-          <label className="mb-2 font-semibold text-gray-700">Upload PDF</label>
+          <label htmlFor="pdfFile" className="mb-2 font-semibold text-gray-700">
+            Upload PDF
+          </label>
           <input
+            id="pdfFile"
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setFile(e.target.files ? e.target.files[0] : undefined)
+              setPdfFile(e.target.files ? e.target.files[0] : undefined)
             }
             type="file"
             accept=".pdf"
             className="border border-gray-300 rounded-md p-2"
           />
         </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="coverImage"
+            className="mb-2 font-semibold text-gray-700"
+          >
+            Upload Cover Image
+          </label>
+          <input
+            id="coverImage"
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setCoverImage(e.target.files ? e.target.files[0] : undefined)
+            }
+            type="file"
+            accept="image/*"
+            className="border border-gray-300 rounded-md p-2"
+          />
+        </div>
 
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition duration-300"
+          className={`w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition duration-300 ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={loading}
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>
