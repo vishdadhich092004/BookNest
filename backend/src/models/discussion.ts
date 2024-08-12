@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { DiscussionType } from "../shared/types";
-import { commentSchema } from "./comment";
+import Comment from "./comment";
 const discussionSchema = new Schema({
   title: {
     type: String,
@@ -29,6 +29,12 @@ const discussionSchema = new Schema({
       ref: "Comment",
     },
   ],
+});
+
+discussionSchema.post("findOneAndDelete", async (doc) => {
+  if (doc) {
+    await Comment.deleteMany({ _id: { $in: doc.comment } });
+  }
 });
 
 const Discussion = mongoose.model<DiscussionType>(

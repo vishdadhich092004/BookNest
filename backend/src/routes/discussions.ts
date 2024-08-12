@@ -77,6 +77,20 @@ router.put("/:discussionId/edit", async (req: Request, res: Response) => {
   }
 });
 
+router.delete("/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const discussion = await Discussion.findById(id);
+    if (!discussion)
+      return res.status(404).json({ message: "No Discussion Found" });
+    // res.send(discussion);
+    await Discussion.findByIdAndDelete(id);
+    res.status(200).json({ message: "Discussion Deleted Succesfully" });
+  } catch (e) {
+    return res.status(502).json({ message: `Error Deleting Discussion ${e}` });
+  }
+});
+
 // COMMENTS
 
 // NEW COMMENT POST ROUTE

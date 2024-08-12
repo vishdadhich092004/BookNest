@@ -17,9 +17,6 @@ const bookSchema = new Schema({
     type: String,
     required: true,
   },
-  pdfName: {
-    type: String,
-  },
   pdfUrl: {
     type: String,
   },

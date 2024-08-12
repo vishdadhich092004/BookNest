@@ -7,6 +7,7 @@ import {
   PutObjectCommand,
   S3Client,
   GetObjectCommand,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -132,4 +133,28 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
+router.delete("/:id", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const book = await Book.findById(id);
+    if (!book) return res.status(404).json({ messge: "Book not found" });
+
+    const pdfParams = {
+      Bucket: bucketName,
+      Key: book?.pdfUrl,
+    };
+    const pdfCommand = new DeleteObjectCommand(pdfParams);
+    await s3.send(pdfCommand);
+    const coverImgParams = {
+      Bucket: bucketName,
+      Key: book?.coverPageUrl,
+    };
+    const coverImgCommand = new DeleteObjectCommand(coverImgParams);
+    await s3.send(coverImgCommand);
+    await Book.findByIdAndDelete(id);
+    res.status(200).json({ message: "Deleted Succesfully" });
+  } catch (e) {
+    res.status(502).json({ message: `Error Deleting Book${e}` });
+  }
+});
 export default router;
