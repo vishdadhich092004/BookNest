@@ -27,11 +27,18 @@ app.use(
   })
 );
 app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/discussions", discussionRoutes);
+
+/* AT THE END */
+//catchall path : solves reload issues during production
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+});
 app.listen(4000, () => {
   console.log("Port 4000 Activated!");
 });
