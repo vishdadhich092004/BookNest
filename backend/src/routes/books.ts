@@ -10,6 +10,7 @@ import {
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { BookType } from "../shared/types";
 
 const router = express.Router();
 
@@ -35,6 +36,30 @@ const cpUpload = upload.fields([
   { name: "pdfFile", maxCount: 1 },
   { name: "coverImage", maxCount: 1 },
 ]);
+
+async function getSignedUrlsForBook(book: BookType) {
+  // Generate signed URL for the PDF file
+  const pdfObjectParams = {
+    Bucket: bucketName,
+    Key: book.pdfUrl, // Assuming `pdfUrl` stores the S3 key of the PDF file
+  };
+  const pdfCommand = new GetObjectCommand(pdfObjectParams);
+  const pdfUrl = await getSignedUrl(s3, pdfCommand, { expiresIn: 20 });
+
+  // Generate signed URL for the cover image
+  const coverImgObjectParams = {
+    Bucket: bucketName,
+    Key: book.coverPageUrl, // Assuming `coverPageUrl` stores the S3 key of the cover image
+  };
+  const coverImgCommand = new GetObjectCommand(coverImgObjectParams);
+  const coverImgUrl = await getSignedUrl(s3, coverImgCommand);
+
+  // Return the book with updated URLs
+  return {
+    pdfUrl: pdfUrl,
+    coverPageUrl: coverImgUrl,
+  };
+}
 
 router.post("/new", cpUpload, async (req: Request, res: Response) => {
   try {
@@ -126,10 +151,36 @@ router.get("/", async (req: Request, res: Response) => {
       })
     );
 
-    res.json(booksWithSignedUrls);
+    res.status(200).json(booksWithSignedUrls);
   } catch (error) {
     console.error("Error fetching books:", error);
     res.status(500).json({ error: "Failed to fetch books" });
+  }
+});
+
+router.get("/:bookId", async (req: Request, res: Response) => {
+  try {
+    const { bookId } = req.params;
+    // res.send(bookId);
+    // const book = await Book.findById(bookId).populate("reviews").exec();
+    const book = await Book.findById(bookId)
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "userId",
+          model: "User", // Specify the model if needed
+        },
+      })
+      .exec();
+    if (!book) return res.status(404).json({ message: "No Book Found" });
+
+    const { pdfUrl, coverPageUrl } = await getSignedUrlsForBook(book); // Pass the single book object here
+    book.pdfUrl = pdfUrl;
+    book.coverPageUrl = coverPageUrl;
+    // res.json(book);
+    return res.status(200).json(book);
+  } catch (e) {
+    res.status(502).json({ message: "Error Fetching book" });
   }
 });
 

@@ -23,6 +23,12 @@ const bookSchema = new Schema({
   coverPageUrl: {
     type: String,
   },
+  reviews: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Review",
+    },
+  ],
 });
 
 const Book = mongoose.model<BookType>("Book", bookSchema);

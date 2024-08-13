@@ -10,7 +10,7 @@ const discussionSchema = new Schema({
     type: String,
     required: true,
   },
-  createdBy: {
+  userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
@@ -18,10 +18,12 @@ const discussionSchema = new Schema({
   createdAt: {
     type: Date,
     required: true,
+    default: Date.now,
   },
   updatedAt: {
     type: Date,
     required: true,
+    default: Date.now,
   },
   comments: [
     {

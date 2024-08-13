@@ -21,10 +21,9 @@ router.post(
     }
 
     try {
-      const discussion = new Discussion(req.body);
-      discussion.createdBy = req.userId as string;
-      discussion.createdAt = new Date();
-      discussion.updatedAt = new Date();
+      const userId = req.userId;
+      const { title, description } = req.body;
+      const discussion = new Discussion({ userId, title, description });
       await discussion.save();
       res.status(200).send({ message: "Discussion created successfully." });
     } catch (e) {
@@ -46,14 +45,23 @@ router.get("/", async (req: Request, res: Response) => {
 // find one discussion by discussionId
 router.get("/:discussionId", async (req: Request, res: Response) => {
   try {
-    const { discussionId } = req.params;
-    const discussion = await Discussion.findById(discussionId)
-      .populate("comments")
-      .exec();
-    if (!discussion) res.status(404).json({ message: "No discussion found" });
+    const discussion = await Discussion.findById(req.params.discussionId)
+      .populate("userId", "firstName lastName")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "userId",
+          select: "firstName lastName",
+        },
+      });
+
+    if (!discussion) {
+      return res.status(404).json({ message: "No discussion found" });
+    }
+
     res.status(200).json(discussion);
   } catch (e) {
-    res.status(501).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 });
 
@@ -91,34 +99,5 @@ router.delete("/:id", async (req: Request, res: Response) => {
     return res.status(502).json({ message: `Error Deleting Discussion ${e}` });
   }
 });
-
-// COMMENTS
-
-// NEW COMMENT POST ROUTE
-router.post(
-  "/:discussionId/comments",
-  verifyToken,
-  [check("text", "Text cannot be empty").notEmpty()],
-  async (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array() });
-    }
-    try {
-      const { discussionId } = req.params;
-      const discussion = await Discussion.findById(discussionId);
-      if (!discussion) res.status(404).json({ message: "No discussion found" });
-      const comment = new Comment(req.body);
-      comment.timestamp = new Date();
-      comment.user = req.userId;
-      discussion?.comments.push(comment as any);
-      await comment.save();
-      await discussion?.save();
-      res.status(200).json({ message: "Comment created succesfully" });
-    } catch (e) {
-      res.status(500).json({ message: "Something went wrong" });
-    }
-  }
-);
 
 export default router;

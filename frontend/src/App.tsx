@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./layouts/Layout";
-import Register from "./pages/Register";
-import SignIn from "./pages/SignIn";
+import Register from "./pages/Auth/Register";
+import SignIn from "./pages/Auth/SignIn";
 import NewDiscussion from "./pages/Discussion/NewDiscussion";
 import AllDiscussions from "./pages/Discussion/AllDiscussions";
 import PrivateRoute from "./components/PrivateRoute";
@@ -10,6 +10,8 @@ import NewComment from "./pages/Comment/NewComment";
 import EditDiscussion from "./pages/Discussion/EditDiscussion";
 import NewBook from "./pages/Book/NewBook";
 import AllBooks from "./pages/Book/AllBooks";
+import NewReview from "./pages/Review/NewReview";
+import SingleBook from "./components/SingleBook";
 function App() {
   return (
     <BrowserRouter>
@@ -59,7 +61,7 @@ function App() {
           }
         />
         <Route
-          path="/discussions/:id"
+          path="/discussions/:discussionId"
           element={
             <Layout>
               <SingleDiscussion />
@@ -95,6 +97,22 @@ function App() {
           element={
             <Layout>
               <AllBooks />
+            </Layout>
+          }
+        />
+        <Route
+          path="/books/:bookId"
+          element={
+            <Layout>
+              <SingleBook />
+            </Layout>
+          }
+        />
+        <Route
+          path="/books/:bookId/reviews"
+          element={
+            <Layout>
+              <NewReview />
             </Layout>
           }
         />

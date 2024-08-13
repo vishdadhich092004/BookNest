@@ -5,7 +5,9 @@ import cors from "cors";
 import userRoutes from "./routes/users";
 import authRoutes from "./routes/auth";
 import discussionRoutes from "./routes/discussions";
+import commentRoutes from "./routes/comments";
 import bookRoutes from "./routes/books";
+import reviewRoutes from "./routes/reviews";
 import cookieParser from "cookie-parser";
 import path from "path";
 const app = express();
@@ -32,7 +34,9 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/books", bookRoutes);
+app.use("/api/books", reviewRoutes);
 app.use("/api/discussions", discussionRoutes);
+app.use("/api/discussions", commentRoutes);
 
 /* AT THE END */
 //catchall path : solves reload issues during production

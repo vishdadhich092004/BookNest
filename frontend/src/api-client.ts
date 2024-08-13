@@ -1,8 +1,9 @@
-import { RegisterFormData } from "./pages/Register";
-import { SignInFormData } from "./pages/SignIn";
+import { RegisterFormData } from "./pages/Auth/Register";
+import { SignInFormData } from "./pages/Auth/SignIn";
 import { DiscussionFormData } from "./pages/Discussion/NewDiscussion";
-import { DiscussionType } from "../../backend/src/shared/types";
+import { BookType, DiscussionType } from "../../backend/src/shared/types";
 import { CommentFormData } from "./pages/Comment/NewComment";
+import { ReviewFormData } from "./pages/Review/NewReview";
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
 export const register = async (formData: RegisterFormData) => {
@@ -134,4 +135,31 @@ export const fetchBooks = async () => {
     throw new Error(body.message || "Failed to fetch books");
   }
   return response.json();
+};
+
+// new review
+export const newReview = async (
+  reviewFormData: ReviewFormData,
+  bookId: string
+) => {
+  const response = await fetch(`${BASE_URL}/api/books/${bookId}/reviews`, {
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify(reviewFormData),
+  });
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.message);
+  return body;
+};
+
+export const fetchBookById = async (bookId: string): Promise<BookType> => {
+  const response = await fetch(`${BASE_URL}/api/books/${bookId}`, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Error fetching book.");
+  const data = await response.json();
+  return data as BookType;
 };

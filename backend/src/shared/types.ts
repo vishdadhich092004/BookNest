@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 export type UserType = {
   _id: string;
   email: string;
@@ -9,7 +10,8 @@ export type UserType = {
 
 export type CommentType = {
   _id: string;
-  user: string;
+  discussionId: DiscussionType;
+  userId: UserType;
   text: string;
   timestamp: Date;
   likes: number;
@@ -19,7 +21,7 @@ export type DiscussionType = {
   _id: string;
   title: string;
   description: string;
-  createdBy: string;
+  userId: UserType;
   comments: CommentType[];
   createdAt: Date;
   updatedAt: Date;
@@ -33,4 +35,14 @@ export type BookType = {
   genre: string;
   pdfUrl: string;
   coverPageUrl: string;
+  reviews: ReviewType[];
+};
+
+export type ReviewType = {
+  _id: string;
+  rating: number;
+  text: string;
+  bookId: BookType;
+  userId: UserType;
+  createdAt: Date;
 };

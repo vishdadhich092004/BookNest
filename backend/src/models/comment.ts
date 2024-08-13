@@ -2,10 +2,13 @@ import mongoose, { Schema } from "mongoose";
 import { CommentType } from "../shared/types";
 
 export const commentSchema = new Schema({
-  user: {
+  discussionId: {
+    type: Schema.Types.ObjectId,
+    ref: "Discussion",
+  },
+  userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: true,
   },
   text: {
     type: String,

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import * as apiClient from "../../api-client";
 import { BookType } from "../../../../backend/src/shared/types";
 import { Link } from "react-router-dom";
-import DeleteButton from "../../components/DeleteButton";
 
 function BooksList() {
   const [books, setBooks] = useState<BookType[]>([]);
@@ -37,9 +36,9 @@ function BooksList() {
       <div className="mb-6">
         <Link
           to="/books/new"
-          className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform hover:scale-105"
+          className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
-          Create new Book
+          Create New Book
         </Link>
       </div>
       <h1 className="text-2xl font-bold mb-4">Books List</h1>
@@ -49,22 +48,13 @@ function BooksList() {
             <h2 className="text-xl font-semibold">{book.title}</h2>
             <p className="text-gray-600">by {book.author}</p>
             <p className="text-gray-800">{book.description}</p>
-            <p className="text-gray-600">Genre: {book.genre}</p>
-            <img
-              src={book.coverPageUrl}
-              alt={book.title}
-              className="w-32 h-48 object-cover mt-2"
-            />
-            <a
-              href={book.pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-indigo-600 hover:underline mt-2 block"
-            >
-              Read PDF
-            </a>
             <div className="mt-4">
-              <DeleteButton id={book._id} toBeDeleted="books" />
+              <Link
+                to={`/books/${book._id}`}
+                className="px-4 py-2 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                View Details
+              </Link>
             </div>
           </li>
         ))}
