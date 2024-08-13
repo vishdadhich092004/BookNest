@@ -31,12 +31,6 @@ const discussionSchema = new Schema({
   ],
 });
 
-discussionSchema.post("findOneAndDelete", async (doc) => {
-  if (doc) {
-    await Comment.deleteMany({ _id: { $in: doc.comment } });
-  }
-});
-
 const Discussion = mongoose.model<DiscussionType>(
   "Discussion",
   discussionSchema

@@ -84,6 +84,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
     if (!discussion)
       return res.status(404).json({ message: "No Discussion Found" });
     // res.send(discussion);
+    await Comment.deleteMany({ _id: { $in: discussion.comments } });
     await Discussion.findByIdAndDelete(id);
     res.status(200).json({ message: "Discussion Deleted Succesfully" });
   } catch (e) {
