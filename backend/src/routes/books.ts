@@ -11,6 +11,8 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { BookType } from "../shared/types";
+import { check, validationResult } from "express-validator";
+import verifyToken from "../middleware/auth";
 
 const router = express.Router();
 
@@ -61,69 +63,83 @@ async function getSignedUrlsForBook(book: BookType) {
   };
 }
 
-router.post("/new", cpUpload, async (req: Request, res: Response) => {
-  try {
-    // Type assertion to specify the structure of req.files
-    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-
-    if (!files || !files["pdfFile"] || !files["coverImage"]) {
-      return res
-        .status(400)
-        .json({ error: "PDF file and cover image are required" });
+router.post(
+  "/new",
+  verifyToken,
+  cpUpload,
+  [check("title", "Title is required").notEmpty()],
+  [check("description", "Description is required").notEmpty()],
+  [check("author", "Author is required").notEmpty()],
+  [check("genre", "Genre is required").notEmpty()],
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: errors.array() });
     }
 
-    const randomName = (bytes = 16) =>
-      crypto.randomBytes(bytes).toString("hex");
+    try {
+      // Type assertion to specify the structure of req.files
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-    // PDF File Upload
-    const pdfFile = files["pdfFile"][0];
-    const pdfName = `books/pdf/${randomName()}`;
-    const pdfParams = {
-      Bucket: bucketName,
-      Key: pdfName,
-      Body: pdfFile.buffer,
-      ContentType: pdfFile.mimetype,
-    };
+      if (!files || !files["pdfFile"] || !files["coverImage"]) {
+        return res
+          .status(400)
+          .json({ error: "PDF file and cover image are required" });
+      }
 
-    const pdfCommand = new PutObjectCommand(pdfParams);
-    await s3.send(pdfCommand);
+      const randomName = (bytes = 16) =>
+        crypto.randomBytes(bytes).toString("hex");
 
-    // Cover Image Upload
-    const coverImage = files["coverImage"][0];
-    const coverImgName = `books/images/${randomName()}`;
-    const imageParams = {
-      Bucket: bucketName,
-      Key: coverImgName,
-      Body: coverImage.buffer,
-      ContentType: coverImage.mimetype,
-    };
+      // PDF File Upload
+      const pdfFile = files["pdfFile"][0];
+      const pdfName = `books/pdf/${randomName()}`;
+      const pdfParams = {
+        Bucket: bucketName,
+        Key: pdfName,
+        Body: pdfFile.buffer,
+        ContentType: pdfFile.mimetype,
+      };
 
-    const imgCommand = new PutObjectCommand(imageParams);
-    await s3.send(imgCommand);
+      const pdfCommand = new PutObjectCommand(pdfParams);
+      await s3.send(pdfCommand);
 
-    // Save book details to database
-    const { title, description, author, genre } = req.body;
-    const newBook = new Book({
-      title,
-      description,
-      author,
-      genre,
-      pdfUrl: pdfName,
-      coverPageUrl: coverImgName,
-    });
+      // Cover Image Upload
+      const coverImage = files["coverImage"][0];
+      const coverImgName = `books/images/${randomName()}`;
+      const imageParams = {
+        Bucket: bucketName,
+        Key: coverImgName,
+        Body: coverImage.buffer,
+        ContentType: coverImage.mimetype,
+      };
 
-    await newBook.save();
+      const imgCommand = new PutObjectCommand(imageParams);
+      await s3.send(imgCommand);
 
-    res.status(200).json({ message: "Book uploaded successfully" });
-  } catch (error) {
-    console.error("Error uploading files:", error);
-    res.status(500).json({ error: "Failed to upload files" });
+      // Save book details to database
+      const { title, description, author, genre } = req.body;
+      const newBook = new Book({
+        title,
+        description,
+        author,
+        genre,
+        pdfUrl: pdfName,
+        coverPageUrl: coverImgName,
+      });
+
+      await newBook.save();
+
+      res.status(200).json({ message: "Book uploaded successfully" });
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      res.status(500).json({ error: "Failed to upload files" });
+    }
   }
-});
+);
 
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const books = await Book.find({}).lean(); // Use `.lean()` to get plain JavaScript objects instead of Mongoose documents
+    const books = await Book.find({}).lean(); // to get plain JavaScript objects instead of Mongoose documents
 
     const booksWithSignedUrls = await Promise.all(
       books.map(async (book) => {
@@ -161,15 +177,10 @@ router.get("/", async (req: Request, res: Response) => {
 router.get("/:bookId", async (req: Request, res: Response) => {
   try {
     const { bookId } = req.params;
-    // res.send(bookId);
-    // const book = await Book.findById(bookId).populate("reviews").exec();
     const book = await Book.findById(bookId)
       .populate({
         path: "reviews",
-        populate: {
-          path: "userId",
-          model: "User", // Specify the model if needed
-        },
+        populate: { path: "userId", model: "User" },
       })
       .exec();
     if (!book) return res.status(404).json({ message: "No Book Found" });
@@ -184,7 +195,7 @@ router.get("/:bookId", async (req: Request, res: Response) => {
   }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", verifyToken, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const book = await Book.findById(id);

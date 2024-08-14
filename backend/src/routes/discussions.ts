@@ -2,7 +2,6 @@ import express, { Request, response, Response } from "express";
 import verifyToken from "../middleware/auth";
 import Discussion from "../models/discussion";
 import { check, validationResult } from "express-validator";
-import { CommentType, DiscussionType } from "../shared/types";
 import Comment from "../models/comment";
 const router = express.Router();
 
@@ -66,26 +65,30 @@ router.get("/:discussionId", async (req: Request, res: Response) => {
 });
 
 // update the discussion
-router.put("/:discussionId/edit", async (req: Request, res: Response) => {
-  try {
-    const EditDiscussionFormData = req.body;
-    const { discussionId } = req.params;
-    const updatedDiscussion = await Discussion.findByIdAndUpdate(
-      discussionId,
-      EditDiscussionFormData,
-      { new: true }
-    );
-    if (!updatedDiscussion) {
-      return res.status(404).json({ message: "Discussion not found" });
+router.put(
+  "/:discussionId/edit",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    try {
+      const EditDiscussionFormData = req.body;
+      const { discussionId } = req.params;
+      const updatedDiscussion = await Discussion.findByIdAndUpdate(
+        discussionId,
+        EditDiscussionFormData,
+        { new: true }
+      );
+      if (!updatedDiscussion) {
+        return res.status(404).json({ message: "Discussion not found" });
+      }
+      await updatedDiscussion.save();
+      res.status(200).json(updatedDiscussion);
+    } catch (e) {
+      res.status(500).json({ message: "Error updating discussion", e });
     }
-    await updatedDiscussion.save();
-    res.status(200).json(updatedDiscussion);
-  } catch (e) {
-    res.status(500).json({ message: "Error updating discussion", e });
   }
-});
+);
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", verifyToken, async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     const discussion = await Discussion.findById(id);

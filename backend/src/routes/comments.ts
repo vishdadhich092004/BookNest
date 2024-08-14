@@ -36,12 +36,10 @@ router.post(
         select: "firstName lastName",
       });
 
-      res
-        .status(200)
-        .json({
-          message: "Comment created successfully",
-          comment: populatedComment,
-        });
+      res.status(200).json({
+        message: "Comment created successfully",
+        comment: populatedComment,
+      });
     } catch (e) {
       res.status(500).json({ message: "Something went wrong" });
     }

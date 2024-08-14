@@ -36,12 +36,7 @@ router.post(
         select: "firstName lastName",
       });
 
-      res
-        .status(200)
-        .json({
-          message: "Review created successfully",
-          review: populatedReview,
-        });
+      res.status(200).json({ message: "Review created successfully" });
     } catch (e) {
       res.status(500).json({ message: "Something went wrong" });
     }
