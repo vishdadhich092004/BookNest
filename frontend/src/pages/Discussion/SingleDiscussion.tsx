@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import { useAppContext } from "../../contexts/AppContext";
 import * as apiClient from "../../api-client";
@@ -8,12 +8,16 @@ import {
 } from "../../../../backend/src/shared/types";
 import DeleteButton from "../../components/DeleteButton";
 import SingleComment from "../../components/SingleComment";
+import LikeButton from "../../components/LikeButton";
+import DislikeButton from "../../components/DislikeButton";
 
 function SingleDiscussion() {
+  const queryClient = useQueryClient();
   const { showToast } = useAppContext();
   const { discussionId } = useParams<{ discussionId: string }>();
 
-  const { isLoading, data, isError } = useQuery(
+  // Query for fetching the discussion data
+  const { data, isLoading, isError } = useQuery(
     ["fetchDiscussionById", discussionId],
     () => apiClient.fetchDiscussionById(discussionId as string),
     {
@@ -22,6 +26,51 @@ function SingleDiscussion() {
       },
     }
   );
+
+  // Mutation for liking a discussion
+  const likeMutation = useMutation(
+    () => apiClient.likeDiscussion(discussionId!),
+    {
+      onSuccess: async () => {
+        // Invalidate and refetch the discussion data
+        await queryClient.invalidateQueries([
+          "fetchDiscussionById",
+          discussionId,
+        ]);
+      },
+      onError: () => {
+        showToast({ message: "Already liked", type: "ERROR" });
+      },
+    }
+  );
+
+  // Mutation for disliking a discussion
+  const dislikeMutation = useMutation(
+    () => apiClient.dislikeDiscussion(discussionId!),
+    {
+      onSuccess: async () => {
+        // Invalidate and refetch the discussion data
+        await queryClient.invalidateQueries([
+          "fetchDiscussionById",
+          discussionId,
+        ]);
+      },
+      onError: () => {
+        showToast({
+          message: "Already disliked",
+          type: "ERROR",
+        });
+      },
+    }
+  );
+
+  const handleLike = () => {
+    likeMutation.mutate();
+  };
+
+  const handleDislike = () => {
+    dislikeMutation.mutate();
+  };
 
   if (isLoading) {
     return (
@@ -39,8 +88,17 @@ function SingleDiscussion() {
     );
   }
 
-  const { title, description, userId, createdAt, updatedAt, comments } =
-    data as DiscussionType;
+  const {
+    title,
+    description,
+    userId,
+    createdAt,
+    updatedAt,
+    comments,
+    book,
+    likes,
+    dislikes,
+  } = data as DiscussionType;
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -68,6 +126,30 @@ function SingleDiscussion() {
             <span className="font-semibold">Updated at:</span>{" "}
             {new Date(updatedAt).toLocaleDateString()}
           </p>
+          <p>
+            <span className="font-semibold">About: </span> {book}
+          </p>
+
+          <div className="mt-4 flex space-x-4">
+            <LikeButton
+              onClick={handleLike}
+              disabled={likeMutation.isLoading}
+              className={
+                "px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+              }
+            >
+              {likes.length}
+            </LikeButton>
+            <DislikeButton
+              onClick={handleDislike}
+              disabled={dislikeMutation.isLoading}
+              className={
+                "px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              }
+            >
+              {dislikes.length}
+            </DislikeButton>
+          </div>
         </div>
         <div className="flex justify-between mb-6">
           <Link
@@ -93,11 +175,15 @@ function SingleDiscussion() {
           {comments && comments.length > 0 ? (
             <div className="space-y-4">
               {comments.map((comment: CommentType) => (
-                <SingleComment key={comment._id} comment={comment} />
+                <SingleComment
+                  key={comment._id}
+                  comment={comment}
+                  discussionId={discussionId!}
+                />
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No comments yet.</p>
+            <p className="text-gray-500">Be the first to comment.</p>
           )}
         </div>
       </div>

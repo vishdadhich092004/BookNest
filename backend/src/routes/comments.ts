@@ -46,4 +46,85 @@ router.post(
   }
 );
 
+// Like Route
+router.post(
+  "/:discussionId/comments/:commentId/like",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const { discussionId, commentId } = req.params;
+    const userId = req.userId;
+    try {
+      const discussion = await Discussion.findById(discussionId);
+      if (!discussion)
+        return res.status(404).json({ message: "No Discussion Found" });
+
+      const comment = await Comment.findById(commentId);
+      if (!comment)
+        return res.status(404).json({ message: "No Comment Found" });
+
+      if (comment.likes.includes(userId))
+        return res.status(400).json({ message: "Already liked" });
+
+      comment.likes.push(userId);
+      comment.dislikes = comment.dislikes.filter(
+        (commentId) => commentId.toString() !== userId
+      );
+      await comment.save();
+      await discussion.save();
+
+      res.status(200).json(comment);
+    } catch (e) {
+      res.status(500).json({ message: `Something went wrong , ${e}` });
+    }
+  }
+);
+
+// return all the comments under a discussion:
+router.get("/:discussionId/comments", async (req: Request, res: Response) => {
+  const { discussionId } = req.params;
+  try {
+    const discussion = await Discussion.findById(discussionId);
+    if (!discussion)
+      return res.status(404).json({ message: "No Discussion Found" });
+    const allComments = discussion.comments;
+
+    res.status(200).json(allComments);
+  } catch (e) {
+    return res.status(500).json({ message: `Something went wrong, ${e}` });
+  }
+});
+// Dislike Route
+router.post(
+  "/:discussionId/comments/:commentId/dislike",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const { discussionId, commentId } = req.params;
+    const userId = req.userId;
+    try {
+      const discussion = await Discussion.findById(discussionId);
+      if (!discussion)
+        return res.status(404).json({ message: "No Discussion Found" });
+
+      const comment = await Comment.findById(commentId);
+      if (!comment)
+        return res.status(404).json({ message: "No Comment Found" });
+
+      if (comment.dislikes.includes(userId))
+        return res.status(400).json({ message: "Already Disliked" });
+
+      comment.dislikes.push(userId);
+      comment.likes = comment.likes.filter(
+        (commentId) => commentId.toString() !== userId
+      );
+
+      await comment.save();
+      await discussion.save();
+
+      res.status(200).json(comment);
+    } catch (e) {
+      res.status(500).json({ message: `Something went wrong , ${e}` });
+    }
+  }
+);
+
 export default router;

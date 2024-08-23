@@ -13,7 +13,8 @@ export type CommentType = {
   userId: UserType;
   text: string;
   timestamp: Date;
-  likes: number;
+  likes: string[];
+  dislikes: string[];
 };
 
 export type DiscussionType = {
@@ -24,6 +25,9 @@ export type DiscussionType = {
   comments: CommentType[];
   createdAt: Date;
   updatedAt: Date;
+  book: string;
+  likes: string[];
+  dislikes: string[];
 };
 
 export type BookType = {

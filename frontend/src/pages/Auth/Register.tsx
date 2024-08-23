@@ -35,8 +35,8 @@ function Register() {
       await queryClient.invalidateQueries("validate-token");
       navigate("/");
     },
-    onError: () => {
-      showToast({ message: "Registration Failed", type: "ERROR" });
+    onError: (e) => {
+      showToast({ message: `${e}`, type: "ERROR" });
     },
   });
   const onSubmit = handleSubmit((data) => {

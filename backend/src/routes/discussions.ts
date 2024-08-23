@@ -12,6 +12,7 @@ router.post(
   [
     check("title", "Title is required").notEmpty(),
     check("description", "Description cannot be empty").notEmpty(),
+    check("book", "Book is required").notEmpty(),
   ],
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
@@ -21,8 +22,8 @@ router.post(
 
     try {
       const userId = req.userId;
-      const { title, description } = req.body;
-      const discussion = new Discussion({ userId, title, description });
+      const { title, description, book } = req.body;
+      const discussion = new Discussion({ userId, title, description, book });
       await discussion.save();
       res.status(200).send({ message: "Discussion created successfully." });
     } catch (e) {
@@ -102,5 +103,63 @@ router.delete("/:id", verifyToken, async (req: Request, res: Response) => {
     return res.status(502).json({ message: `Error Deleting Discussion ${e}` });
   }
 });
+
+router.post(
+  "/:discussionId/like",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const { discussionId } = req.params;
+    const userId = req.userId;
+    try {
+      const discussion = await Discussion.findById(discussionId);
+      if (!discussion)
+        return res.status(404).json({ message: "No Discussion Found" });
+      if (discussion.likes.includes(userId))
+        return res
+          .status(400)
+          .json({ message: "You have already liked the post" });
+
+      discussion.likes.push(userId);
+      discussion.dislikes = discussion.dislikes.filter(
+        (discussionId) => discussionId.toString() !== userId
+      );
+      await discussion.save();
+      res
+        .status(200)
+        .json({ message: "Post Liked", likes: discussion.likes.length });
+    } catch (e) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+
+router.post(
+  "/:discussionId/dislike",
+  verifyToken,
+  async (req: Request, res: Response) => {
+    const { discussionId } = req.params;
+    const userId = req.userId;
+    try {
+      const discussion = await Discussion.findById(discussionId);
+      if (!discussion)
+        return res.status(404).json({ message: "No Discussion Found" });
+
+      if (discussion.dislikes.includes(userId))
+        return res
+          .status(400)
+          .json({ message: "You have already disliked the discussion" });
+
+      discussion.dislikes.push(userId);
+      discussion.likes = discussion.likes.filter(
+        (discussionId) => discussionId.toString() !== userId
+      );
+
+      await discussion.save();
+      res.status(200).json({ message: "Post Disliked!" });
+    } catch (e) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
 
 export default router;

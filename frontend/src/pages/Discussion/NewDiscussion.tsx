@@ -7,6 +7,7 @@ export type DiscussionFormData = {
   title: string;
   description: string;
   updatedAt: Date;
+  book: string;
 };
 
 function NewDiscussion() {
@@ -57,6 +58,19 @@ function NewDiscussion() {
             {errors.title && (
               <span className="text-red-500 text-sm">
                 {errors.title.message}
+              </span>
+            )}
+          </label>
+          <label className="block">
+            <span className="text-gray-700">Book</span>
+            <input
+              type="text"
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+              {...register("book", { required: "Book cannot be empty" })}
+            />
+            {errors.book && (
+              <span className="text-red-500 text-sm">
+                {errors.book.message}
               </span>
             )}
           </label>

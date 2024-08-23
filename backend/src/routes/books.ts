@@ -13,6 +13,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { BookType } from "../shared/types";
 import { check, validationResult } from "express-validator";
 import verifyToken from "../middleware/auth";
+import Review from "../models/review";
 
 const router = express.Router();
 
@@ -65,7 +66,7 @@ async function getSignedUrlsForBook(book: BookType) {
 
 router.post(
   "/new",
-  verifyToken,
+  // verifyToken,
   cpUpload,
   [check("title", "Title is required").notEmpty()],
   [check("description", "Description is required").notEmpty()],
@@ -195,7 +196,7 @@ router.get("/:bookId", async (req: Request, res: Response) => {
   }
 });
 
-router.delete("/:id", verifyToken, async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const book = await Book.findById(id);
@@ -213,6 +214,7 @@ router.delete("/:id", verifyToken, async (req: Request, res: Response) => {
     };
     const coverImgCommand = new DeleteObjectCommand(coverImgParams);
     await s3.send(coverImgCommand);
+    await Review.deleteMany({ _id: { $in: book.reviews } });
     await Book.findByIdAndDelete(id);
     res.status(200).json({ message: "Deleted Succesfully" });
   } catch (e) {

@@ -163,3 +163,61 @@ export const fetchBookById = async (bookId: string): Promise<BookType> => {
   const data = await response.json();
   return data as BookType;
 };
+
+export const likeDiscussion = async (discussionId: string) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/like`,
+    {
+      method: "POST",
+      credentials: "include",
+    }
+  );
+  if (!response.ok) throw new Error("Failed to like discussion");
+  return response.json();
+};
+export const dislikeDiscussion = async (discussionId: string) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/dislike`,
+    {
+      method: "POST",
+      credentials: "include",
+    }
+  );
+  if (!response.ok) throw new Error("Error disliking discussion");
+  return response.json();
+};
+
+export const likeComment = async (discussionId: string, commentId: string) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/comments/${commentId}/like`,
+    {
+      credentials: "include",
+      method: "POST",
+    }
+  );
+  if (!response.ok) throw new Error("Failed to Like Comment");
+  return response.json();
+};
+
+export const dislikeComment = async (
+  discussionId: string,
+  commentId: string
+) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/comments/${commentId}/dislike`,
+    {
+      credentials: "include",
+      method: "POST",
+    }
+  );
+  if (!response.ok) throw new Error("Failed to Dislike Comment");
+  return response.json();
+};
+
+export const fetchCommentByDiscussionId = async (discussionId: string) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/:${discussionId}/comments`
+  );
+  if (!response.ok) throw new Error("Error fetching comments");
+  return response.json();
+};

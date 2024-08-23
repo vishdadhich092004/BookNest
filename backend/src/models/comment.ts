@@ -18,10 +18,18 @@ export const commentSchema = new Schema({
     type: Date,
     default: new Date(),
   },
-  likes: {
-    type: Number,
-    default: 0,
-  },
+  likes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  dislikes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 const Comment = mongoose.model<CommentType>("Comment", commentSchema);
