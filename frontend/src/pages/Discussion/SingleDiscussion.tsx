@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAppContext } from "../../contexts/AppContext";
 import * as apiClient from "../../api-client";
 import {
@@ -10,8 +10,12 @@ import DeleteButton from "../../components/Buttons/DeleteButton";
 import SingleComment from "../../components/SingleComment";
 import LikeButton from "../../components/Buttons/LikeButton";
 import DislikeButton from "../../components/Buttons/DislikeButton";
+import Loader from "../../components/Loader";
+import { useAuth } from "../../contexts/AuthContext";
 
 function SingleDiscussion() {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const { showToast } = useAppContext();
   const { discussionId } = useParams<{ discussionId: string }>();
@@ -73,14 +77,11 @@ function SingleDiscussion() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen text-xl text-slate-800">
-        Loading...
-      </div>
-    );
+    return <Loader />;
   }
 
   if (isError || !data) {
+    navigate("/");
     return (
       <div className="flex justify-center items-center h-screen text-xl text-slate-800">
         404 Not Found
@@ -106,12 +107,15 @@ function SingleDiscussion() {
         <h1 className="text-3xl font-bold text-slate-800 mb-4">{title}</h1>
         <div className="flex justify-between mb-4">
           <p className="text-slate-600">{description}</p>
-          <Link
-            className="text-teal-600 hover:text-teal-800 transition-colors duration-300"
-            to={`/discussions/${discussionId}/edit`}
-          >
-            Edit Discussion
-          </Link>
+          {isAuthenticated &&
+            userId._id.toString() === user?._id.toString() && (
+              <Link
+                className="text-teal-600 hover:text-teal-800 transition-colors duration-300"
+                to={`/discussions/${discussionId}/edit`}
+              >
+                Edit Discussion
+              </Link>
+            )}
         </div>
         <div className="text-sm text-slate-500 mb-6">
           <p>
@@ -154,7 +158,12 @@ function SingleDiscussion() {
         <div className="flex justify-between mb-6">
           <Link
             className="text-teal-600 hover:text-teal-800 transition-colors duration-300"
-            to={`/discussions/${discussionId}/comments`}
+            // to={`/discussions/${discussionId}/comments`}
+            to={`${
+              isAuthenticated
+                ? `/discussions/${discussionId}/comments`
+                : "/sign-in"
+            }`}
           >
             New Comment
           </Link>
@@ -164,7 +173,10 @@ function SingleDiscussion() {
           >
             Back
           </Link>
-          <DeleteButton id={discussionId!} toBeDeleted="discussions" />
+          {isAuthenticated &&
+            userId._id.toString() === user?._id.toString() && (
+              <DeleteButton id={discussionId!} toBeDeleted="discussions" />
+            )}
         </div>
 
         {/* Comments Section */}

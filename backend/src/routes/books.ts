@@ -136,6 +136,7 @@ router.post(
       await s3.send(imgCommand);
 
       const userId = req.user?.userId;
+      // console.log(userId);
       // Save book details to database
       const { title, description, author, genre } = req.body;
       const newBook = new Book({
@@ -158,6 +159,26 @@ router.post(
   }
 );
 
+router.get("/:bookId", async (req: Request, res: Response) => {
+  try {
+    const { bookId } = req.params;
+    const book = await Book.findById(bookId)
+      .populate({
+        path: "reviews",
+        populate: { path: "userId", model: "User" },
+      })
+      .exec();
+    if (!book) return res.status(404).json({ message: "No Book Found" });
+
+    const { pdfUrl, coverPageUrl } = await getSignedUrlsForBook(book); // Pass the single book object here
+    book.pdfUrl = pdfUrl;
+    book.coverPageUrl = coverPageUrl;
+    // res.json(book);
+    return res.status(200).json(book);
+  } catch (e) {
+    res.status(502).json({ message: "Error Fetching book" });
+  }
+});
 router.get("/", async (req: Request, res: Response) => {
   try {
     const books = await Book.find({}).lean(); // to get plain JavaScript objects instead of Mongoose documents
@@ -192,27 +213,6 @@ router.get("/", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching books:", error);
     res.status(500).json({ error: "Failed to fetch books" });
-  }
-});
-
-router.get("/:bookId", async (req: Request, res: Response) => {
-  try {
-    const { bookId } = req.params;
-    const book = await Book.findById(bookId)
-      .populate({
-        path: "reviews",
-        populate: { path: "userId", model: "User" },
-      })
-      .exec();
-    if (!book) return res.status(404).json({ message: "No Book Found" });
-
-    const { pdfUrl, coverPageUrl } = await getSignedUrlsForBook(book); // Pass the single book object here
-    book.pdfUrl = pdfUrl;
-    book.coverPageUrl = coverPageUrl;
-    // res.json(book);
-    return res.status(200).json(book);
-  } catch (e) {
-    res.status(502).json({ message: "Error Fetching book" });
   }
 });
 

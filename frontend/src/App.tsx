@@ -112,6 +112,14 @@ function App() {
             </Layout>
           }
         />
+        <Route
+          path="*"
+          element={
+            <Layout>
+              <HomePage />
+            </Layout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -23,6 +23,10 @@ const bookSchema = new Schema({
   coverPageUrl: {
     type: String,
   },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   reviews: [
     {
       type: Schema.Types.ObjectId,

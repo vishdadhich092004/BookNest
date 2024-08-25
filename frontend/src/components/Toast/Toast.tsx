@@ -15,8 +15,8 @@ export default function Toast({ message, type, onClose }: ToastProps) {
 
   const styles =
     type === "SUCCESS"
-      ? "toast-slide-in-success fixed top-4 left-1/2 transform -translate-x-1/2 z-50 p-4 rounded-md bg-green-500 text-white max-w-xs flex items-center space-x-4"
-      : "toast-slide-in-error fixed top-4 left-1/2 transform -translate-x-1/2 z-50 p-4 rounded-md bg-red-500 text-white max-w-xs flex items-center space-x-4";
+      ? "toast-slide-in-success fixed top-4 left-1/2 transform -translate-z-50 p-4 rounded-md bg-green-500 text-white max-w-xs flex items-center space-x-4"
+      : "toast-slide-in-error fixed top-4 left-1/2 transform -translate-z-50 p-4 rounded-md bg-red-500 text-white max-w-xs flex items-center space-x-4";
 
   return (
     <div className={styles}>

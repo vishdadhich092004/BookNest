@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import * as apiClient from "../../api-client";
 import { BookType } from "../../../../backend/src/shared/types";
 import { Link } from "react-router-dom";
-
+import Loader from "../../components/Loader";
+import { useAuth } from "../../contexts/AuthContext";
 function BooksList() {
+  const { isAuthenticated } = useAuth();
   const [books, setBooks] = useState<BookType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,12 +27,7 @@ function BooksList() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="text-gray-600">
-        {/* Optionally replace with a skeleton loader */}
-        <p>Loading books...</p>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (error) {
@@ -41,7 +38,7 @@ function BooksList() {
     <div className="max-w-4xl mx-auto mt-8 px-6">
       <div className="mb-6">
         <Link
-          to="/books/new"
+          to={`${isAuthenticated ? "/books/new" : "/sign-in"}`}
           className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
         >
           Create New Book

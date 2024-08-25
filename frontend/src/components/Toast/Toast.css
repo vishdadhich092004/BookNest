@@ -21,9 +21,9 @@
 }
 
 .toast-slide-in-success {
-  animation: slide-in-success 0.5s ease-out;
+  animation: slide-in-success 0.2s ease-out;
 }
 
 .toast-slide-in-error {
-  animation: slide-in-error 0.5s ease-out;
+  animation: slide-in-error 0.2s ease-out;
 }

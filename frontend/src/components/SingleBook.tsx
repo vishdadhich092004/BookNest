@@ -1,12 +1,15 @@
 import { useQuery } from "react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
 import * as apiClient from "../api-client";
 import { BookType, ReviewType } from "../../../backend/src/shared/types";
 import DeleteButton from "../components/Buttons/DeleteButton";
 import SingleReview from "./SingleReview";
-
+import Loader from "./Loader";
+import { useAuth } from "../contexts/AuthContext";
 function SingleBook() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { showToast } = useAppContext();
   const { bookId } = useParams<{ bookId: string }>();
 
@@ -21,14 +24,11 @@ function SingleBook() {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen text-xl text-slate-600">
-        Loading...
-      </div>
-    );
+    return <Loader />;
   }
 
   if (isError || !data) {
+    navigate("/");
     return (
       <div className="flex justify-center items-center h-screen text-xl text-slate-600">
         404 Not Found
@@ -36,21 +36,14 @@ function SingleBook() {
     );
   }
 
-  const { title, author, description, coverPageUrl, pdfUrl, reviews } =
+  const { title, author, description, coverPageUrl, pdfUrl, reviews, userId } =
     data as BookType;
-
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="bg-white shadow-md rounded-lg p-6">
         <h1 className="text-3xl font-bold text-slate-800 mb-4">{title}</h1>
         <div className="flex justify-between mb-4">
           <p className="text-slate-600">by {author}</p>
-          <Link
-            className="text-teal-600 hover:text-teal-700 transition-colors duration-300"
-            to={`/books/${bookId}/edit`}
-          >
-            Edit Book
-          </Link>
         </div>
         <p className="text-slate-800 mb-4">{description}</p>
         <img
@@ -79,7 +72,9 @@ function SingleBook() {
           >
             Back
           </Link>
-          <DeleteButton id={bookId!} toBeDeleted="books" />
+          {userId.toString() === user?._id.toString() && (
+            <DeleteButton id={bookId!} toBeDeleted="books" />
+          )}
         </div>
 
         {/* Reviews Section */}

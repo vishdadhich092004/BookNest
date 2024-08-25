@@ -1,9 +1,11 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import { useQuery } from "react-query";
 import { validateToken } from "../api-client"; // Adjust import path as necessary
+import Loader from "../components/Loader";
 
 // Define types for user and context
 type User = {
+  _id: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -56,7 +58,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
         refetchUser: refetch,
       }}
     >
-      {isLoading ? <div>Loading...</div> : children}
+      {isLoading ? <Loader /> : children}
     </AuthContext.Provider>
   );
 };

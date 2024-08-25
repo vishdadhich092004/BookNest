@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 function HeroSection() {
   const { isAuthenticated } = useAuth();
-  const toLink = isAuthenticated ? "/" : "/sign-in";
+  const toLink = isAuthenticated ? "/discussions" : "/sign-in";
   return (
     <section className="bg-gradient-to-r from-teal-500 to-teal-600 text-white py-20">
       <div className="container mx-auto px-6 text-center">
@@ -17,7 +17,7 @@ function HeroSection() {
           to={toLink}
           className="bg-white text-teal-600 px-6 py-3 rounded-full font-semibold hover:bg-teal-100 transition duration-300"
         >
-          Join Now
+          {isAuthenticated ? "Start" : "Join Now"}
         </Link>
       </div>
     </section>
