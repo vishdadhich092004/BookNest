@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import verifyToken from "../middleware/auth";
+import { verifyToken, AuthRequest } from "../middleware/auth";
 import Book from "../models/book";
 import Review from "../models/review";
 import { check, validationResult } from "express-validator";
@@ -13,7 +13,7 @@ router.post(
   verifyToken,
   [check("text", "Text cannot be empty").notEmpty()],
   [check("rating", "Rating is required").notEmpty()],
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array() });
@@ -23,7 +23,10 @@ router.post(
       const book = await Book.findById(bookId);
       if (!book) return res.status(404).json({ message: "No Book found" });
 
-      const userId = req.userId;
+      const userId = req.user?.userId;
+      if (!userId)
+        return res.status(400).json({ message: "User Access Denied" });
+
       const { rating, text } = req.body;
       const review = new Review({ bookId, userId, rating, text });
       book.reviews.push(review);

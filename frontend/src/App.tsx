@@ -4,7 +4,6 @@ import Register from "./pages/Auth/Register";
 import SignIn from "./pages/Auth/SignIn";
 import NewDiscussion from "./pages/Discussion/NewDiscussion";
 import AllDiscussions from "./pages/Discussion/AllDiscussions";
-import PrivateRoute from "./components/PrivateRoute";
 import SingleDiscussion from "./pages/Discussion/SingleDiscussion";
 import NewComment from "./pages/Comment/NewComment";
 import EditDiscussion from "./pages/Discussion/EditDiscussion";
@@ -43,13 +42,9 @@ function App() {
         <Route
           path="/discussions/new"
           element={
-            <PrivateRoute
-              element={
-                <Layout>
-                  <NewDiscussion />
-                </Layout>
-              }
-            />
+            <Layout>
+              <NewDiscussion />
+            </Layout>
           }
         />
         <Route

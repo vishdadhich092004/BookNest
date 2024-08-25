@@ -39,10 +39,11 @@ export const validateToken = async () => {
   });
 
   if (!response.ok) {
+    console.error(await response.text());
     throw new Error("Token invalid");
   }
-
-  return response.json();
+  const data = await response.json();
+  return data;
 };
 export const signOut = async () => {
   const response = await fetch(`${BASE_URL}/api/auth/logout`, {
@@ -83,6 +84,18 @@ export const fetchDiscussionById = async (
   if (!response.ok) throw new Error("Error fetching discussion.");
   const data = await response.json();
   return data as DiscussionType;
+};
+
+export const fetchDiscussionOwner = async (discussionId: string) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/owner`,
+    {
+      credentials: "include",
+    }
+  );
+  if (!response.ok) throw new Error("Error Fetching user for the discussion");
+  const data = await response.json();
+  return data;
 };
 
 export const newComment = async (

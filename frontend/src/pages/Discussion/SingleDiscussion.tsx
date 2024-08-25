@@ -116,7 +116,7 @@ function SingleDiscussion() {
         <div className="text-sm text-gray-500 mb-6">
           <p>
             <span className="font-semibold">Created by:</span>{" "}
-            {userId.firstName}
+            {userId ? userId.firstName : "[deleted]"}
           </p>
           <p>
             <span className="font-semibold">Created at:</span>{" "}

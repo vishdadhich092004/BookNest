@@ -2,8 +2,7 @@ import express, { Request, Response } from "express";
 import User from "../models/user";
 import jwt from "jsonwebtoken";
 import { check, validationResult } from "express-validator";
-import verifyToken from "../middleware/auth";
-
+import { Role, assignPermissions } from "../config/rolesConfig";
 const router = express.Router();
 
 router.post(
@@ -28,10 +27,19 @@ router.post(
       if (user) {
         return res.status(400).json({ message: "User already exists" });
       }
-      user = new User(req.body);
+      const { email, firstName, lastName, password, role } = req.body;
+      const permissions = assignPermissions(role as Role);
+      user = new User({
+        email,
+        firstName,
+        lastName,
+        password,
+        role,
+        permissions,
+      });
       await user.save();
       const token = jwt.sign(
-        { userId: user.id },
+        { userId: user._id, role: user.role, permissions },
         process.env.JWT_SECRET_KEY as string,
         {
           expiresIn: "1d",
@@ -42,24 +50,11 @@ router.post(
         secure: process.env.NODE_ENV === "production",
         maxAge: 86400000,
       });
-      return res.status(200).send({ message: "User registered OK" });
+      return res.status(200).send(user);
     } catch (error) {
       console.log(error);
       res.status(500).send({ message: "Something went wrong" });
     }
   }
 );
-
-router.get("/me", verifyToken, async (req: Request, res: Response) => {
-  try {
-    const userId = req.userId;
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).send({ message: "User not found" });
-    res.json(user);
-  } catch (e) {
-    console.log(e);
-    res.status(500).send({ message: "Something went wrong" });
-  }
-});
-
 export default router;

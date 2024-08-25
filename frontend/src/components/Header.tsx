@@ -1,8 +1,9 @@
-import { useAppContext } from "../contexts/AppContext";
 import { Link } from "react-router-dom";
 import SignOutButton from "./SignOutButton";
+import { useAuth } from "../contexts/AuthContext";
+import { FaRegUser } from "react-icons/fa6";
 const Header = () => {
-  const { isLoggedIn } = useAppContext();
+  const { isAuthenticated, user } = useAuth();
   return (
     <header className="bg-gray-50">
       <div className="container mx-auto px-4 py-4">
@@ -34,14 +35,13 @@ const Header = () => {
           >
             Books
           </Link>
-
-          {isLoggedIn ? (
-            <>
-              <SignOutButton />
-            </>
-          ) : (
-            <SignInButton />
+          {isAuthenticated && user && (
+            <span className="flex ">
+              {" "}
+              <FaRegUser className="text-2xl" /> Hey {user.firstName}
+            </span>
           )}
+          {isAuthenticated ? <SignOutButton /> : <SignInButton />}
         </div>
       </div>
     </header>

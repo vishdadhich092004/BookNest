@@ -11,7 +11,7 @@ function SingleReview({ review }: SingleReviewType) {
       <div className="text-sm text-gray-500 mt-2">
         <p>
           <span className="font-semibold">Reviewed by:</span>{" "}
-          {review.userId.firstName}
+          {review.userId ? review.userId.firstName : "[deleted]"}
         </p>
         <p>
           <span className="font-semibold">Rating:</span> {review.rating}

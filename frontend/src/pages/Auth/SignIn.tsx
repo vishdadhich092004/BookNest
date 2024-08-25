@@ -46,7 +46,7 @@ function SignIn() {
           <img
             src="https://images.unsplash.com/photo-1529158062015-cad636e205a0?q=80&w=1953&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             alt="SignIn"
-            className="object-cover w-0 md:w-full h-full"
+            className="object-cover w-full h-full" // Changed w-0 to w-full
           />
         </div>
         <div className="flex-1 p-8 self-center w-25">

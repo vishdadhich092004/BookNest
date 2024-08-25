@@ -3,7 +3,9 @@ import User from "../models/user";
 import { check, validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import verifyToken from "../middleware/auth";
+import * as middleware from "../middleware/auth";
+import { Role, assignPermissions } from "../config/rolesConfig";
+import { AuthRequest } from "../middleware/auth";
 const router = express.Router();
 
 router.post(
@@ -30,8 +32,9 @@ router.post(
         return res.status(400).json({ message: "Invalid Credentials" });
       }
 
+      const permissions = assignPermissions(user.role as Role);
       const token = jwt.sign(
-        { userId: user._id }, // Use _id for MongoDB ObjectId
+        { userId: user._id, role: user.role, permissions }, // Use _id for MongoDB ObjectId
         process.env.JWT_SECRET_KEY as string,
         { expiresIn: "1d" }
       );
@@ -42,9 +45,7 @@ router.post(
       });
 
       // Return the full user details
-      res.status(200).json({
-        userId: user._id,
-      });
+      res.status(200).json(user);
     } catch (e) {
       res.status(500).json({ message: "Something went wrong" });
     }
@@ -53,19 +54,15 @@ router.post(
 
 router.get(
   "/validate-token",
-  verifyToken,
-  async (req: Request, res: Response) => {
+  middleware.verifyToken,
+  async (req: AuthRequest, res: Response) => {
     try {
-      const user = await User.findById(req.userId);
+      const user = await User.findById(req.user?.userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
-      res.status(200).json({
-        user: {
-          userId: user._id,
-        },
-      });
+      res.status(200).json({ user });
     } catch (e) {
       res.status(500).json({ message: "Something went wrong" });
     }

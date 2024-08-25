@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import verifyToken from "../middleware/auth";
+import { AuthRequest, verifyToken } from "../middleware/auth";
 import Discussion from "../models/discussion";
 import Comment from "../models/comment";
 import { check, validationResult } from "express-validator";
@@ -12,7 +12,7 @@ router.post(
   "/:discussionId/comments",
   verifyToken,
   [check("text", "Text cannot be empty").notEmpty()],
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array() });
@@ -23,7 +23,7 @@ router.post(
       if (!discussion)
         return res.status(404).json({ message: "No discussion found" });
 
-      const userId = req.userId;
+      const userId = req.user?.userId;
       const { text } = req.body;
       const comment = new Comment({ discussionId, userId, text });
       discussion.comments.push(comment);
@@ -50,9 +50,10 @@ router.post(
 router.post(
   "/:discussionId/comments/:commentId/like",
   verifyToken,
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     const { discussionId, commentId } = req.params;
-    const userId = req.userId;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(400).json({ message: "User Access Denied" });
     try {
       const discussion = await Discussion.findById(discussionId);
       if (!discussion)
@@ -78,7 +79,6 @@ router.post(
     }
   }
 );
-
 // return all the comments under a discussion:
 router.get("/:discussionId/comments", async (req: Request, res: Response) => {
   const { discussionId } = req.params;
@@ -97,9 +97,10 @@ router.get("/:discussionId/comments", async (req: Request, res: Response) => {
 router.post(
   "/:discussionId/comments/:commentId/dislike",
   verifyToken,
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     const { discussionId, commentId } = req.params;
-    const userId = req.userId;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(400).json({ message: "User Access Denied" });
     try {
       const discussion = await Discussion.findById(discussionId);
       if (!discussion)

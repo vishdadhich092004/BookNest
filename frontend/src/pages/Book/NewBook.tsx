@@ -40,6 +40,7 @@ export default function NewBook() {
       const response = await fetch(`${BASE_URL}/api/books/new`, {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       if (!response.ok) {

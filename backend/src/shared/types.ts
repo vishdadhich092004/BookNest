@@ -5,6 +5,8 @@ export type UserType = {
   lastName: string;
   password: string;
   comments: string;
+  role: string;
+  permissions: [string];
 };
 
 export type CommentType = {
@@ -38,6 +40,7 @@ export type BookType = {
   genre: string;
   pdfUrl: string;
   coverPageUrl: string;
+  userId: UserType;
   reviews: ReviewType[];
 };
 

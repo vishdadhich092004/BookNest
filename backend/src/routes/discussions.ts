@@ -1,9 +1,28 @@
-import express, { Request, response, Response } from "express";
-import verifyToken from "../middleware/auth";
+import express, { NextFunction, Request, response, Response } from "express";
+import { AuthRequest, verifyToken } from "../middleware/auth";
 import Discussion from "../models/discussion";
 import { check, validationResult } from "express-validator";
 import Comment from "../models/comment";
 const router = express.Router();
+
+const checkOwnership = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { discussionId } = req.params;
+    const discussion = await Discussion.findById(discussionId);
+    if (!discussion)
+      return res.status(404).json({ message: "Discussion Not Found" });
+
+    if (discussion.userId.toString() !== req.user?.userId)
+      return res.status(403).json({ message: "You dont have permission" });
+    next();
+  } catch (e) {
+    return res.status(500).json({ message: "Error Checking Ownership", e });
+  }
+};
 
 // new discussion create - post route
 router.post(
@@ -14,14 +33,16 @@ router.post(
     check("description", "Description cannot be empty").notEmpty(),
     check("book", "Book is required").notEmpty(),
   ],
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array() });
     }
 
     try {
-      const userId = req.userId;
+      const userId = req.user?.userId;
+      if (!userId)
+        return res.status(400).json({ message: "User Access Denied" });
       const { title, description, book } = req.body;
       const discussion = new Discussion({ userId, title, description, book });
       await discussion.save();
@@ -31,7 +52,19 @@ router.post(
     }
   }
 );
-
+router.get(":/discussionId/owner", async (req: Request, res: Response) => {
+  const { discussionId } = req.params;
+  try {
+    const discussion = await Discussion.findById(discussionId);
+    if (!discussion)
+      return res.status(404).json({ message: "No discussion Found" });
+    const user = discussion.userId;
+    if (!user) return res.status(404).json({ message: "No user Found" });
+    return res.status(200).json({ user });
+  } catch (e) {
+    return res.status(500).json({ message: "Something went Wrong" });
+  }
+});
 // return all the discussions
 router.get("/", async (req: Request, res: Response) => {
   try {
@@ -69,7 +102,8 @@ router.get("/:discussionId", async (req: Request, res: Response) => {
 router.put(
   "/:discussionId/edit",
   verifyToken,
-  async (req: Request, res: Response) => {
+  checkOwnership,
+  async (req: AuthRequest, res: Response) => {
     try {
       const EditDiscussionFormData = req.body;
       const { discussionId } = req.params;
@@ -89,27 +123,35 @@ router.put(
   }
 );
 
-router.delete("/:id", verifyToken, async (req: Request, res: Response) => {
-  const { id } = req.params;
-  try {
-    const discussion = await Discussion.findById(id);
-    if (!discussion)
-      return res.status(404).json({ message: "No Discussion Found" });
-    // res.send(discussion);
-    await Comment.deleteMany({ _id: { $in: discussion.comments } });
-    await Discussion.findByIdAndDelete(id);
-    res.status(200).json({ message: "Discussion Deleted Succesfully" });
-  } catch (e) {
-    return res.status(502).json({ message: `Error Deleting Discussion ${e}` });
+router.delete(
+  "/:discussionId",
+  verifyToken,
+  checkOwnership,
+  async (req: AuthRequest, res: Response) => {
+    const { discussionId } = req.params;
+    try {
+      const discussion = await Discussion.findById(discussionId);
+      if (!discussion)
+        return res.status(404).json({ message: "No Discussion Found" });
+      // res.send(discussion);
+      await Comment.deleteMany({ _id: { $in: discussion.comments } });
+      await Discussion.findByIdAndDelete(discussionId);
+      res.status(200).json({ message: "Discussion Deleted Succesfully" });
+    } catch (e) {
+      return res
+        .status(502)
+        .json({ message: `Error Deleting Discussion ${e}` });
+    }
   }
-});
+);
 
 router.post(
   "/:discussionId/like",
   verifyToken,
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     const { discussionId } = req.params;
-    const userId = req.userId;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(400).json({ message: "User Access Denied" });
     try {
       const discussion = await Discussion.findById(discussionId);
       if (!discussion)
@@ -136,9 +178,11 @@ router.post(
 router.post(
   "/:discussionId/dislike",
   verifyToken,
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     const { discussionId } = req.params;
-    const userId = req.userId;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(400).json({ message: "User Access Denied" });
+
     try {
       const discussion = await Discussion.findById(discussionId);
       if (!discussion)

@@ -23,6 +23,12 @@ const userSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: "Comment",
   },
+  role: {
+    type: String,
+    enum: ["admin", "user"],
+    default: "user",
+  },
+  permissions: [String],
 });
 
 userSchema.pre("save", async function (next) {

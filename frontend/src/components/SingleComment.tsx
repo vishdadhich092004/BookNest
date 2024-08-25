@@ -54,7 +54,7 @@ function SingleComment({ comment, discussionId }: SingleCommentType) {
       <div className="text-sm text-gray-500 mt-2">
         <p>
           <span className="font-semibold">Commented by:</span>{" "}
-          {comment.userId.firstName}
+          {comment.userId ? comment.userId.firstName : "[deleted]"}
         </p>
         <p>
           <span className="font-semibold">On:</span>{" "}

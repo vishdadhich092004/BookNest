@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import Book from "../models/book";
 import crypto from "crypto";
@@ -12,10 +12,28 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { BookType } from "../shared/types";
 import { check, validationResult } from "express-validator";
-import verifyToken from "../middleware/auth";
+import { AuthRequest, verifyToken } from "../middleware/auth";
 import Review from "../models/review";
 
 const router = express.Router();
+
+const checkOwnership = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { bookId } = req.params;
+    const book = await Book.findById(bookId);
+    if (!book) return res.status(404).json({ message: "Book Not Found" });
+
+    if (book.userId.toString() !== req.user?.userId)
+      return res.status(403).json({ message: "You dont have permission" });
+    next();
+  } catch (e) {
+    return res.status(500).json({ message: `Error Checking Ownership ${e}` });
+  }
+};
 
 const secretKey = process.env.AWS_SECRET_ACCESS_KEY!;
 const accessKey = process.env.AWS_ACCESS_KEY_ID!;
@@ -66,13 +84,13 @@ async function getSignedUrlsForBook(book: BookType) {
 
 router.post(
   "/new",
-  // verifyToken,
+  verifyToken,
   cpUpload,
   [check("title", "Title is required").notEmpty()],
   [check("description", "Description is required").notEmpty()],
   [check("author", "Author is required").notEmpty()],
   [check("genre", "Genre is required").notEmpty()],
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: errors.array() });
@@ -117,6 +135,7 @@ router.post(
       const imgCommand = new PutObjectCommand(imageParams);
       await s3.send(imgCommand);
 
+      const userId = req.user?.userId;
       // Save book details to database
       const { title, description, author, genre } = req.body;
       const newBook = new Book({
@@ -126,6 +145,7 @@ router.post(
         genre,
         pdfUrl: pdfName,
         coverPageUrl: coverImgName,
+        userId: userId,
       });
 
       await newBook.save();
@@ -196,29 +216,34 @@ router.get("/:bookId", async (req: Request, res: Response) => {
   }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const book = await Book.findById(id);
-    if (!book) return res.status(404).json({ messge: "Book not found" });
+router.delete(
+  "/:bookId",
+  verifyToken,
+  checkOwnership,
+  async (req: Request, res: Response) => {
+    try {
+      const { bookId } = req.params;
+      const book = await Book.findById(bookId);
+      if (!book) return res.status(404).json({ messge: "Book not found" });
 
-    const pdfParams = {
-      Bucket: bucketName,
-      Key: book?.pdfUrl,
-    };
-    const pdfCommand = new DeleteObjectCommand(pdfParams);
-    await s3.send(pdfCommand);
-    const coverImgParams = {
-      Bucket: bucketName,
-      Key: book?.coverPageUrl,
-    };
-    const coverImgCommand = new DeleteObjectCommand(coverImgParams);
-    await s3.send(coverImgCommand);
-    await Review.deleteMany({ _id: { $in: book.reviews } });
-    await Book.findByIdAndDelete(id);
-    res.status(200).json({ message: "Deleted Succesfully" });
-  } catch (e) {
-    res.status(502).json({ message: `Error Deleting Book${e}` });
+      const pdfParams = {
+        Bucket: bucketName,
+        Key: book?.pdfUrl,
+      };
+      const pdfCommand = new DeleteObjectCommand(pdfParams);
+      await s3.send(pdfCommand);
+      const coverImgParams = {
+        Bucket: bucketName,
+        Key: book?.coverPageUrl,
+      };
+      const coverImgCommand = new DeleteObjectCommand(coverImgParams);
+      await s3.send(coverImgCommand);
+      await Review.deleteMany({ _id: { $in: book.reviews } });
+      await Book.findByIdAndDelete(bookId);
+      res.status(200).json({ message: "Deleted Succesfully" });
+    } catch (e) {
+      res.status(502).json({ message: `Error Deleting Book,${e}` });
+    }
   }
-});
+);
 export default router;
