@@ -11,6 +11,7 @@ import NewBook from "./pages/Book/NewBook";
 import AllBooks from "./pages/Book/AllBooks";
 import NewReview from "./pages/Review/NewReview";
 import SingleBook from "./components/SingleBook";
+import HomePage from "./pages/HomePage";
 function App() {
   return (
     <BrowserRouter>
@@ -19,7 +20,7 @@ function App() {
           path="/"
           element={
             <Layout>
-              <p>Home Page</p>
+              <HomePage />
             </Layout>
           }
         />

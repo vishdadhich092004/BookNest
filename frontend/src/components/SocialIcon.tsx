@@ -2,11 +2,13 @@ type SocialIconProps = {
   href: string;
   icon: string;
 };
+
 const SocialIcon = ({ href, icon }: SocialIconProps) => (
   <a
     href={href}
-    className="text-gray-400 hover:text-indigo-600 transition-colors duration-300"
+    className="text-gray-400 hover:text-teal-600 transition-colors duration-300"
     aria-label={icon}
+    target="_blank"
   >
     <svg className="h-6 w-6 fill-current" viewBox="0 0 24 24">
       {getPath(icon)}

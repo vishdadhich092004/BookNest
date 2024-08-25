@@ -6,9 +6,9 @@ type SingleReviewType = {
 
 function SingleReview({ review }: SingleReviewType) {
   return (
-    <div className="bg-gray-100 p-4 rounded-lg">
-      <p className="text-gray-700">{review.text}</p>
-      <div className="text-sm text-gray-500 mt-2">
+    <div className="bg-white shadow-md p-4 rounded-lg mb-4">
+      <p className="text-slate-800">{review.text}</p>
+      <div className="text-sm text-slate-600 mt-2">
         <p>
           <span className="font-semibold">Reviewed by:</span>{" "}
           {review.userId ? review.userId.firstName : "[deleted]"}
@@ -16,10 +16,10 @@ function SingleReview({ review }: SingleReviewType) {
         <p>
           <span className="font-semibold">Rating:</span> {review.rating}
         </p>
-        <p>
+        {/* <p>
           <span className="font-semibold">On:</span>{" "}
-          {/* {new Date(review.timestamp).toLocaleDateString()} */}
-        </p>
+          {new Date(review.timestamp).toLocaleDateString()}
+        </p> */}
       </div>
     </div>
   );

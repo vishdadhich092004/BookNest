@@ -5,12 +5,12 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 border-t border-gray-200">
-      <div className="container mx-auto px-4 py-8">
+    <footer className="bg-slate-50 border-t border-slate-200">
+      <div className="container mx-auto px-6 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="text-gray-600 text-sm mb-4 md:mb-0">
-            © {currentYear} Book<span className="text-indigo-600">Nest</span>.
-            All rights reserved.
+          <div className="text-slate-600 text-sm mb-4 md:mb-0">
+            © {currentYear} Book<span className="text-teal-600">Nest</span>. All
+            rights reserved.
           </div>
 
           <div className="flex space-x-6 mb-4 md:mb-0">
@@ -20,9 +20,15 @@ const Footer = () => {
           </div>
 
           <div className="flex space-x-4">
-            <SocialIcon href="#" icon="facebook" />
-            <SocialIcon href="#" icon="twitter" />
-            <SocialIcon href="#" icon="instagram" />
+            <SocialIcon
+              href="https://www.facebook.com/profile.php?id=61565048666364"
+              icon="facebook"
+            />
+            <SocialIcon href="https://x.com/booknestweb" icon="twitter" />
+            <SocialIcon
+              href="https://www.instagram.com/booknestweb/"
+              icon="instagram"
+            />
           </div>
         </div>
       </div>

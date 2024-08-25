@@ -59,7 +59,7 @@ export default function NewBook() {
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-4">Add New Book</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">Add New Book</h1>
       <form onSubmit={submit} className="space-y-4">
         <div className="flex flex-col">
           <label htmlFor="title" className="mb-2 font-semibold text-gray-700">
@@ -157,7 +157,7 @@ export default function NewBook() {
 
         <button
           type="submit"
-          className={`w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition duration-300 ${
+          className={`w-full bg-teal-600 text-white py-2 rounded-sm hover:bg-teal-700 transition-colors duration-300 ${
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
           disabled={loading}

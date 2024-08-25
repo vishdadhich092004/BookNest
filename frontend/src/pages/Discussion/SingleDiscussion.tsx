@@ -6,10 +6,10 @@ import {
   DiscussionType,
   CommentType,
 } from "../../../../backend/src/shared/types";
-import DeleteButton from "../../components/DeleteButton";
+import DeleteButton from "../../components/Buttons/DeleteButton";
 import SingleComment from "../../components/SingleComment";
-import LikeButton from "../../components/LikeButton";
-import DislikeButton from "../../components/DislikeButton";
+import LikeButton from "../../components/Buttons/LikeButton";
+import DislikeButton from "../../components/Buttons/DislikeButton";
 
 function SingleDiscussion() {
   const queryClient = useQueryClient();
@@ -74,7 +74,7 @@ function SingleDiscussion() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen text-xl text-gray-800">
+      <div className="flex justify-center items-center h-screen text-xl text-slate-800">
         Loading...
       </div>
     );
@@ -82,7 +82,7 @@ function SingleDiscussion() {
 
   if (isError || !data) {
     return (
-      <div className="flex justify-center items-center h-screen text-xl text-gray-800">
+      <div className="flex justify-center items-center h-screen text-xl text-slate-800">
         404 Not Found
       </div>
     );
@@ -101,19 +101,19 @@ function SingleDiscussion() {
   } = data as DiscussionType;
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6 bg-slate-50">
       <div className="bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">{title}</h1>
+        <h1 className="text-3xl font-bold text-slate-800 mb-4">{title}</h1>
         <div className="flex justify-between mb-4">
-          <p className="text-gray-600">{description}</p>
+          <p className="text-slate-600">{description}</p>
           <Link
-            className="text-indigo-600 hover:text-indigo-800 transition-colors duration-300"
+            className="text-teal-600 hover:text-teal-800 transition-colors duration-300"
             to={`/discussions/${discussionId}/edit`}
           >
             Edit Discussion
           </Link>
         </div>
-        <div className="text-sm text-gray-500 mb-6">
+        <div className="text-sm text-slate-500 mb-6">
           <p>
             <span className="font-semibold">Created by:</span>{" "}
             {userId ? userId.firstName : "[deleted]"}
@@ -135,7 +135,7 @@ function SingleDiscussion() {
               onClick={handleLike}
               disabled={likeMutation.isLoading}
               className={
-                "px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                "px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700"
               }
             >
               {likes.length}
@@ -153,13 +153,13 @@ function SingleDiscussion() {
         </div>
         <div className="flex justify-between mb-6">
           <Link
-            className="text-indigo-600 hover:text-indigo-800 transition-colors duration-300"
+            className="text-teal-600 hover:text-teal-800 transition-colors duration-300"
             to={`/discussions/${discussionId}/comments`}
           >
             New Comment
           </Link>
           <Link
-            className="text-indigo-600 hover:text-indigo-800 transition-colors duration-300"
+            className="text-teal-600 hover:text-teal-800 transition-colors duration-300"
             to="/discussions"
           >
             Back
@@ -169,7 +169,7 @@ function SingleDiscussion() {
 
         {/* Comments Section */}
         <div>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <h2 className="text-2xl font-semibold text-slate-800 mb-4">
             Comments
           </h2>
           {comments && comments.length > 0 ? (
@@ -183,7 +183,7 @@ function SingleDiscussion() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">Be the first to comment.</p>
+            <p className="text-slate-500">Be the first to comment.</p>
           )}
         </div>
       </div>

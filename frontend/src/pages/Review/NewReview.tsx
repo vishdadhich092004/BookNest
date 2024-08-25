@@ -36,7 +36,7 @@ const ReviewForm = () => {
 
   const buttonStyles = isSubmitSuccessful
     ? "w-full bg-gray-400 text-white py-2 rounded-md"
-    : "w-full bg-indigo-600 text-white py-2 rounded-md shadow-md hover:bg-indigo-700 transition-transform transform hover:scale-105";
+    : "w-full bg-teal-600 text-white py-2 rounded-md shadow-md hover:bg-teal-700 transition-transform transform hover:scale-105";
 
   const onSubmit = handleSubmit((data) => {
     mutation.mutate(data);
@@ -48,10 +48,10 @@ const ReviewForm = () => {
       className="bg-white shadow-md rounded-lg p-6 mt-3"
     >
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
+        <label className="block text-slate-700 text-sm font-bold mb-2">
           Review
           <textarea
-            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 text-slate-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
             rows={4}
             {...register("text", { required: "This field cannot be empty" })}
           ></textarea>
@@ -62,10 +62,10 @@ const ReviewForm = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
+        <label className="block text-slate-700 text-sm font-bold mb-2">
           Rating
           <select
-            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2 text-slate-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
             {...register("rating", { required: "Rating is required" })}
           >
             <option value="">Select a rating</option>

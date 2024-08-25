@@ -1,9 +1,10 @@
 import { CommentType } from "../../../backend/src/shared/types";
 import * as apiClient from "../api-client";
 import { useMutation, useQueryClient } from "react-query";
-import LikeButton from "./LikeButton";
-import DislikeButton from "./DislikeButton";
+import LikeButton from "./Buttons/LikeButton";
+import DislikeButton from "./Buttons/DislikeButton";
 import { useAppContext } from "../contexts/AppContext";
+
 type SingleCommentType = {
   comment: CommentType;
   discussionId: string;
@@ -49,9 +50,9 @@ function SingleComment({ comment, discussionId }: SingleCommentType) {
   };
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg">
-      <p className="text-gray-700">{comment.text}</p>
-      <div className="text-sm text-gray-500 mt-2">
+    <div className="bg-white shadow-md p-4 rounded-lg mb-4">
+      <p className="text-slate-800">{comment.text}</p>
+      <div className="text-sm text-slate-600 mt-2">
         <p>
           <span className="font-semibold">Commented by:</span>{" "}
           {comment.userId ? comment.userId.firstName : "[deleted]"}
@@ -66,7 +67,7 @@ function SingleComment({ comment, discussionId }: SingleCommentType) {
             onClick={handleLike}
             disabled={likeMutation.isLoading}
             className={
-              "px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+              "px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition-colors duration-300"
             }
           >
             {comment.likes.length}
@@ -75,7 +76,7 @@ function SingleComment({ comment, discussionId }: SingleCommentType) {
             onClick={handleDislike}
             disabled={dislikeMutation.isLoading}
             className={
-              "px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              "px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors duration-300"
             }
           >
             {comment.dislikes.length}

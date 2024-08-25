@@ -1,57 +1,62 @@
 import { Link } from "react-router-dom";
-import SignOutButton from "./SignOutButton";
+import SignOutButton from "./Buttons/SignOutButton";
 import { useAuth } from "../contexts/AuthContext";
 import { FaRegUser } from "react-icons/fa6";
+
 const Header = () => {
   const { isAuthenticated, user } = useAuth();
+
   return (
-    <header className="bg-gray-50">
-      <div className="container mx-auto px-4 py-4">
+    <header className="bg-slate-50 border-b border-slate-200">
+      <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="text-2xl font-semibold text-gray-800">
+          {/* Logo */}
+          <div className="text-2xl font-light tracking-wider">
             <Link
               to="/"
-              className="inline-block transform hover:scale-105 transition-transform duration-300"
+              className="text-slate-800 hover:text-teal-600 transition-colors duration-300"
             >
-              Book
-            </Link>
-            <Link
-              to="/"
-              className="inline-block text-indigo-600 transform hover:scale-105 transition-transform duration-300 ml-1"
-            >
-              Nest
+              BOOK<span className="text-teal-600">NEST</span>
             </Link>
           </div>
-
-          <Link
-            to="/discussions"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform hover:scale-105"
-          >
-            Discussions
-          </Link>
-          <Link
-            to="/books"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform hover:scale-105"
-          >
-            Books
-          </Link>
-          {isAuthenticated && user && (
-            <span className="flex ">
-              {" "}
-              <FaRegUser className="text-2xl" /> Hey {user.firstName}
-            </span>
-          )}
-          {isAuthenticated ? <SignOutButton /> : <SignInButton />}
+          {/* Navigation Links */}
+          <nav className="hidden md:flex space-x-8">
+            <NavLink to="/discussions">Discussions</NavLink>
+            <NavLink to="/books">Books</NavLink>
+          </nav>
+          {/* User Greeting and Auth Buttons */}
+          <div className="flex items-center space-x-6">
+            {isAuthenticated && user && (
+              <span className="hidden md:flex items-center text-slate-600">
+                <FaRegUser className="text-xl mr-2 text-teal-600" />
+                <span className="text-sm font-medium">{user.firstName}</span>
+              </span>
+            )}
+            {isAuthenticated ? <SignOutButton /> : <SignInButton />}
+          </div>
         </div>
       </div>
     </header>
   );
 };
+type navProps = {
+  to: string;
+  children: string;
+};
+
+const NavLink = ({ to, children }: navProps) => (
+  <Link
+    to={to}
+    className="text-slate-600 hover:text-teal-600 transition-colors duration-300 text-sm uppercase tracking-wide"
+  >
+    {children}
+  </Link>
+);
 
 const SignInButton = () => (
   <Link
     to="/sign-in"
-    className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform hover:scale-105"
+    className="px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition-colors duration-300 text-sm uppercase tracking-wide"
   >
     Sign In
   </Link>

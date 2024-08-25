@@ -8,15 +8,17 @@ type Props = {
   children: ReactNode;
 };
 
+// DislikeButton Component
 function DislikeButton({ onClick, disabled, className, children }: Props) {
   return (
-    <button onClick={onClick} disabled={disabled} className={className}>
-      <span>
-        <AiTwotoneDislike />
-        {children}
-      </span>
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`${className} flex items-center space-x-2`}
+    >
+      <AiTwotoneDislike />
+      <span>{children}</span>
     </button>
   );
 }
-
 export default DislikeButton;

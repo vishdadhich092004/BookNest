@@ -16,11 +16,15 @@ function AllDiscussions() {
   );
 
   if (isError || !data) {
-    return <div>404 Not found</div>;
+    return (
+      <div className="text-center text-red-600 text-2xl font-bold">
+        404 Not found
+      </div>
+    );
   }
   if (isLoading) {
     return (
-      <div className="text-2xl font-bold flex justify-center items-center">
+      <div className="text-center text-2xl font-bold text-slate-800">
         Loading ...
       </div>
     );
@@ -32,17 +36,17 @@ function AllDiscussions() {
         <div className="mb-6">
           <Link
             to="/discussions/new"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform hover:scale-105"
+            className="px-4 py-2 bg-teal-600 text-white rounded-sm hover:bg-teal-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
           >
-            Create new Discussion
+            Create New Discussion
           </Link>
         </div>
       ) : (
         <div className="mb-6 flex items-center space-x-4">
-          <span className="text-gray-800">Create new Discussion</span>
+          <span className="text-slate-800">Create New Discussion</span>
           <Link
             to="/sign-in"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-sm hover:bg-indigo-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform hover:scale-105"
+            className="px-4 py-2 bg-teal-600 text-white rounded-sm hover:bg-teal-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
           >
             Login
           </Link>
@@ -53,17 +57,17 @@ function AllDiscussions() {
         {data.map((discussion) => (
           <div
             key={discussion._id}
-            className="bg-white shadow-md rounded-lg p-6 transform hover:scale-105 transition-transform duration-300"
+            className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transform hover:scale-105 transition-transform duration-300"
           >
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            <h2 className="text-xl font-semibold text-slate-800 mb-2">
               {discussion.title}
             </h2>
-            <p className="text-gray-600 mb-4">
+            <p className="text-slate-600 mb-4">
               {discussion.description || "No description available."}
             </p>
             <Link
               to={`/discussions/${discussion._id}`}
-              className="text-indigo-600 hover:text-indigo-800 transition-colors duration-300"
+              className="text-teal-600 hover:text-teal-800 transition-colors duration-300"
             >
               View More
             </Link>

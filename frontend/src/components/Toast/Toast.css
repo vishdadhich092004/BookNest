@@ -1,0 +1,29 @@
+@keyframes slide-in-success {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-error {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.toast-slide-in-success {
+  animation: slide-in-success 0.5s ease-out;
+}
+
+.toast-slide-in-error {
+  animation: slide-in-error 0.5s ease-out;
+}
