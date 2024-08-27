@@ -27,7 +27,10 @@ const DeleteButton = ({ id, toBeDeleted }: DeleteButtonProps) => {
       }
 
       showToast({
-        message: `${capitalize(toBeDeleted)} deleted successfully.`,
+        message: `${capitalize(toBeDeleted).slice(
+          0,
+          toBeDeleted.length - 1
+        )} deleted successfully`,
         type: "SUCCESS",
       });
       navigate(`/${toBeDeleted}`);

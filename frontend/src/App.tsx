@@ -12,7 +12,12 @@ import AllBooks from "./pages/Book/AllBooks";
 import NewReview from "./pages/Review/NewReview";
 import SingleBook from "./components/SingleBook";
 import HomePage from "./pages/HomePage";
+import NewClub from "./pages/Club/NewClub";
+import { useAuth } from "./contexts/AuthContext";
+import AllClubs from "./pages/Club/AllClubs";
+import SingleClub from "./pages/Club/SingleClub";
 function App() {
+  const { isAuthenticated } = useAuth();
   return (
     <BrowserRouter>
       <Routes>
@@ -40,14 +45,25 @@ function App() {
             </Layout>
           }
         />
-        <Route
-          path="/discussions/new"
-          element={
-            <Layout>
-              <NewDiscussion />
-            </Layout>
-          }
-        />
+        {isAuthenticated ? (
+          <Route
+            path="/discussions/new"
+            element={
+              <Layout>
+                <NewDiscussion />
+              </Layout>
+            }
+          />
+        ) : (
+          <Route
+            path="/sign-in"
+            element={
+              <Layout>
+                <SignIn />
+              </Layout>
+            }
+          />
+        )}
         <Route
           path="/discussions"
           element={
@@ -80,16 +96,27 @@ function App() {
             </Layout>
           }
         />
+        {isAuthenticated ? (
+          <Route
+            path="/books/new"
+            element={
+              <Layout>
+                <NewBook />
+              </Layout>
+            }
+          />
+        ) : (
+          <Route
+            path="/sign-in"
+            element={
+              <Layout>
+                <SignIn />
+              </Layout>
+            }
+          />
+        )}
         <Route
-          path="/books/new"
-          element={
-            <Layout>
-              <NewBook />
-            </Layout>
-          }
-        />
-        <Route
-          path="/books/"
+          path="/books"
           element={
             <Layout>
               <AllBooks />
@@ -109,6 +136,42 @@ function App() {
           element={
             <Layout>
               <NewReview />
+            </Layout>
+          }
+        />
+        {isAuthenticated ? (
+          <Route
+            path="/clubs/new"
+            element={
+              <Layout>
+                <NewClub />
+              </Layout>
+            }
+          />
+        ) : (
+          <Route
+            path="/sign-in"
+            element={
+              <Layout>
+                <SignIn />
+              </Layout>
+            }
+          />
+        )}
+
+        <Route
+          path="/clubs"
+          element={
+            <Layout>
+              <AllClubs />
+            </Layout>
+          }
+        />
+        <Route
+          path="/clubs/:clubId"
+          element={
+            <Layout>
+              <SingleClub />
             </Layout>
           }
         />

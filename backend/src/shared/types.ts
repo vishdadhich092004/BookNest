@@ -52,3 +52,13 @@ export type ReviewType = {
   userId: UserType;
   createdAt: Date;
 };
+
+export type ClubType = {
+  _id: string;
+  title: string;
+  description: string;
+  admin: UserType;
+  members: UserType[];
+  createdAt: Date;
+  updatedAt: Date;
+};

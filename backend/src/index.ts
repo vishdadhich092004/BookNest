@@ -10,6 +10,7 @@ import bookRoutes from "./routes/books";
 import reviewRoutes from "./routes/reviews";
 import cookieParser from "cookie-parser";
 import path from "path";
+import clubRoutes from "./routes/clubs";
 const app = express();
 mongoose
   .connect(process.env.MONGO_URL as string)
@@ -37,7 +38,7 @@ app.use("/api/books", bookRoutes);
 app.use("/api/books", reviewRoutes);
 app.use("/api/discussions", discussionRoutes);
 app.use("/api/discussions", commentRoutes);
-
+app.use("/api/clubs", clubRoutes);
 /* AT THE END */
 //catchall path : solves reload issues during production
 app.get("*", (req, res) => {

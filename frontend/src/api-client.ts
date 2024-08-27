@@ -1,9 +1,14 @@
 import { RegisterFormData } from "./pages/Auth/Register";
 import { SignInFormData } from "./pages/Auth/SignIn";
 import { DiscussionFormData } from "./pages/Discussion/NewDiscussion";
-import { BookType, DiscussionType } from "../../backend/src/shared/types";
+import {
+  BookType,
+  ClubType,
+  DiscussionType,
+} from "../../backend/src/shared/types";
 import { CommentFormData } from "./pages/Comment/NewComment";
 import { ReviewFormData } from "./pages/Review/NewReview";
+import { ClubFormData } from "./pages/Club/NewClub";
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
 export const register = async (formData: RegisterFormData) => {
@@ -232,5 +237,53 @@ export const fetchCommentByDiscussionId = async (discussionId: string) => {
     `${BASE_URL}/api/discussions/:${discussionId}/comments`
   );
   if (!response.ok) throw new Error("Error fetching comments");
+  return response.json();
+};
+
+export const newClub = async (clubFormData: ClubFormData) => {
+  const response = await fetch(`${BASE_URL}/api/clubs/new`, {
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify(clubFormData),
+  });
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.message);
+  return body;
+};
+
+export const fetchClubs = async (): Promise<ClubType[]> => {
+  const response = await fetch(`${BASE_URL}/api/clubs`, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Error fetching Clubs");
+  return response.json();
+};
+
+export const fetchClubById = async (clubId: string): Promise<ClubType> => {
+  const response = await fetch(`${BASE_URL}/api/clubs/${clubId}`, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Error fetching club");
+  const body = await response.json();
+  return body;
+};
+
+export const joinClub = async (clubId: string) => {
+  const response = await fetch(`${BASE_URL}/api/clubs/${clubId}/join`, {
+    credentials: "include",
+    method: "POST",
+  });
+  if (!response.ok) throw new Error("Failed to Join the Club");
+  return response.json();
+};
+export const leaveClub = async (clubId: string) => {
+  const response = await fetch(`${BASE_URL}/api/clubs/${clubId}/leave`, {
+    credentials: "include",
+    method: "POST",
+  });
+  if (!response.ok) throw new Error("Failed to Leave the Club");
   return response.json();
 };

@@ -37,6 +37,7 @@ const Header = () => {
           <nav className="hidden md:flex space-x-8">
             <NavLink to="/discussions">Discussions</NavLink>
             <NavLink to="/books">Books</NavLink>
+            <NavLink to="/clubs">Clubs</NavLink>
           </nav>
           {/* User Greeting and Auth Buttons */}
           <div className="hidden md:flex items-center space-x-6">
@@ -58,6 +59,9 @@ const Header = () => {
               </NavLink>
               <NavLink to="/books" onClick={toggleMenu}>
                 Books
+              </NavLink>
+              <NavLink to="/clubs" onClick={toggleMenu}>
+                Clubs
               </NavLink>
               {isAuthenticated && user && (
                 <span className="flex items-center text-slate-600">
