@@ -7,6 +7,7 @@ import DeleteButton from "../components/Buttons/DeleteButton";
 import SingleReview from "./SingleReview";
 import Loader from "./Loader";
 import { useAuth } from "../contexts/AuthContext";
+
 function SingleBook() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -38,50 +39,51 @@ function SingleBook() {
 
   const { title, author, description, coverPageUrl, pdfUrl, reviews, userId } =
     data as BookType;
+
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-slate-800 mb-4">{title}</h1>
-        <div className="flex justify-between mb-4">
-          <p className="text-slate-600">by {author}</p>
-        </div>
-        <p className="text-slate-800 mb-4">{description}</p>
-        <img
-          src={coverPageUrl}
-          alt={title}
-          className="w-32 h-48 object-cover mt-2"
-        />
-        <a
-          href={pdfUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-teal-600 hover:text-teal-700 transition-colors duration-300 block mt-2"
-        >
-          Read PDF
-        </a>
-        <div className="flex justify-between mb-6 mt-6">
-          <Link
-            className="text-teal-600 hover:text-teal-700 transition-colors duration-300"
-            to={`/books/${bookId}/reviews`}
-          >
-            Add Review
-          </Link>
-          <Link
-            className="text-teal-600 hover:text-teal-700 transition-colors duration-300"
-            to="/books"
-          >
-            Back
-          </Link>
-          {userId.toString() === user?._id.toString() && (
-            <DeleteButton id={bookId!} toBeDeleted="books" />
-          )}
+      <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="flex flex-col md:flex-row p-6">
+          <img
+            src={coverPageUrl}
+            alt={title}
+            className="w-full md:w-1/3 h-80 object-cover rounded-lg"
+          />
+          <div className="md:ml-6 flex-1">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">{title}</h1>
+            <p className="text-lg text-gray-600 mb-2">by {author}</p>
+            <p className="text-gray-800 mb-4">{description}</p>
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-teal-600 hover:text-teal-700 transition-colors duration-300 block mb-4"
+            >
+              Read PDF
+            </a>
+            <div className="flex gap-4 mb-6">
+              <Link
+                className="text-teal-600 hover:text-teal-700 transition-colors duration-300"
+                to={`/books/${bookId}/reviews`}
+              >
+                Add Review
+              </Link>
+              <Link
+                className="text-teal-600 hover:text-teal-700 transition-colors duration-300"
+                to="/books"
+              >
+                Back
+              </Link>
+              {userId.toString() === user?._id.toString() && (
+                <DeleteButton id={bookId!} toBeDeleted="books" />
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Reviews Section */}
-        <div>
-          <h2 className="text-2xl font-semibold text-slate-800 mb-4">
-            Reviews
-          </h2>
+        <div className="p-6">
+          <h2 className="text-3xl font-semibold text-gray-900 mb-4">Reviews</h2>
           {reviews && reviews.length > 0 ? (
             <div className="space-y-4">
               {reviews.map((review: ReviewType) => (
@@ -89,7 +91,7 @@ function SingleBook() {
               ))}
             </div>
           ) : (
-            <p className="text-slate-500">No reviews yet.</p>
+            <p className="text-gray-500">No reviews yet.</p>
           )}
         </div>
       </div>

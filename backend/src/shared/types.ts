@@ -2,7 +2,7 @@ export type UserType = {
   _id: string;
   email: string;
   firstName: string;
-  lastName: string;
+  lastName?: string;
   password: string;
   comments: string;
   role: string;

@@ -16,6 +16,7 @@ import NewClub from "./pages/Club/NewClub";
 import { useAuth } from "./contexts/AuthContext";
 import AllClubs from "./pages/Club/AllClubs";
 import SingleClub from "./pages/Club/SingleClub";
+import UserPage from "./pages/UserPage";
 function App() {
   const { isAuthenticated } = useAuth();
   return (
@@ -172,6 +173,14 @@ function App() {
           element={
             <Layout>
               <SingleClub />
+            </Layout>
+          }
+        />
+        <Route
+          path="/:userId"
+          element={
+            <Layout>
+              <UserPage />
             </Layout>
           }
         />

@@ -1,11 +1,11 @@
 const testimonials = [
   {
-    name: "Rohit S.",
+    name: "Abhinav D.",
     quote:
       "BookNest has revolutionized my reading experience. I've connected with so many like-minded book lovers!",
   },
   {
-    name: "Harshit D.",
+    name: "Harshit S.",
     quote:
       "The discussions on BookNest have deepened my understanding and appreciation of literature.",
   },

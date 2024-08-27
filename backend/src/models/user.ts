@@ -17,7 +17,6 @@ const userSchema = new mongoose.Schema({
   },
   lastName: {
     type: String,
-    required: true,
   },
   comments: {
     type: Schema.Types.ObjectId,

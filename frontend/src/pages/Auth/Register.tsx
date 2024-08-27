@@ -67,11 +67,10 @@ function Register() {
           </label>
 
           <label className="block">
-            <span className="text-slate-600">Last Name</span>
+            <span className="text-slate-600">Last Name (optional)</span>
             <input
               type="text"
               className="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-500 focus:ring-opacity-50"
-              {...register("lastName", { required: "This field is required" })}
             />
             {errors.lastName && (
               <span className="text-red-500 text-sm">

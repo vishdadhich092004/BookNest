@@ -42,10 +42,13 @@ const Header = () => {
           {/* User Greeting and Auth Buttons */}
           <div className="hidden md:flex items-center space-x-6">
             {isAuthenticated && user && (
-              <span className="flex items-center text-slate-600">
+              <Link
+                to={`/${user._id}`}
+                className="flex items-center text-slate-600"
+              >
                 <FaRegUser className="text-xl mr-2 text-teal-600" />
                 <span className="text-sm font-medium">{user.firstName}</span>
-              </span>
+              </Link>
             )}
             {isAuthenticated ? <SignOutButton /> : <SignInButton />}
           </div>
@@ -64,10 +67,13 @@ const Header = () => {
                 Clubs
               </NavLink>
               {isAuthenticated && user && (
-                <span className="flex items-center text-slate-600">
+                <Link
+                  to={`/${user._id}`}
+                  className="flex items-center text-slate-600"
+                >
                   <FaRegUser className="text-xl mr-2 text-teal-600" />
                   <span className="text-sm font-medium">{user.firstName}</span>
-                </span>
+                </Link>
               )}
               {isAuthenticated ? <SignOutButton /> : <SignInButton />}
             </nav>

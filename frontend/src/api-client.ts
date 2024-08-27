@@ -4,6 +4,7 @@ import { DiscussionFormData } from "./pages/Discussion/NewDiscussion";
 import {
   BookType,
   ClubType,
+  CommentType,
   DiscussionType,
 } from "../../backend/src/shared/types";
 import { CommentFormData } from "./pages/Comment/NewComment";
@@ -285,5 +286,41 @@ export const leaveClub = async (clubId: string) => {
     method: "POST",
   });
   if (!response.ok) throw new Error("Failed to Leave the Club");
+  return response.json();
+};
+
+export const fetchUserComments = async (
+  userId: string
+): Promise<CommentType[]> => {
+  const response = await fetch(`${BASE_URL}/api/users/${userId}/comments`, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Error fetching comments");
+  return response.json();
+};
+
+export const fetchUserDiscussions = async (
+  userId: string
+): Promise<DiscussionType[]> => {
+  const response = await fetch(`${BASE_URL}/api/users/${userId}/discussions`, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Error fetching discussions");
+  return response.json();
+};
+
+export const fetchUserClubs = async (userId: string): Promise<ClubType[]> => {
+  const response = await fetch(`${BASE_URL}/api/users/${userId}/clubs`, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Error fetching clubs");
+  return response.json();
+};
+
+export const fetchUserBooks = async (userId: string): Promise<BookType[]> => {
+  const response = await fetch(`${BASE_URL}/api/users/${userId}/books`, {
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("Error fetching books");
   return response.json();
 };
