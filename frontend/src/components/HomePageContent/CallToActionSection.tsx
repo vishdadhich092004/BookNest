@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 function CallToActionSection() {
   const { isAuthenticated } = useAuth();
   const toLink = isAuthenticated ? "/discussions" : "sign-in";
