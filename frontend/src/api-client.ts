@@ -9,7 +9,6 @@ import {
 } from "../../backend/src/shared/types";
 import { CommentFormData } from "./pages/Comment/NewComment";
 import { ReviewFormData } from "./pages/Review/NewReview";
-import { ClubFormData } from "./pages/Club/NewClub";
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
 export const register = async (formData: RegisterFormData) => {
@@ -241,19 +240,19 @@ export const fetchCommentByDiscussionId = async (discussionId: string) => {
   return response.json();
 };
 
-export const newClub = async (clubFormData: ClubFormData) => {
-  const response = await fetch(`${BASE_URL}/api/clubs/new`, {
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    method: "POST",
-    body: JSON.stringify(clubFormData),
-  });
-  const body = await response.json();
-  if (!response.ok) throw new Error(body.message);
-  return body;
-};
+// export const newClub = async (clubFormData: ClubFormData) => {
+//   const response = await fetch(`${BASE_URL}/api/clubs/new`, {
+//     credentials: "include",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     method: "POST",
+//     body: JSON.stringify(clubFormData),
+//   });
+//   const body = await response.json();
+//   if (!response.ok) throw new Error(body.message);
+//   return body;
+// };
 
 export const fetchClubs = async (): Promise<ClubType[]> => {
   const response = await fetch(`${BASE_URL}/api/clubs`, {

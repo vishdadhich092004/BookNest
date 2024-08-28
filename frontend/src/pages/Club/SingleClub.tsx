@@ -39,7 +39,8 @@ function SingleClub() {
     );
   }
 
-  const { title, description, admin, members } = data as ClubType;
+  const { title, description, admin, members, bannerImgUrl, profileImgUrl } =
+    data as ClubType;
 
   let isMember = false;
   if (isAuthenticated && user && user._id) {
@@ -52,9 +53,43 @@ function SingleClub() {
   }
 
   const isAdmin = user?._id.toString() === admin._id.toString();
+
   return (
     <div className="container mx-auto px-4 py-6 bg-slate-50">
-      <div className="bg-white shadow-md rounded-lg p-6">
+      <div className="relative">
+        {/* Banner Image */}
+        <img
+          src={bannerImgUrl}
+          alt={title}
+          className="w-full h-60 object-cover rounded-t-lg"
+        />
+
+        {/* Profile Picture */}
+        <img
+          src={profileImgUrl}
+          alt={title}
+          className="absolute top-10 left-4 w-24 h-24 rounded-full border-4 border-white object-cover mt-20"
+        />
+
+        {/* Action Buttons on Top Right */}
+        <div className="absolute top-4 right-4 flex space-x-2">
+          {isAuthenticated &&
+            !isAdmin &&
+            (isMember ? (
+              <LeaveClubButton clubId={clubId!} />
+            ) : (
+              <JoinClubButton clubId={clubId!} />
+            ))}
+          {isAdmin && (
+            <>
+              <ManageClubButton />
+              <DeleteButton id={clubId!} toBeDeleted="clubs" />
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="bg-white shadow-md rounded-b-lg p-6 mt-4">
         <h1 className="text-3xl font-bold text-slate-800 mb-4">{title}</h1>
         <div className="flex justify-between mb-4">
           <p className="text-slate-600">{description}</p>
@@ -69,19 +104,6 @@ function SingleClub() {
             <span className="font-semibold">Members:</span> {members.length}
           </p>
         </div>
-        {isAdmin && (
-          <>
-            <ManageClubButton />
-            <DeleteButton id={clubId!} toBeDeleted="clubs" />
-          </>
-        )}
-        {isAuthenticated &&
-          !isAdmin &&
-          (isMember ? (
-            <LeaveClubButton clubId={clubId!} />
-          ) : (
-            <JoinClubButton clubId={clubId!} />
-          ))}
       </div>
     </div>
   );

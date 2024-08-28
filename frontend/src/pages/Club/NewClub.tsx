@@ -1,89 +1,136 @@
-import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
-import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
-export type ClubFormData = {
-  title: string;
-  description: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { ChangeEvent, FormEvent, useState } from "react";
+
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
 function NewClub() {
   const navigate = useNavigate();
   const { showToast } = useAppContext();
-  const {
-    register,
-    formState: { errors, isSubmitSuccessful },
-    handleSubmit,
-  } = useForm<ClubFormData>();
 
-  const mutation = useMutation(apiClient.newClub, {
-    onSuccess: () => {
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [bannerImgUrl, setBannerImgUrl] = useState<File | undefined>(undefined);
+  const [profileImgUrl, setProfileImgUrl] = useState<File | undefined>(
+    undefined
+  );
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    if (!bannerImgUrl || !profileImgUrl) {
       showToast({
-        message: "New Club created",
-        type: "SUCCESS",
-      });
-      navigate("/clubs");
-    },
-    onError: () => {
-      showToast({
-        message: "Error creating Club",
+        message: "Please Upload both Banner and Profile Picture",
         type: "ERROR",
       });
-    },
-  });
+      return;
+    }
+    setLoading(true);
 
-  const onSubmit = handleSubmit((data) => {
-    mutation.mutate(data);
-    // console.log(data);
-  });
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("bannerImgUrl", bannerImgUrl);
+    formData.append("profileImgUrl", profileImgUrl);
 
-  const buttonStyles = isSubmitSuccessful
-    ? "w-full bg-slate-400 text-white py-2 rounded-md"
-    : "w-full bg-teal-600 text-white py-2 rounded-md shadow-md hover:bg-teal-700 transition-colors duration-300 transform hover:scale-105";
+    try {
+      const response = await fetch(`${BASE_URL}/api/clubs/new`, {
+        credentials: "include",
+        body: formData,
+        method: "POST",
+      });
+      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+      navigate("/clubs");
+    } catch (error) {
+      console.error("There was a problem with the request:", error);
+      showToast({ message: "Club Upload Failed", type: "ERROR" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <form className="space-y-4" onSubmit={onSubmit}>
-          <h2 className="text-3xl font-bold text-center text-teal-600">
-            Create a New Club
-          </h2>
-          <label className="block">
-            <span className="text-slate-800">Title</span>
-            <input
-              type="text"
-              className="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-500 focus:ring-opacity-50"
-              {...register("title", { required: "Title cannot be empty" })}
-            />
-            {errors.title && (
-              <span className="text-red-500 text-sm">
-                {errors.title.message}
-              </span>
-            )}
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">Add New Book</h1>
+      <form onSubmit={submit} className="space-y-4">
+        <div className="flex flex-col">
+          <label htmlFor="title" className="mb-2 font-semibold text-gray-700">
+            Title
           </label>
-          <label className="block">
-            <span className="text-slate-800">Description</span>
-            <textarea
-              className="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-500 focus:ring-opacity-50"
-              {...register("description", {
-                required: "This field is required",
-              })}
-              rows={4}
-            ></textarea>
-            {errors.description && (
-              <span className="text-red-500 text-sm">
-                {errors.description.message}
-              </span>
-            )}
+          <input
+            id="title"
+            value={title}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setTitle(e.target.value)
+            }
+            type="text"
+            placeholder="Title"
+            className="border border-gray-300 rounded-md p-2"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="description"
+            className="mb-2 font-semibold text-gray-700"
+          >
+            Description
           </label>
-          <button type="submit" className={buttonStyles}>
-            Create Club
-          </button>
-        </form>
-      </div>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+              setDescription(e.target.value)
+            }
+            placeholder="Description"
+            className="border border-gray-300 rounded-md p-2 h-32 resize-none"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="bannerImgUrl"
+            className="mb-2 font-semibold text-gray-700"
+          >
+            Upload Banner Image
+          </label>
+          <input
+            id="bannerImgUrl"
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setBannerImgUrl(e.target.files ? e.target.files[0] : undefined)
+            }
+            type="file"
+            accept="image/*"
+            className="border border-gray-300 rounded-md p-2"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="profileImgUrl"
+            className="mb-2 font-semibold text-gray-700"
+          >
+            Upload Profile Image
+          </label>
+          <input
+            id="profileImgUrl"
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setProfileImgUrl(e.target.files ? e.target.files[0] : undefined)
+            }
+            type="file"
+            accept="image/*"
+            className="border border-gray-300 rounded-md p-2"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className={`w-full bg-teal-600 text-white py-2 rounded-sm hover:bg-teal-700 transition-colors duration-300 ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={loading}
+        >
+          {loading ? "Submitting..." : "Submit"}
+        </button>
+      </form>
     </div>
   );
 }

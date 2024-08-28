@@ -61,4 +61,6 @@ export type ClubType = {
   members: UserType[];
   createdAt: Date;
   updatedAt: Date;
+  bannerImgUrl: string;
+  profileImgUrl: string;
 };

@@ -106,8 +106,9 @@ router.post(
           .json({ error: "PDF file and cover image are required" });
       }
 
-      const randomName = (bytes = 16) =>
-        crypto.randomBytes(bytes).toString("hex");
+      const randomName = (bytes = 16) => {
+        return crypto.randomBytes(bytes).toString("hex");
+      };
 
       // PDF File Upload
       const pdfFile = files["pdfFile"][0];

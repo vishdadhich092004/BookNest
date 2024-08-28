@@ -32,7 +32,6 @@ function AllDiscussions() {
     <div className="container mx-auto px-4 py-6">
       <div className="mb-6">
         <Link
-          // to="/discussions/new"
           to={`${isAuthenticated ? "/clubs/new" : "/sign-in"}`}
           className="px-4 py-2 bg-teal-600 text-white rounded-sm hover:bg-teal-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
         >
@@ -50,7 +49,8 @@ function AllDiscussions() {
               {club.title}
             </h2>
             <p className="text-slate-600 mb-4">
-              {club.description || "No description available."}
+              {club.description.slice(0, 100)}
+              {club.description.length > 100 ? "..." : ""}
             </p>
             <Link
               to={`/clubs/${club._id}`}

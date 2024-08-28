@@ -4,8 +4,62 @@ import Club from "../models/club";
 import { AuthRequest, verifyToken } from "../middleware/auth";
 import { check, validationResult } from "express-validator";
 import User from "../models/user"; // Assuming you have a User model
-
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
+import multer from "multer";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import crypto from "crypto";
 const router = express.Router();
+
+const secretKey = process.env.AWS_SECRET_ACCESS_KEY!;
+const accessKey = process.env.AWS_ACCESS_KEY_ID!;
+const bucketRegion = process.env.AWS_BUCKET_REGION!;
+const bucketName = process.env.AWS_BUCKET_NAME!;
+
+// Create a new S3 client
+const s3 = new S3Client({
+  region: bucketRegion,
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretKey,
+  },
+});
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+const cpUpload = upload.fields([
+  { name: "bannerImgUrl", maxCount: 1 },
+  {
+    name: "profileImgUrl",
+    maxCount: 1,
+  },
+]);
+
+async function getSignedUrlsForClubs(club: ClubType) {
+  const bannerObjectParams = {
+    Bucket: bucketName,
+    Key: club.bannerImgUrl,
+  };
+  const bannerCommand = new GetObjectCommand(bannerObjectParams);
+  const bannerImgUrl = await getSignedUrl(s3, bannerCommand, { expiresIn: 20 });
+
+  const profileObjectParams = {
+    Bucket: bucketName,
+    Key: club.profileImgUrl,
+  };
+  const profileImgCommand = new GetObjectCommand(profileObjectParams);
+  const profileImgUrl = await getSignedUrl(s3, profileImgCommand);
+
+  return {
+    bannerImgUrl: bannerImgUrl,
+    profileImgUrl: profileImgUrl,
+  };
+}
 
 const checkOwnership = async (
   req: AuthRequest,
@@ -28,6 +82,7 @@ const checkOwnership = async (
 router.post(
   "/new",
   verifyToken,
+  cpUpload,
   [
     check("title", "Title is required").notEmpty(),
     check("description", "Description is required").notEmpty(),
@@ -38,6 +93,42 @@ router.post(
       return res.status(400).json({ message: errors.array() });
 
     try {
+      const files = req.files as {
+        [fieldname: string]: Express.Multer.File[];
+      };
+
+      if (!files || !files["bannerImgUrl"] || !files["profileImgUrl"]) {
+        return res
+          .status(400)
+          .json({ error: "Banner Image and Profile Img is neccessary" });
+      }
+
+      const randomName = (bytes = 16) => {
+        return crypto.randomBytes(bytes).toString("hex");
+      };
+      const bannerImg = files["bannerImgUrl"][0];
+      const bannerImgName = `clubs/banners/${randomName()}`;
+      const bannerParams = {
+        Bucket: bucketName,
+        Key: bannerImgName,
+        Body: bannerImg.buffer,
+        ContentType: bannerImg.mimetype,
+      };
+      const commandBanner = new PutObjectCommand(bannerParams);
+      await s3.send(commandBanner);
+
+      const profielImg = files["profileImgUrl"][0];
+      const profileImgName = `clubs/profile/${randomName()}`;
+      const profileParams = {
+        Bucket: bucketName,
+        Key: profileImgName,
+        Body: profielImg.buffer,
+        ContentType: profielImg.mimetype,
+      };
+
+      const commandProfile = new PutObjectCommand(profileParams);
+      await s3.send(commandProfile);
+
       const { title, description } = req.body;
       const userId = req.user?.userId;
 
@@ -50,6 +141,8 @@ router.post(
         description,
         admin: user,
         members: [user],
+        bannerImgUrl: bannerImgName,
+        profileImgUrl: profileImgName,
       });
 
       await club.save();
@@ -80,6 +173,9 @@ router.get("/:clubId", async (req: Request, res: Response) => {
       .populate("admin")
       .populate("members");
     if (!club) return res.status(404).json({ message: "No Club Found" });
+    const { bannerImgUrl, profileImgUrl } = await getSignedUrlsForClubs(club);
+    club.profileImgUrl = profileImgUrl;
+    club.bannerImgUrl = bannerImgUrl;
     return res.status(200).json(club);
   } catch (e) {
     return res.status(500).json({ message: "Something went Wrong" });
@@ -173,6 +269,20 @@ router.delete(
     try {
       const club = await Club.findById(clubId);
       if (!club) return res.status(404).json({ message: "No Club Found" });
+
+      const bannerParams = {
+        Bucket: bucketName,
+        Key: club.bannerImgUrl,
+      };
+      const bannerCommand = new DeleteObjectCommand(bannerParams);
+      await s3.send(bannerCommand);
+
+      const profileParams = {
+        Bucket: bucketName,
+        Key: club.profileImgUrl,
+      };
+      const profileImgCommand = new DeleteObjectCommand(profileParams);
+      await s3.send(profileImgCommand);
 
       await Club.findByIdAndDelete(clubId);
       return res.status(200).json({ message: "Club Deleted Succesfully" });

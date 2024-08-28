@@ -29,6 +29,12 @@ const clubSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  bannerImgUrl: {
+    type: String,
+  },
+  profileImgUrl: {
+    type: String,
+  },
 });
 
 const Club = mongoose.model<ClubType>("Club", clubSchema);
