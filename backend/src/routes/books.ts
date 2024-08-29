@@ -180,31 +180,41 @@ router.get("/:bookId", async (req: Request, res: Response) => {
     res.status(502).json({ message: "Error Fetching book" });
   }
 });
+
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const books = await Book.find({}).lean(); // to get plain JavaScript objects instead of Mongoose documents
+    // Extract query parameters for genre and author
+    const { genre, author } = req.query;
+
+    // Build a dynamic filter object based on query parameters
+    const filter: any = {};
+    if (genre) filter.genre = genre;
+    if (author) filter.author = author;
+
+    // Fetch books from the database based on the filter
+    const books = await Book.find(filter).lean();
 
     const booksWithSignedUrls = await Promise.all(
       books.map(async (book) => {
-        // Generate signed URL for the PDF file
+        // Generate signed URLs for the PDF and cover image
         const pdfObjectParams = {
           Bucket: bucketName,
-          Key: book.pdfUrl, // Assuming `pdfUrl` stores the S3 key of the PDF file
+          Key: book.pdfUrl,
         };
         const pdfCommand = new GetObjectCommand(pdfObjectParams);
         const pdfUrl = await getSignedUrl(s3, pdfCommand, { expiresIn: 20 });
 
-        // Generate signed URL for the cover image
         const coverImgObjectParams = {
           Bucket: bucketName,
-          Key: book.coverPageUrl, // Assuming `coverPageUrl` stores the S3 key of the cover image
+          Key: book.coverPageUrl,
         };
         const coverImgCommand = new GetObjectCommand(coverImgObjectParams);
         const coverImgUrl = await getSignedUrl(s3, coverImgCommand);
+
         // Return the book with updated URLs
         return {
           ...book,
-          pdfUrl: pdfUrl,
+          pdfUrl,
           coverPageUrl: coverImgUrl,
         };
       })
@@ -247,4 +257,17 @@ router.delete(
     }
   }
 );
+
+router.get("/books", async (req: Request, res: Response) => {
+  const { genre } = req.query;
+  try {
+    const filter = genre ? { genre: genre.toString() } : {};
+
+    const books = await Book.find(filter);
+    res.status(200).json(books);
+  } catch (e) {
+    res.status(500).json({ message: "ERROR FETCHING BOOKS", e });
+  }
+});
+
 export default router;

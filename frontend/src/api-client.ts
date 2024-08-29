@@ -144,15 +144,31 @@ export const updateDiscussion = async (
 };
 
 // BOOKS:
-export const fetchBooks = async () => {
-  const response = await fetch(`${BASE_URL}/api/books`, {
-    credentials: "include",
-  });
-  if (!response.ok) {
-    const body = await response.json();
-    throw new Error(body.message || "Failed to fetch books");
+export const fetchBooks = async (
+  genre: string,
+  author: string
+): Promise<BookType[]> => {
+  try {
+    // Build the query string based on the provided genre and author
+    const queryParams = new URLSearchParams();
+    if (genre) queryParams.append("genre", genre);
+    if (author) queryParams.append("author", author);
+
+    // Construct the full URL with the query string
+    const queryString = queryParams.toString()
+      ? `?${queryParams.toString()}`
+      : "";
+    const response = await fetch(`${BASE_URL}/api/books${queryString}`, {
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to fetch books");
+    return data;
+  } catch (e) {
+    console.error("Error fetching books", e);
+    return [];
   }
-  return response.json();
 };
 
 // new review
@@ -239,20 +255,6 @@ export const fetchCommentByDiscussionId = async (discussionId: string) => {
   if (!response.ok) throw new Error("Error fetching comments");
   return response.json();
 };
-
-// export const newClub = async (clubFormData: ClubFormData) => {
-//   const response = await fetch(`${BASE_URL}/api/clubs/new`, {
-//     credentials: "include",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     method: "POST",
-//     body: JSON.stringify(clubFormData),
-//   });
-//   const body = await response.json();
-//   if (!response.ok) throw new Error(body.message);
-//   return body;
-// };
 
 export const fetchClubs = async (): Promise<ClubType[]> => {
   const response = await fetch(`${BASE_URL}/api/clubs`, {
