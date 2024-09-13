@@ -202,7 +202,7 @@ router.get("/", async (req: Request, res: Response) => {
           Key: book.pdfUrl,
         };
         const pdfCommand = new GetObjectCommand(pdfObjectParams);
-        const pdfUrl = await getSignedUrl(s3, pdfCommand, { expiresIn: 20 });
+        const pdfUrl = await getSignedUrl(s3, pdfCommand);
 
         const coverImgObjectParams = {
           Bucket: bucketName,

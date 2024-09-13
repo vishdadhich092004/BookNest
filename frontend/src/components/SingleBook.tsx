@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Modal from "react-modal";
 import { useAppContext } from "../contexts/AppContext";
 import * as apiClient from "../api-client";
 import { BookType, ReviewType } from "../../../backend/src/shared/types";
@@ -7,8 +9,12 @@ import DeleteButton from "../components/Buttons/DeleteButton";
 import SingleReview from "./SingleReview";
 import Loader from "./Loader";
 import { useAuth } from "../contexts/AuthContext";
+import PDFViewer from "./PDFViewer/PDFViewer";
+
+Modal.setAppElement("#root"); // Accessibility setting for Modal
 
 function SingleBook() {
+  const [isBookOpen, setIsBookOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { showToast } = useAppContext();
@@ -18,15 +24,12 @@ function SingleBook() {
     ["fetchBookById", bookId],
     () => apiClient.fetchBookById(bookId as string),
     {
-      onError: () => {
-        showToast({ message: "Error fetching book", type: "ERROR" });
-      },
+      onError: () =>
+        showToast({ message: "Error fetching book", type: "ERROR" }),
     }
   );
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  if (isLoading) return <Loader />;
 
   if (isError || !data) {
     navigate("/");
@@ -39,6 +42,9 @@ function SingleBook() {
 
   const { title, author, description, coverPageUrl, pdfUrl, reviews, userId } =
     data as BookType;
+
+  const handleBookView = () => setIsBookOpen(true);
+  const closeModal = () => setIsBookOpen(false);
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -53,15 +59,13 @@ function SingleBook() {
             <h1 className="text-4xl font-bold text-gray-900 mb-4">{title}</h1>
             <p className="text-lg text-gray-600 mb-2">by {author}</p>
             <p className="text-gray-800 mb-4">{description}</p>
-            <a
-              href={pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-teal-600 hover:text-teal-700 transition-colors duration-300 block mb-4"
+            <button
+              onClick={handleBookView}
+              className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition-colors duration-300 text-sm uppercase tracking-wide"
             >
-              Read PDF
-            </a>
-            <div className="flex gap-4 mb-6">
+              View Book
+            </button>
+            <div className="flex gap-4 mb-6 mt-4">
               <Link
                 className="text-teal-600 hover:text-teal-700 transition-colors duration-300"
                 to={`/books/${bookId}/reviews`}
@@ -80,6 +84,42 @@ function SingleBook() {
             </div>
           </div>
         </div>
+
+        {/* Modal for PDF Viewer */}
+        <Modal
+          isOpen={isBookOpen}
+          onRequestClose={closeModal}
+          contentLabel="Book PDF Viewer"
+          style={{
+            content: {
+              top: "0",
+              left: "0",
+              right: "0",
+              bottom: "0",
+              padding: "0",
+              margin: "0",
+              border: "none",
+              borderRadius: "0",
+              height: "100vh",
+              width: "100vw",
+            },
+            overlay: {
+              backgroundColor: "rgba(0, 0, 0, 0.75)",
+            },
+          }}
+        >
+          <div className="relative h-full w-full">
+            <button
+              onClick={closeModal}
+              className="absolute bg-transparent text-white px-4 py-2 hover:bg-red-700 transition-colors duration-300 z-50"
+            >
+              Close
+            </button>
+            <div className="h-full">
+              <PDFViewer pdfUrl={pdfUrl} />
+            </div>
+          </div>
+        </Modal>
 
         {/* Reviews Section */}
         <div className="p-6">

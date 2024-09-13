@@ -3,9 +3,9 @@ import jwt from "jsonwebtoken";
 
 export interface AuthRequest extends Request {
   user?: {
-    userId: string;
-    role: string;
-    permissions: string[];
+    userId?: string;
+    role?: string;
+    permissions?: string[];
   };
 }
 
@@ -29,25 +29,4 @@ export const verifyToken = (
   } catch (error) {
     return res.status(401).json({ message: "Invalid Token" });
   }
-};
-
-export const checkPermission = (permission: string) => {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user) return res.status(403).json({ message: "No user LoggedIn" });
-    if (req.user.permissions.includes(permission)) {
-      return next();
-    } else {
-      res.status(403).json({ message: "Access Denied" });
-    }
-  };
-};
-export const checkRole = (roles: string[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user) return res.status(403).json({ message: "No user LoggedIn" });
-    if (roles.includes(req.user.role)) {
-      return next();
-    } else {
-      return res.status(403).json({ message: "Access Denied" });
-    }
-  };
 };
