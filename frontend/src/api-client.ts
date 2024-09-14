@@ -57,6 +57,9 @@ export const signOut = async () => {
   });
   if (!response.ok) throw new Error("Error during Signout");
 };
+export const initiateGoogleAuth = () => {
+  window.location.href = `${BASE_URL}/api/auth/google`;
+};
 
 export const newDiscussion = async (discussionFormData: DiscussionFormData) => {
   const response = await fetch(`${BASE_URL}/api/discussions/new`, {

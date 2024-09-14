@@ -8,9 +8,11 @@ import discussionRoutes from "./routes/discussions";
 import commentRoutes from "./routes/comments";
 import bookRoutes from "./routes/books";
 import reviewRoutes from "./routes/reviews";
+import session from "express-session";
 import cookieParser from "cookie-parser";
 import path from "path";
 import clubRoutes from "./routes/clubs";
+import passport from "./config/passport";
 const app = express();
 mongoose
   .connect(process.env.MONGO_URL as string)
@@ -29,6 +31,19 @@ app.use(
     credentials: true,
   })
 );
+
+// passport
+app.use(
+  session({
+    secret: process.env.JWT_SECRET_KEY!,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
 app.use(cookieParser());

@@ -1,14 +1,15 @@
 export type UserType = {
   _id: string;
   email: string;
+  password?: string;
   firstName: string;
   lastName?: string;
-  password: string;
-  comments: string;
-  role: string;
-  permissions: [string];
+  comments?: string; // Note: This is string in UserType but ObjectId in the schema
+  role: "admin" | "user";
+  permissions: string[];
+  googleId?: string;
+  picture?: string;
 };
-
 export type CommentType = {
   _id: string;
   discussionId: DiscussionType;

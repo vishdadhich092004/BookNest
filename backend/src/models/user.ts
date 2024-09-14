@@ -1,7 +1,8 @@
 import mongoose, { Schema } from "mongoose";
-import { UserType } from "../shared/types";
 import bcrypt from "bcrypt";
-const userSchema = new mongoose.Schema({
+import { UserType } from "../shared/types";
+
+const userSchema = new Schema({
   email: {
     type: String,
     required: true,
@@ -9,7 +10,9 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function (this: UserType) {
+      return !this.googleId;
+    },
   },
   firstName: {
     type: String,
@@ -28,12 +31,19 @@ const userSchema = new mongoose.Schema({
     default: "user",
   },
   permissions: [String],
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  picture: String,
 });
 
 userSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
+  if (this.isModified("password") && this.password) {
     this.password = await bcrypt.hash(this.password, 8);
   }
+  next();
 });
 
 const User = mongoose.model<UserType>("User", userSchema);

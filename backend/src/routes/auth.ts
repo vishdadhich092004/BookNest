@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import * as middleware from "../middleware/auth";
 import { Role, assignPermissions } from "../config/rolesConfig";
 import { AuthRequest } from "../middleware/auth";
+import passport from "../config/passport";
 const router = express.Router();
 
 router.post(
@@ -27,7 +28,7 @@ router.post(
         return res.status(400).json({ message: "Invalid Credentials" });
       }
 
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compare(password, user.password!);
       if (!isMatch) {
         return res.status(400).json({ message: "Invalid Credentials" });
       }
@@ -53,6 +54,33 @@ router.post(
 );
 
 router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req: Request, res: Response) => {
+    const user = req.user as any;
+    const token = jwt.sign(
+      { userId: user._id, role: user.role, permissions: user.permissions },
+      process.env.JWT_SECRET_KEY as string,
+      { expiresIn: "1d" }
+    );
+
+    res.cookie("auth_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    // Redirect to frontend URL
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
+  }
+);
+
+router.get(
   "/validate-token",
   middleware.verifyToken,
   async (req: AuthRequest, res: Response) => {
@@ -62,8 +90,11 @@ router.get(
         return res.status(404).json({ message: "User not found" });
       }
 
-      res.status(200).json({ user });
+      // Omit sensitive information like password
+      const { password, ...userWithoutPassword } = user.toObject();
+      res.status(200).json({ user: userWithoutPassword });
     } catch (e) {
+      console.error("Error validating token:", e);
       res.status(500).json({ message: "Something went wrong" });
     }
   }
@@ -71,9 +102,11 @@ router.get(
 
 router.post("/logout", (req: Request, res: Response) => {
   res.cookie("auth_token", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
     expires: new Date(0),
   });
-  res.send();
+  res.status(200).json({ message: "Logged out successfully" });
 });
 
 export default router;
