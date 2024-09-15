@@ -5,12 +5,14 @@ import { assignPermissions } from "../config/rolesConfig";
 
 const getRedirectUri = () => {
   if (process.env.NODE_ENV === "production") {
-    return `${process.env.DEPLOYED_URL}/auth/google/callback`;
+    return `${process.env.DEPLOYED_URL}/api/auth/google/callback`;
   }
   return "http://localhost:4000/api/auth/google/callback";
 };
 
 const redirectUri = getRedirectUri();
+
+console.log("Passport Redirect URI:", redirectUri); // Add this log to debug
 
 passport.use(
   new GoogleStrategy(
@@ -45,7 +47,7 @@ passport.use(
   )
 );
 
-// Add these serialization functions
+// Serialization functions remain the same
 passport.serializeUser((user: any, done) => {
   done(null, user.id);
 });

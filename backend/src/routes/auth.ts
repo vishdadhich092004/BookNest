@@ -9,16 +9,19 @@ import { AuthRequest } from "../middleware/auth";
 import passport from "../config/passport";
 const router = express.Router();
 
-// Update this part
 const getRedirectUri = () => {
   if (process.env.NODE_ENV === "production") {
-    return `${process.env.DEPLOYED_URL}`;
+    return `${process.env.DEPLOYED_URL}/auth/google/callback`;
   }
-  return process.env.FRONTEND_URL || "http://localhost:3000"; // Provide a default value
+  return `${
+    process.env.FRONTEND_URL || "http://localhost:4000"
+  }/auth/google/callback`;
 };
 
 // Use the function to set redirectUri
 const redirectUri = getRedirectUri();
+
+console.log("Redirect URI:", redirectUri);
 
 router.post(
   "/login",
@@ -86,12 +89,10 @@ router.get(
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    console.log("Redirect URI", redirectUri);
-    // Redirect to frontend URL
+    console.log("Redirecting to:", redirectUri); // Add this log
     res.redirect(redirectUri);
   }
 );
-
 router.get(
   "/validate-token",
   middleware.verifyToken,
