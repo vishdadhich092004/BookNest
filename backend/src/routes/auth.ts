@@ -9,6 +9,11 @@ import { AuthRequest } from "../middleware/auth";
 import passport from "../config/passport";
 const router = express.Router();
 
+const redirectUri =
+  process.env.NODE_ENV === "production"
+    ? `${process.env.DEPLOYED_URL}`
+    : `${process.env.FRONTEND_URL}`;
+
 router.post(
   "/login",
   [
@@ -76,7 +81,7 @@ router.get(
     });
 
     // Redirect to frontend URL
-    res.redirect(`${process.env.FRONTEND_URL}`);
+    res.redirect(`${redirectUri}`);
   }
 );
 
