@@ -14,6 +14,7 @@ const redirectUri =
     ? `${process.env.DEPLOYED_URL}`
     : `${process.env.FRONTEND_URL}`;
 
+console.log(redirectUri);
 router.post(
   "/login",
   [
@@ -81,7 +82,7 @@ router.get(
     });
 
     // Redirect to frontend URL
-    res.redirect(`${redirectUri}`);
+    res.redirect(redirectUri);
   }
 );
 
