@@ -9,11 +9,6 @@ import { AuthRequest } from "../middleware/auth";
 import passport from "../config/passport";
 const router = express.Router();
 
-const redirectUri =
-  process.env.NODE_ENV === "production"
-    ? "https://booknest-e8f0.onrender.com/api/auth/callback"
-    : "http://localhost:5174/api/auth/callback";
-
 router.post(
   "/login",
   [
@@ -77,12 +72,11 @@ router.get(
     res.cookie("auth_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
     // Redirect to frontend URL
-    res.redirect(`${redirectUri}`);
+    res.redirect(`${process.env.FRONTEND_URL}`);
   }
 );
 
