@@ -11,6 +11,7 @@ type User = {
   lastName: string;
   role: string; // Added role to User type
   permissions: string[];
+  readBooks: string[];
 };
 
 type AuthContextType = {

@@ -328,3 +328,12 @@ export const fetchUserBooks = async (userId: string): Promise<BookType[]> => {
   if (!response.ok) throw new Error("Error fetching books");
   return response.json();
 };
+
+export const markBookAsRead = async (bookId: string) => {
+  const response = await fetch(`${BASE_URL}/api/books/${bookId}/mark-read`, {
+    credentials: "include",
+    method: "POST",
+  });
+  if (!response.ok) throw new Error("Failed to mark the book as read");
+  return response.json();
+};

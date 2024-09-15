@@ -9,6 +9,8 @@ export type UserType = {
   permissions: string[];
   googleId?: string;
   picture?: string;
+  favoriteGenres: string[];
+  readBooks: BookType[];
 };
 export type CommentType = {
   _id: string;

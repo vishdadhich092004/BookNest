@@ -37,6 +37,14 @@ const userSchema = new Schema({
     sparse: true,
   },
   picture: String,
+  favoriteGenres: [String],
+  readBooks: [{ type: Schema.Types.ObjectId, ref: "Book" }],
+  ratedBooks: [
+    {
+      bookId: { type: Schema.Types.ObjectId, ref: "Book" },
+      rating: Number,
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {

@@ -10,6 +10,7 @@ import SingleReview from "./SingleReview";
 import Loader from "./Loader";
 import { useAuth } from "../contexts/AuthContext";
 import PDFViewer from "./PDFViewer/PDFViewer";
+import MarkBookAsRead from "./Buttons/MarkBookAsRead";
 
 Modal.setAppElement("#root"); // Accessibility setting for Modal
 
@@ -46,6 +47,11 @@ function SingleBook() {
   const handleBookView = () => setIsBookOpen(true);
   const closeModal = () => setIsBookOpen(false);
 
+  let isBookAlreadyRead = false;
+
+  if (user?.readBooks.includes(bookId!)) {
+    isBookAlreadyRead = true;
+  }
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
@@ -59,6 +65,11 @@ function SingleBook() {
             <h1 className="text-4xl font-bold text-gray-900 mb-4">{title}</h1>
             <p className="text-lg text-gray-600 mb-2">by {author}</p>
             <p className="text-gray-800 mb-4">{description}</p>
+            {isBookAlreadyRead ? (
+              <h3>Already Read</h3>
+            ) : (
+              <MarkBookAsRead bookId={bookId!} />
+            )}
             <button
               onClick={handleBookView}
               className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition-colors duration-300 text-sm uppercase tracking-wide"

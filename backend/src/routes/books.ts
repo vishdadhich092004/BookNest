@@ -14,6 +14,7 @@ import { BookType } from "../shared/types";
 import { check, validationResult } from "express-validator";
 import { AuthRequest, verifyToken } from "../middleware/auth";
 import Review from "../models/review";
+import * as bookController from "../controllers/bookControllers";
 
 const router = express.Router();
 
@@ -269,5 +270,7 @@ router.get("/books", async (req: Request, res: Response) => {
     res.status(500).json({ message: "ERROR FETCHING BOOKS", e });
   }
 });
+
+router.post("/:bookId/mark-read", verifyToken, bookController.markBookAsRead);
 
 export default router;
