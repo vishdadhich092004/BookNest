@@ -11,11 +11,9 @@ const router = express.Router();
 
 const getRedirectUri = () => {
   if (process.env.NODE_ENV === "production") {
-    return `${process.env.DEPLOYED_URL}/auth/google/callback`;
+    return `${process.env.DEPLOYED_URL}`;
   }
-  return `${
-    process.env.FRONTEND_URL || "http://localhost:4000"
-  }/auth/google/callback`;
+  return `${process.env.FRONTEND_URL}`;
 };
 
 // Use the function to set redirectUri
