@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth";
 import discussionRoutes from "./routes/discussions";
 import commentRoutes from "./routes/comments";
 import bookRoutes from "./routes/books";
+import MongoStore from "connect-mongo";
 import reviewRoutes from "./routes/reviews";
 import session from "express-session";
 import cookieParser from "cookie-parser";
@@ -35,9 +36,16 @@ app.use(
 // passport
 app.use(
   session({
-    secret: process.env.JWT_SECRET_KEY!,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URL, // MongoDB connection string
+    }),
+    secret: process.env.JWT_SECRET_KEY!, // Session secret
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
   })
 );
 
