@@ -3,10 +3,15 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/user";
 import { assignPermissions } from "../config/rolesConfig";
 
-const redirectUri =
-  process.env.NODE_ENV === "production"
-    ? `${process.env.DEPLOYED_URL}/auth/google/callback`
-    : "http://localhost:4000/api/auth/google/callback";
+const getRedirectUri = () => {
+  if (process.env.NODE_ENV === "production") {
+    return `${process.env.DEPLOYED_URL}/auth/google/callback`;
+  }
+  return "http://localhost:4000/api/auth/google/callback";
+};
+
+const redirectUri = getRedirectUri();
+
 passport.use(
   new GoogleStrategy(
     {

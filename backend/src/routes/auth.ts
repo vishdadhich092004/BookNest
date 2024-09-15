@@ -9,12 +9,17 @@ import { AuthRequest } from "../middleware/auth";
 import passport from "../config/passport";
 const router = express.Router();
 
-const redirectUri =
-  process.env.NODE_ENV === "production"
-    ? `${process.env.DEPLOYED_URL}`
-    : `${process.env.FRONTEND_URL}`;
+// Update this part
+const getRedirectUri = () => {
+  if (process.env.NODE_ENV === "production") {
+    return `${process.env.DEPLOYED_URL}`;
+  }
+  return process.env.FRONTEND_URL || "http://localhost:3000"; // Provide a default value
+};
 
-console.log(redirectUri);
+// Use the function to set redirectUri
+const redirectUri = getRedirectUri();
+
 router.post(
   "/login",
   [
@@ -81,6 +86,7 @@ router.get(
       maxAge: 24 * 60 * 60 * 1000,
     });
 
+    console.log("Redirect URI", redirectUri);
     // Redirect to frontend URL
     res.redirect(redirectUri);
   }
