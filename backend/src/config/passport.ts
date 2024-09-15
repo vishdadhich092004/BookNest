@@ -5,7 +5,7 @@ import { assignPermissions } from "../config/rolesConfig";
 
 const getRedirectUri = () => {
   if (process.env.NODE_ENV === "production") {
-    return `${process.env.DEPLOYED_URL}/api/auth/google/callback`;
+    return `${process.env.DEPLOYED_URL}/auth/google/callback`;
   }
   return "http://localhost:4000/api/auth/google/callback";
 };
