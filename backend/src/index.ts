@@ -28,7 +28,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin:
+      process.env.NODE_ENV === "production"
+        ? process.env.DEPLOYED_URL
+        : process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -37,13 +40,14 @@ app.use(
 app.use(
   session({
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URL, // MongoDB connection string
+      mongoUrl: process.env.MONGO_URL,
     }),
-    secret: process.env.JWT_SECRET_KEY!, // Session secret
+    secret: process.env.JWT_SECRET_KEY!, // Use a separate secret for sessions
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: true, // Set to true in production
+      sameSite: "strict",
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
