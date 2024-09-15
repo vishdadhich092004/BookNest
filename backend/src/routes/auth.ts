@@ -11,7 +11,7 @@ const router = express.Router();
 
 const redirectUri =
   process.env.NODE_ENV === "production"
-    ? "https://booknest-e8f0.onrender.com/auth/callback"
+    ? "https://booknest-e8f0.onrender.com/api/auth/callback"
     : "http://localhost:5174/api/auth/callback";
 
 router.post(
