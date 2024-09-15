@@ -9,15 +9,10 @@ import { AuthRequest } from "../middleware/auth";
 import passport from "../config/passport";
 const router = express.Router();
 
-const getRedirectUri = () => {
-  if (process.env.NODE_ENV === "production") {
-    return `${process.env.DEPLOYED_URL}`;
-  }
-  return `${process.env.FRONTEND_URL}`;
-};
-
-// Use the function to set redirectUri
-const redirectUri = getRedirectUri();
+const redirectUri =
+  process.env.NODE_ENV === "production"
+    ? process.env.DEPLOYED_URL
+    : process.env.FRONTEND_URL;
 
 console.log("Redirect URI:", redirectUri);
 
@@ -88,7 +83,7 @@ router.get(
     });
 
     console.log("Redirecting to:", redirectUri); // Add this log
-    res.redirect(redirectUri);
+    res.redirect(redirectUri!);
   }
 );
 router.get(
