@@ -192,8 +192,8 @@ router.get("/", async (req: Request, res: Response) => {
     if (genre) filter.genre = genre;
     if (author) filter.author = author;
 
-    // Fetch books from the database based on the filter
-    const books = await Book.find(filter).lean();
+    // Fetch books from the database based on the filter and sort by creation date (newest first)
+    const books = await Book.find(filter).sort({ _id: -1 }).lean();
 
     const booksWithSignedUrls = await Promise.all(
       books.map(async (book) => {

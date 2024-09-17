@@ -1,3 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Define keyframes for the background animation */
+@keyframes moveBackground {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Apply the background animation to the entire page */
+body {
+  background: black; /* Gradient colors */
+  background-size: 400% 400%; /* Ensure it's large enough to create a moving effect */
+  animation: moveBackground 10s linear infinite; /* Duration and looping */
+  min-height: 100vh; /* Ensure the background covers the entire screen */
+  margin: 0; /* Remove default body margin */
+  font-family: sans-serif; /* For basic styling */
+}

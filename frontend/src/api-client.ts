@@ -146,10 +146,25 @@ export const updateDiscussion = async (
   return body;
 };
 
+export const fetchBooksWithoutGenre = async (): Promise<BookType[]> => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/books`, {
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to fetch books");
+    return data;
+  } catch (e) {
+    console.error("Error fetching books", e);
+    return [];
+  }
+};
+
 // BOOKS:
-export const fetchBooks = async (
-  genre: string,
-  author: string
+export const fetchBooksWithGenre = async (
+  genre: string = "",
+  author: string = ""
 ): Promise<BookType[]> => {
   try {
     // Build the query string based on the provided genre and author

@@ -1,26 +1,20 @@
-import { Link } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import BackgroundBeamsWithCollision from "../aceternity-ui/background-beams-with-collision";
 
 function HeroSection() {
-  const { isAuthenticated } = useAuth();
-  const toLink = isAuthenticated ? "/discussions" : "/sign-in";
   return (
-    <section className="bg-gradient-to-r from-teal-500 to-teal-600 text-white py-20">
-      <div className="container mx-auto px-6 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">
-          Welcome to BookNest
-        </h1>
-        <p className="text-xl mb-8">
-          Connect, discuss, and explore books with fellow readers
-        </p>
-        <Link
-          to={toLink}
-          className="bg-white text-teal-600 px-6 py-3 rounded-full font-semibold hover:bg-teal-100 transition duration-300"
-        >
-          {isAuthenticated ? "Start" : "Join Now"}
-        </Link>
-      </div>
-    </section>
+    <BackgroundBeamsWithCollision>
+      <h2 className="text-2xl relative z-20 md:text-4xl lg:text-7xl font-bold text-center text-white  font-sans tracking-tight">
+        Unlock a World of Stories <br />
+        <div className="relative mx-auto inline-block w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
+          <div className="absolute left-0 top-[1px] bg-clip-text bg-no-repeat text-transparent bg-gradient-to-r py-4 from-purple-500 via-violet-500 to-pink-500 [text-shadow:0_0_rgba(0,0,0,0.1)]">
+            <span className="">Start Reading Now!</span>
+          </div>
+          <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500 py-4">
+            <span className="">Start Reading Now!</span>
+          </div>
+        </div>
+      </h2>
+    </BackgroundBeamsWithCollision>
   );
 }
 

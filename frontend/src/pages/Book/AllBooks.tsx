@@ -22,7 +22,7 @@ function BooksList() {
     async function loadBooks() {
       setLoading(true);
       try {
-        const fetchedBooks = await apiClient.fetchBooks(genre, author); // Fetch books with genre and author filters
+        const fetchedBooks = await apiClient.fetchBooksWithGenre(genre, author); // Fetch books with genre and author filters
         setBooks(fetchedBooks);
         setError(null); // Reset error on successful fetch
 

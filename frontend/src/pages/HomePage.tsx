@@ -1,17 +1,17 @@
-import CallToActionSection from "../components/HomePageContent/CallToActionSection";
-import FeaturesSection from "../components/HomePageContent/FeaturesSection";
 import HeroSection from "../components/HomePageContent/HeroSection";
-import HowItWorksSection from "../components/HomePageContent/HowItWorksSection";
-import TestimonialsSection from "../components/HomePageContent/TestimonialsSection";
+import BookCarousel from "../components/HomePageContent/BookCarousel";
+import LampComponent from "../components/HomePageContent/LampComponent";
+import InfiniteMovingCardsComponent from "../components/HomePageContent/InfiniteMovingCardsComponent";
+import DoYouKnow from "../components/HomePageContent/DoYouKnow";
 
 const HomePage = () => {
   return (
-    <div className="space-y-20">
+    <div className="">
       <HeroSection />
-      <FeaturesSection />
-      <HowItWorksSection />
-      <TestimonialsSection />
-      <CallToActionSection />
+      <BookCarousel />
+      <DoYouKnow />
+      <InfiniteMovingCardsComponent />
+      <LampComponent />
     </div>
   );
 };

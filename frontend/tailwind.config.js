@@ -1,16 +1,71 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-undef */
+const {
+  default: flattenColorPalette,
+} = require("tailwindcss/lib/util/flattenColorPalette");
+
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+
+    // Or if using `src` directory:
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
-    extend: {},
-    container: {
-      padding: {
-        "md": "10rem"
+    extend: {
+      zIndex: {
+        '0': 0,
+        '10': 10,
+      },
+      fontFamily: {
+        roboto: ['Roboto', 'sans-serif'],
+        irina: ['Inria Sans', 'sans-serif'] // Set 'Roboto' as the default sans-serif font
+      },
+      container: {
+        padding: {
+          "md": "7rem"
+        }
       }
-    }
+    },
+    animation: {
+      spotlight: "spotlight 2s ease .75s 1 forwards",
+      scroll:
+        "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
+    },
+    keyframes: {
+      spotlight: {
+        "0%": {
+          opacity: 0,
+          transform: "translate(-72%, -62%) scale(0.5)",
+        },
+        "100%": {
+          opacity: 1,
+          transform: "translate(-50%,-40%) scale(1)",
+        },
+      },
+      scroll: {
+        to: {
+          transform: "translate(calc(-50% - 0.5rem))",
+        },
+      },
+    },
   },
-  plugins: [],
+  plugins: [addVariablesForColors],
+};
+
+// This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
+function addVariablesForColors({ addBase, theme }) {
+  let allColors = flattenColorPalette(theme("colors"));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+
+  addBase({
+    ":root": newVars,
+  });
 }
