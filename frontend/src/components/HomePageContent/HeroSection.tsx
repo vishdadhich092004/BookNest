@@ -6,7 +6,7 @@ function HeroSection() {
     <BackgroundBeamsWithCollision>
       <div className="flex flex-col h-full">
         {/* Display the PlaceholdersAndVanishInputComponent only on smaller screens at the top */}
-        <div className="lg:hidden">
+        <div>
           <PlaceholdersAndVanishInputComponent />
         </div>
 

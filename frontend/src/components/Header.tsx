@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import SignOutButton from "./Buttons/SignOutButton";
 import { useAuth } from "../contexts/AuthContext";
-import { FaRegUser } from "react-icons/fa6";
+import { FaRegUser } from "react-icons/fa";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { cn } from "../lib/utills"; // Assuming you're using this for classnames
-import PlaceholdersAndVanishInputComponent from "./PlaceholdersAndVanishInputComponent";
 
 const Header = () => {
   const { isAuthenticated, user } = useAuth();
@@ -14,7 +13,6 @@ const Header = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  // Detect scroll event
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -25,7 +23,9 @@ const Header = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   return (
@@ -44,7 +44,7 @@ const Header = () => {
         </div>
 
         {/* Hamburger Menu for Mobile */}
-        <div className="md:hidden ">
+        <div className="md:hidden">
           <button onClick={toggleMenu} className="text-white">
             {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
           </button>
@@ -52,7 +52,9 @@ const Header = () => {
 
         {/* Navigation Links for Desktop */}
         <ul className="hidden lg:flex space-x-8">
-          <PlaceholdersAndVanishInputComponent />
+          <NavLink to="/discussions">Discussions</NavLink>
+          <NavLink to="/books">Books</NavLink>
+          <NavLink to="/clubs">Clubs</NavLink>
         </ul>
 
         {/* User Greeting and Auth Buttons */}
@@ -69,21 +71,34 @@ const Header = () => {
 
       {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
-        <div className="md:hidden mt-4">
-          <nav className="flex flex-col space-y-4 ps-4">
-            <NavLink to="/discussions" onClick={toggleMenu}>
+        <div className="md:hidden mt-4 bg-black bg-opacity-80 p-4 rounded-lg shadow-lg">
+          <nav className="flex flex-col space-y-4">
+            <NavLink
+              to="/discussions"
+              onClick={toggleMenu}
+              className="text-white hover:text-indigo-400 transition-colors duration-300"
+            >
               Discussions
             </NavLink>
-            <NavLink to="/books" onClick={toggleMenu}>
+            <NavLink
+              to="/books"
+              onClick={toggleMenu}
+              className="text-white hover:text-indigo-400 transition-colors duration-300"
+            >
               Books
             </NavLink>
-            <NavLink to="/clubs" onClick={toggleMenu}>
+            <NavLink
+              to="/clubs"
+              onClick={toggleMenu}
+              className="text-white hover:text-indigo-400 transition-colors duration-300"
+            >
               Clubs
             </NavLink>
             {isAuthenticated && user && (
               <Link
                 to={`/${user._id}`}
-                className="flex items-center text-white"
+                className="flex items-center text-white hover:text-indigo-400 transition-colors duration-300 ml-2"
+                onClick={toggleMenu} // Close menu on click
               >
                 <FaRegUser className="text-xl mr-2" />
                 <span className="text-sm font-medium">{user.firstName}</span>
@@ -97,18 +112,19 @@ const Header = () => {
   );
 };
 
-type navProps = {
+type NavProps = {
   to: string;
-  children: string;
+  children: React.ReactNode; // Change to React.ReactNode for better flexibility
   onClick?: () => void;
+  className?: string; // Make className optional
 };
-
-const NavLink = ({ to, children, onClick }: navProps) => (
+const NavLink = ({ to, children, onClick, className }: NavProps) => (
   <Link
     to={to}
     className={cn(
       "text-white text-lg font-medium relative group",
-      "hover:text-indigo-400 transition-all duration-300 ease-in-out"
+      "hover:text-indigo-400 transition-all duration-300 ease-in-out",
+      className // Apply className here
     )}
     onClick={onClick}
   >

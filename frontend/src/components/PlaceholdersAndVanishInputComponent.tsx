@@ -21,13 +21,20 @@ function PlaceholdersAndVanishInputComponent() {
     e.preventDefault();
     console.log("submitted");
   };
+
   return (
-    <PlaceholdersAndVanishInput
-      className="lg:mt-0 mt-10"
-      placeholders={placeholders}
-      onChange={handleChange}
-      onSubmit={onSubmit}
-    />
+    <div className="flex flex-col items-center mt-8 px-4">
+      <h1 className="font-bold text-white text-3xl mb-6 text-center">
+        Search Any Sh*t About Books.
+      </h1>
+      <PlaceholdersAndVanishInput
+        className="w-full max-w-md"
+        placeholders={placeholders}
+        onChange={handleChange}
+        onSubmit={onSubmit}
+      />
+    </div>
   );
 }
+
 export default PlaceholdersAndVanishInputComponent;
