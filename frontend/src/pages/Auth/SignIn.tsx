@@ -7,7 +7,7 @@ import { Input } from "../../components/aceternity-ui/input";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import { useAppContext } from "../../contexts/AppContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export type SignInFormData = {
   email: string;
@@ -103,6 +103,9 @@ function SignIn() {
           <BottomGradient />
         </button>
       </form>
+      <Link to="/register" className="text-white">
+        Create an account
+      </Link>
     </div>
   );
 }

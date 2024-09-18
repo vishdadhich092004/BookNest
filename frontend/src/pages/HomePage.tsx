@@ -6,7 +6,7 @@ import DoYouKnow from "../components/HomePageContent/DoYouKnow";
 
 const HomePage = () => {
   return (
-    <div className="">
+    <div>
       <HeroSection />
       <BookCarousel />
       <DoYouKnow />

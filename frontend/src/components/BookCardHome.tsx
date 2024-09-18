@@ -1,27 +1,56 @@
+import { Link } from "react-router-dom";
 import { BookType } from "../../../backend/src/shared/types";
 import { Spotlight } from "./aceternity-ui/Spotlight";
+import { cn } from "../lib/utills";
 
 interface BookCardProps {
   book: BookType;
 }
+
 function BookCardHome({ book }: BookCardProps) {
-  console.log(book);
   return (
-    <div className="h-[40rem] w-full rounded-md flex md:items-center md:justify-center bg-black/[0.96] antialiased bg-grid-white/[0.02] relative overflow-hidden">
+    <div className="h-auto md:h-[40rem] w-full rounded-md flex flex-col md:flex-row bg-black/[0.96] antialiased bg-grid-white/[0.02] relative overflow-hidden">
       <Spotlight
         className="-top-40 left-0 md:left-60 md:-top-20"
         fill="white"
       />
-      <div className=" p-4 max-w-7xl  mx-auto relative z-10  w-full pt-20 md:pt-0">
+
+      {/* Top (on small screens) / Left (on larger screens): Image */}
+      <div className="w-full md:w-1/2 flex items-center justify-center">
+        <img
+          className="h-[20rem] md:h-[80%] w-auto object-cover rounded-md"
+          src={book.coverPageUrl}
+          alt="CoverPage"
+        />
+      </div>
+
+      {/* Bottom (on small screens) / Right (on larger screens): Text Details */}
+      <div className="w-full md:w-1/2 p-4 max-w-7xl mx-auto relative z-10 flex flex-col justify-center">
         <h1 className="text-4xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
-          Spotlight <br /> is the new trend.
+          {book.title}
         </h1>
         <p className="mt-4 font-normal text-base text-neutral-300 max-w-lg text-center mx-auto">
-          Spotlight effect is a great way to draw attention to a specific part
-          of the page. Here, we are drawing the attention towards the text
-          section of the page. I don&apos;t know why but I&apos;m running out of
-          copy.
+          {book.description.slice(0, 305)}...
         </p>
+
+        {/* Buttons Section */}
+        <div className="mt-8 flex justify-center space-x-4">
+          {/* <Link
+            to={`/books/${book._id}`}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition"
+          >
+            Wishlist
+          </Link> */}
+          <Link
+            to={`/books/${book._id}/read`}
+            className={cn(
+              "bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-5 py-2 rounded-full shadow-lg",
+              "hover:from-purple-500 hover:to-indigo-500 transition-transform duration-300 transform hover:scale-105"
+            )}
+          >
+            Read Now
+          </Link>
+        </div>
       </div>
     </div>
   );

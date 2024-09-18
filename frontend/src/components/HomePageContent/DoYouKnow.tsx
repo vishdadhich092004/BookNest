@@ -11,6 +11,7 @@ function DoYouKnow() {
 
   return (
     <div className="flex flex-col items-center justify-center pt-10">
+      {/* Container for bulb and typewriter, arranged in a row */}
       <div className="flex items-center space-x-4">
         <FaLightbulb className="text-yellow-500 dark:text-yellow-400 text-6xl animate-pulse" />
         <TypewriterEffectSmooth words={words} />

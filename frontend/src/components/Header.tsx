@@ -1,19 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import SignOutButton from "./Buttons/SignOutButton";
 import { useAuth } from "../contexts/AuthContext";
 import { FaRegUser } from "react-icons/fa6";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { cn } from "../lib/utills"; // Assuming you're using this for classnames
+import PlaceholdersAndVanishInputComponent from "./PlaceholdersAndVanishInputComponent";
 
 const Header = () => {
   const { isAuthenticated, user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  // Detect scroll event
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setHasScrolled(true); // When scrolled down
+      } else {
+        setHasScrolled(false); // When at the top
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <nav className="w-full z-50 fixed top-0">
+    <nav
+      className={cn(
+        "w-full z-50 fixed top-0 transition-colors duration-300",
+        hasScrolled
+          ? "bg-black bg-opacity-70 backdrop-blur-md" // Faded background on scroll
+          : "bg-transparent"
+      )}
+    >
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <div className="text-white text-2xl font-bold tracking-wider">
@@ -21,17 +44,15 @@ const Header = () => {
         </div>
 
         {/* Hamburger Menu for Mobile */}
-        <div className="md:hidden">
+        <div className="md:hidden ">
           <button onClick={toggleMenu} className="text-white">
             {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
           </button>
         </div>
 
         {/* Navigation Links for Desktop */}
-        <ul className="hidden md:flex space-x-8">
-          <NavLink to="/discussions">Discussions</NavLink>
-          <NavLink to="/books">Books</NavLink>
-          <NavLink to="/clubs">Clubs</NavLink>
+        <ul className="hidden lg:flex space-x-8">
+          <PlaceholdersAndVanishInputComponent />
         </ul>
 
         {/* User Greeting and Auth Buttons */}
@@ -48,7 +69,7 @@ const Header = () => {
 
       {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
-        <div className="md:hidden mt-4 ">
+        <div className="md:hidden mt-4">
           <nav className="flex flex-col space-y-4 ps-4">
             <NavLink to="/discussions" onClick={toggleMenu}>
               Discussions

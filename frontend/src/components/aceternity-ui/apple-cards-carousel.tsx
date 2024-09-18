@@ -217,32 +217,13 @@ export const Card = ({
             >
               {/* Close Button */}
               <button
-                className="absolute top-4 right-4 h-8 w-8 bg-black dark:bg-white rounded-full flex items-center justify-center"
+                className="absolute top-4 right-4 h-8 w-8 bg-transparent flex items-center justify-center z-40"
                 onClick={handleClose}
               >
                 <IconX className="h-6 w-6 text-neutral-100 dark:text-neutral-900" />
               </button>
-              {/* <img
-                src={card.src}
-                alt={card.title}
-                className="absolute top-4 right-4 w-32 h-32 md:w-48 md:h-48 object-cover rounded-lg shadow-lg"
-              /> */}
-              {/* Category */}
-              {/* <motion.p
-                layoutId={layout ? `category-${card.title}` : undefined}
-                className="text-base font-medium text-black dark:text-white"
-              >
-                {card.category}
-              </motion.p> */}
-              {/* Title */}
-              {/* <motion.p
-                layoutId={layout ? `title-${card.title}` : undefined}
-                className="text-2xl md:text-5xl font-semibold text-neutral-700 mt-4 dark:text-white"
-              >
-                {card.title}
-              </motion.p> */}
-              {/* Content */}
-              <div className="py-10">{card.content}</div>
+
+              <div>{card.content}</div>
             </motion.div>
           </div>
         )}
