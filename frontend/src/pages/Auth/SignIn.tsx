@@ -1,9 +1,13 @@
+import React from "react";
+import { cn } from "../../lib/utills";
+import * as apiClient from "../../api-client";
+import { IconBrandGoogle } from "@tabler/icons-react";
+import { Label } from "../../components/aceternity-ui/label";
+import { Input } from "../../components/aceternity-ui/input";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
-import { Link, useNavigate } from "react-router-dom";
-import { FaGoogle } from "react-icons/fa"; // Import Google icon from react-icons
+import { useNavigate } from "react-router-dom";
 
 export type SignInFormData = {
   email: string;
@@ -11,123 +15,119 @@ export type SignInFormData = {
 };
 
 function SignIn() {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { showToast } = useAppContext();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const {
     register,
-    formState: { errors },
     handleSubmit,
+    formState: { errors },
   } = useForm<SignInFormData>();
 
   const mutation = useMutation(apiClient.signIn, {
     onSuccess: async () => {
-      showToast({
-        message: "Sign in Successful",
-        type: "SUCCESS",
-      });
+      showToast({ message: "DOne!", type: "SUCCESS" });
       await queryClient.invalidateQueries("validate-token");
       navigate("/");
     },
-    onError: (error: Error) => {
-      showToast({
-        message: error.message,
-        type: "ERROR",
-      });
+    onError: () => {
+      showToast({ message: "Error", type: "ERROR" });
     },
-  });
-
-  const onSubmit = handleSubmit((data) => {
-    mutation.mutate(data);
   });
 
   const handleGoogleAuth = () => {
     apiClient.initiateGoogleAuth();
   };
+  const onSubmit = handleSubmit((data) => {
+    mutation.mutate(data);
+    // console.log(data);
+  });
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-50">
-      <div className="flex bg-white shadow-lg rounded-lg overflow-hidden max-w-4xl w-full">
-        {/* Left side image */}
-        <div className="hidden md:block md:w-1/2">
-          <img
-            src="https://images.unsplash.com/photo-1529158062015-cad636e205a0?q=80&w=1953&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Sign In"
-            className="object-cover w-full h-full"
+    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-black md:mt-10 ">
+      <h2 className="font-bold text-2xl text-white">Welcome Back</h2>
+
+      <form className="my-8" onSubmit={onSubmit}>
+        <div className="flex flex-col space-y-4">
+          <button
+            onClick={handleGoogleAuth}
+            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
+          >
+            <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
+            <span className="text-neutral-700 dark:text-neutral-300 text-sm">
+              Google
+            </span>
+            <BottomGradient />
+          </button>
+        </div>
+        <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
+
+        <LabelInputContainer className="mb-4">
+          <Label htmlFor="email">Email Address</Label>
+          <Input
+            id="email"
+            placeholder="amitverma@gmail.com"
+            type="email"
+            {...register("email", { required: "This field is required" })}
           />
-        </div>
+          {errors.email?.message && (
+            <span className="text-white font-bold">{errors.email.message}</span>
+          )}
+        </LabelInputContainer>
+        <LabelInputContainer className="mb-4">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            placeholder="••••••••"
+            type="password"
+            {...register("password", {
+              required: "This field is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters long",
+              },
+            })}
+          />
+          {errors.password?.message && (
+            <span className="text-white font-bold">
+              {errors.password.message}
+            </span>
+          )}
+        </LabelInputContainer>
 
-        {/* Right side form */}
-        <div className="flex-1 p-8 md:p-12 bg-gray-100">
-          <h2 className="text-4xl font-bold text-gray-800 mb-6">Sign In</h2>
-          <form className="space-y-6" onSubmit={onSubmit}>
-            <label className="block">
-              <span className="text-gray-700 text-sm font-semibold">Email</span>
-              <input
-                type="email"
-                className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                {...register("email", { required: "This field is required" })}
-              />
-              {errors.email && (
-                <span className="text-red-500 text-sm">
-                  {errors.email.message}
-                </span>
-              )}
-            </label>
-
-            <label className="block">
-              <span className="text-gray-700 text-sm font-semibold">
-                Password
-              </span>
-              <input
-                type="password"
-                className="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-teal-500 focus:ring-teal-500"
-                {...register("password", {
-                  required: "This field is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters long",
-                  },
-                })}
-              />
-              {errors.password && (
-                <span className="text-red-500 text-sm">
-                  {errors.password.message}
-                </span>
-              )}
-            </label>
-
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">
-                Not Registered?{" "}
-                <Link className="underline text-teal-600" to="/register">
-                  Create an account
-                </Link>
-              </span>
-
-              <button
-                type="submit"
-                className="bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-teal-700 transition-colors duration-300"
-              >
-                Login
-              </button>
-            </div>
-          </form>
-
-          {/* Google Sign In Button */}
-          <div className="mt-8">
-            <button
-              onClick={handleGoogleAuth}
-              className="flex items-center justify-center w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors duration-300"
-            >
-              <FaGoogle className="mr-2" />
-              Sign In with Google
-            </button>
-          </div>
-        </div>
-      </div>
+        <button
+          className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+          type="submit"
+        >
+          Sign In &rarr;
+          <BottomGradient />
+        </button>
+      </form>
     </div>
   );
 }
+
+const BottomGradient = () => {
+  return (
+    <>
+      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
+      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+    </>
+  );
+};
+
+const LabelInputContainer = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div className={cn("flex flex-col space-y-2 w-full", className)}>
+      {children}
+    </div>
+  );
+};
 
 export default SignIn;
