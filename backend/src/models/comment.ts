@@ -31,7 +31,7 @@ export const commentSchema = new Schema({
     },
   ],
 });
-
+commentSchema.index({ text: "text" });
 const Comment = mongoose.model<CommentType>("Comment", commentSchema);
 
 export default Comment;

@@ -49,6 +49,7 @@ const discussionSchema = new Schema({
   ],
 });
 
+discussionSchema.index({ title: "text", description: "text" });
 const Discussion = mongoose.model<DiscussionType>(
   "Discussion",
   discussionSchema

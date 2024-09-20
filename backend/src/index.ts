@@ -12,6 +12,7 @@ import reviewRoutes from "./routes/reviews";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import path from "path";
+import searchRoutes from "./routes/search";
 import clubRoutes from "./routes/clubs";
 import passport from "./config/passport";
 const app = express();
@@ -66,6 +67,7 @@ app.use("/api/books", reviewRoutes);
 app.use("/api/discussions", discussionRoutes);
 app.use("/api/discussions", commentRoutes);
 app.use("/api/clubs", clubRoutes);
+app.use("/api/search", searchRoutes);
 /* AT THE END */
 //catchall path : solves reload issues during production
 app.get("*", (req, res) => {

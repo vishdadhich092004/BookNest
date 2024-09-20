@@ -14,8 +14,6 @@ const redirectUri =
     ? process.env.DEPLOYED_URL
     : process.env.FRONTEND_URL;
 
-console.log("Redirect URI:", redirectUri);
-
 router.post(
   "/login",
   [
@@ -82,7 +80,6 @@ router.get(
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    console.log("Redirecting to:", redirectUri); // Add this log
     res.redirect(redirectUri!);
   }
 );

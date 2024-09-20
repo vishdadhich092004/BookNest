@@ -9,6 +9,7 @@ import {
 } from "../../backend/src/shared/types";
 import { CommentFormData } from "./pages/Comment/NewComment";
 import { ReviewFormData } from "./pages/Review/NewReview";
+import { SearchResultData } from "./components/UniversalSeachBar";
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
 export const register = async (formData: RegisterFormData) => {
@@ -351,4 +352,34 @@ export const markBookAsRead = async (bookId: string) => {
   });
   if (!response.ok) throw new Error("Failed to mark the book as read");
   return response.json();
+};
+
+export const universalSearch = async (
+  query: string
+): Promise<SearchResultData> => {
+  console.log("API Client: Starting search for query:", query); // New log
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/search/?q=${encodeURIComponent(query)}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(
+      "API Client: Received response:",
+      response.status,
+      response.statusText
+    ); // New log
+    if (!response.ok)
+      throw new Error(`Sorry, Search Failed : ${response.statusText}`);
+    const data: SearchResultData = await response.json();
+    console.log("API Client: Parsed data:", data); // New log
+    return data;
+  } catch (e) {
+    console.error("Error in APICLIENT", e);
+    throw e; // Re-throw the error so it's caught by react-query
+  }
 };

@@ -17,6 +17,7 @@ import { useAuth } from "./contexts/AuthContext";
 import AllClubs from "./pages/Club/AllClubs";
 import SingleClub from "./pages/Club/SingleClub";
 import UserPage from "./pages/UserPage";
+import SearchResults from "./components/SearchResults";
 function App() {
   const { isAuthenticated } = useAuth();
   return (
@@ -27,6 +28,14 @@ function App() {
           element={
             <Layout>
               <HomePage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <Layout>
+              <SearchResults />
             </Layout>
           }
         />

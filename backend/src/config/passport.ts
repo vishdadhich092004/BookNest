@@ -12,8 +12,6 @@ const getRedirectUri = () => {
 
 const redirectUri = getRedirectUri();
 
-console.log("Passport Redirect URI:", redirectUri); // Add this log to debug
-
 passport.use(
   new GoogleStrategy(
     {

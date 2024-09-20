@@ -26,6 +26,7 @@ const reviewSchema = new Schema({
   },
 });
 
+reviewSchema.index({ text: "text" });
 const Review = mongoose.model<ReviewType>("Review", reviewSchema);
 
 export default Review;
