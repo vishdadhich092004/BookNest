@@ -24,9 +24,9 @@ function SearchResults() {
       <div>
         {results.length ? (
           <ul>
-            {results.map((result) => (
+            {/* {results.map((result) => (
               <li key={result.id}>{result.title}</li>
-            ))}
+            ))} */}
           </ul>
         ) : (
           <p>No results found.</p>
