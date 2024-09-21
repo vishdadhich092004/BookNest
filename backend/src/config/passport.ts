@@ -1,23 +1,19 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/user";
-import { assignPermissions } from "../config/rolesConfig";
 
-const getRedirectUri = () => {
-  if (process.env.NODE_ENV === "production") {
-    return `${process.env.DEPLOYED_URL}/auth/google/callback`;
-  }
-  return "http://localhost:4000/api/auth/google/callback";
-};
+const backendUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://booknest-e8f0.onrender.com"
+    : "http://localhost:4000";
 
-const redirectUri = getRedirectUri();
-
+const callbackURL = `${backendUrl}/api/auth/google/callback`;
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      callbackURL: redirectUri,
+      callbackURL: callbackURL,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -33,8 +29,8 @@ passport.use(
             role: "user",
           });
 
-          user.permissions = assignPermissions("user");
           await user.save();
+          console.log(user);
         }
 
         return done(null, user);

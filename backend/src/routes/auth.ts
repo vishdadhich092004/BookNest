@@ -9,10 +9,10 @@ import { AuthRequest } from "../middleware/auth";
 import passport from "../config/passport";
 const router = express.Router();
 
-const redirectUri =
-  process.env.NODE_ENV === "production"
-    ? process.env.DEPLOYED_URL
-    : process.env.FRONTEND_URL;
+const frontendUrl =
+  process.env.NODE_ENv === "production"
+    ? "https://booknest-e8f0.onrender.com"
+    : "http://localhost:5173";
 
 router.post(
   "/login",
@@ -69,7 +69,7 @@ router.get(
   (req: Request, res: Response) => {
     const user = req.user as any;
     const token = jwt.sign(
-      { userId: user._id, role: user.role, permissions: user.permissions },
+      { userId: user._id },
       process.env.JWT_SECRET_KEY as string,
       { expiresIn: "1d" }
     );
@@ -80,9 +80,10 @@ router.get(
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res.redirect(redirectUri!);
+    res.redirect(`${frontendUrl}`);
   }
 );
+
 router.get(
   "/validate-token",
   middleware.verifyToken,

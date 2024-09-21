@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import "dotenv/config";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -43,7 +43,7 @@ app.use(
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URL,
     }),
-    secret: process.env.JWT_SECRET_KEY!, // Use a separate secret for sessions
+    secret: process.env.SESSION_SECRET_KEY!, // Use a separate secret for sessions
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -60,6 +60,7 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
 app.use(cookieParser());
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/books", bookRoutes);
