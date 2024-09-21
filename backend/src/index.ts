@@ -21,8 +21,8 @@ mongoose
   .then(() => {
     console.log("Mongo Connection Successful");
   })
-  .catch(() => {
-    "Mongo Connection Issues";
+  .catch((err) => {
+    console.log("Mongo Connection Issues", err);
   });
 
 app.use(express.json());
@@ -47,7 +47,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: true, // Set to true in production
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },

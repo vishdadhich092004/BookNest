@@ -17,7 +17,14 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        let user = await User.findOne({ googleId: profile.id });
+        let user = await User.findOne({ email: profile.emails![0].value });
+
+        if (user && !user.googleId) {
+          user.googleId = profile.id;
+          user.picture = profile.photos?.[0].value;
+          await user.save();
+          return done(null, user);
+        }
 
         if (!user) {
           user = new User({
@@ -30,11 +37,11 @@ passport.use(
           });
 
           await user.save();
-          console.log(user);
         }
 
         return done(null, user);
       } catch (error) {
+        console.error("Error in Google OAuth : ", error);
         return done(error as Error);
       }
     }
@@ -43,7 +50,7 @@ passport.use(
 
 // Serialization functions remain the same
 passport.serializeUser((user: any, done) => {
-  done(null, user.id);
+  done(null, (user as any)._id);
 });
 
 passport.deserializeUser(async (id: string, done) => {
