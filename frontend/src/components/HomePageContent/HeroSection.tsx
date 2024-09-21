@@ -1,4 +1,5 @@
 import BackgroundBeamsWithCollision from "../aceternity-ui/background-beams-with-collision";
+// import SearchBar from "../SearchBar";
 import UniversalSearchBar from "../UniversalSeachBar";
 
 function HeroSection() {
@@ -8,6 +9,7 @@ function HeroSection() {
         {/* Display the PlaceholdersAndVanishInputComponent only on smaller screens at the top */}
         <div>
           <UniversalSearchBar />
+          {/* <SearchBar /> */}
         </div>
 
         {/* Main content */}

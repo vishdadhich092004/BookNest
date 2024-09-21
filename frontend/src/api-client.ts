@@ -9,7 +9,6 @@ import {
 } from "../../backend/src/shared/types";
 import { CommentFormData } from "./pages/Comment/NewComment";
 import { ReviewFormData } from "./pages/Review/NewReview";
-import { SearchResultData } from "./components/UniversalSeachBar";
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
 export const register = async (formData: RegisterFormData) => {
@@ -354,32 +353,23 @@ export const markBookAsRead = async (bookId: string) => {
   return response.json();
 };
 
-export const universalSearch = async (
-  query: string
-): Promise<SearchResultData> => {
-  console.log("API Client: Starting search for query:", query); // New log
+export const universalSearch = async (q: string = "") => {
   try {
-    const response = await fetch(
-      `${BASE_URL}/api/search/?q=${encodeURIComponent(query)}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    console.log(
-      "API Client: Received response:",
-      response.status,
-      response.statusText
-    ); // New log
-    if (!response.ok)
-      throw new Error(`Sorry, Search Failed : ${response.statusText}`);
-    const data: SearchResultData = await response.json();
-    console.log("API Client: Parsed data:", data); // New log
+    const queryParams = new URLSearchParams();
+    if (q) queryParams.append("q", q); // Fixed query parameter name
+
+    const queryString = queryParams.toString()
+      ? `?${queryParams.toString()}`
+      : "";
+    const response = await fetch(`${BASE_URL}/api/search${queryString}`, {
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to search");
     return data;
   } catch (e) {
-    console.error("Error in APICLIENT", e);
-    throw e; // Re-throw the error so it's caught by react-query
+    console.log(e);
+    throw new Error("Error at frontend");
   }
 };

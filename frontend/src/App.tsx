@@ -32,7 +32,7 @@ function App() {
           }
         />
         <Route
-          path="/search"
+          path="/search-results"
           element={
             <Layout>
               <SearchResults />
