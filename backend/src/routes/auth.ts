@@ -10,7 +10,7 @@ import passport from "../config/passport";
 const router = express.Router();
 
 const frontendUrl =
-  process.env.NODE_ENv === "production"
+  process.env.NODE_ENV === "production"
     ? "https://booknest-e8f0.onrender.com"
     : "http://localhost:5173";
 
