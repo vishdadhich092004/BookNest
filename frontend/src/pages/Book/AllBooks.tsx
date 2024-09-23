@@ -1,40 +1,36 @@
 import { useEffect, useState } from "react";
+import { FocusCards } from "../../components/aceternity-ui/focus-cards";
 import * as apiClient from "../../api-client";
 import { BookType } from "../../../../backend/src/shared/types";
-import { Link } from "react-router-dom";
 import Loader from "../../components/Loader";
-import { useAuth } from "../../contexts/AuthContext";
-import Book from "../../components/Book";
-const adminId = import.meta.env.VITE_ADMIN_ID;
+import AuthorFilter from "../../components/Filters/AuthorFilter";
+import GenreFilter from "../../components/Filters/GenreFilter";
 
-function BooksList() {
-  const { isAuthenticated, user } = useAuth();
+function BookFocusCards() {
   const [books, setBooks] = useState<BookType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [genre, setGenre] = useState<string>(""); // State for selected genre
-  const [author, setAuthor] = useState<string>(""); // State for selected author
-  const [genres, setGenres] = useState<string[]>([]); // Sample genres - modify as needed
-  const [authors, setAuthors] = useState<string[]>([]); // State for authors
+  const [genre, setGenre] = useState<string>("");
+  const [author, setAuthor] = useState<string>("");
+  const [genres, setGenres] = useState<string[]>([]);
+  const [authors, setAuthors] = useState<string[]>([]);
 
-  // Fetch books based on the selected genre and author
   useEffect(() => {
     async function loadBooks() {
       setLoading(true);
       try {
-        const fetchedBooks = await apiClient.fetchBooksWithGenre(genre, author); // Fetch books with genre and author filters
+        const fetchedBooks = await apiClient.fetchBooksWithGenre(genre, author);
         setBooks(fetchedBooks);
-        setError(null); // Reset error on successful fetch
+        setError(null);
 
-        // Extract unique authors from the fetched books
         const uniqueAuthors = Array.from(
           new Set(fetchedBooks.map((book) => book.author))
         );
-        setAuthors(uniqueAuthors); // Set authors for dropdown
+        setAuthors(uniqueAuthors);
         const uniqueGenres = Array.from(
           new Set(fetchedBooks.map((book) => book.genre))
         );
-        setGenres(uniqueGenres); // Set authors for dropdown
+        setGenres(uniqueGenres);
       } catch (error) {
         console.error("Failed to load books", error);
         setError("Failed to load books. Please try again later.");
@@ -46,6 +42,15 @@ function BooksList() {
     loadBooks();
   }, [genre, author]);
 
+  // Map books to the card format for FocusCards
+  const cards = books.map((book) => ({
+    _id: book._id, // Pass _id for link navigation
+    title: book.title,
+    src:
+      book.coverPageUrl || "https://via.placeholder.com/300x450?text=No+Image",
+    description: `By ${book.author}`,
+  }));
+
   if (loading) {
     return <Loader />;
   }
@@ -54,56 +59,31 @@ function BooksList() {
     return <p className="text-red-500">{error}</p>;
   }
 
-  const isAdmin = isAuthenticated && user?._id.toString() === adminId;
   return (
-    <div className="max-w-5xl mx-auto mt-8 px-6">
-      {/* Genre and Author Filters */}
+    <div className="max-w-7xl mx-auto mt-8 px-6">
       <div className="mb-6 flex items-center space-x-4">
-        {/* Genre Dropdown */}
-        <select
-          value={genre}
-          onChange={(e) => setGenre(e.target.value)}
-          className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-        >
-          <option value="">All Genres</option>
-          {genres.map((g) => (
-            <option key={g} value={g}>
-              {g}
-            </option>
-          ))}
-        </select>
+        {/* Genre Filter */}
+        <GenreFilter
+          genres={genres}
+          selectedGenre={genre}
+          onGenreChange={setGenre}
+        />
 
-        {/* Author Dropdown */}
-        <select
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-        >
-          <option value="">All Authors</option>
-          {authors.map((a) => (
-            <option key={a} value={a}>
-              {a}
-            </option>
-          ))}
-        </select>
+        {/* Author Filter */}
+        <AuthorFilter
+          authors={authors}
+          selectedAuthor={author}
+          onAuthorChange={setAuthor}
+        />
+      </div>
 
-        {isAdmin && (
-          <Link
-            to="/books/new"
-            className="px-4 py-2 bg-teal-600 text-white rounded-md shadow-md hover:bg-teal-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-          >
-            Create New Book
-          </Link>
-        )}
-      </div>
-      <h1 className="text-4xl font-bold text-gray-800 mb-8">Books List</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {books.map((book) => (
-          <Book key={book._id} book={book} />
-        ))}
-      </div>
+      {/* Title */}
+      <h1 className="text-4xl font-bold text-white mb-8">Books List</h1>
+
+      {/* Display Book Cards */}
+      <FocusCards cards={cards} />
     </div>
   );
 }
 
-export default BooksList;
+export default BookFocusCards;

@@ -17,7 +17,7 @@ import { useAuth } from "./contexts/AuthContext";
 import AllClubs from "./pages/Club/AllClubs";
 import SingleClub from "./pages/Club/SingleClub";
 import UserPage from "./pages/UserPage";
-import SearchResults from "./components/SearchResults";
+import SearchResults from "./components/Search/SearchResults";
 function App() {
   const { isAuthenticated } = useAuth();
   return (

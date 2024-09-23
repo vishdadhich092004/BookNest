@@ -1,16 +1,17 @@
 import { motion } from "framer-motion";
 import { LampContainer } from "../aceternity-ui/lamp";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 function LampComponent() {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  const joinNowUrl = isAuthenticated ? "/books" : "/sign-in";
   const handleJoinNow = () => {
-    navigate("/sign-in");
+    navigate(`${joinNowUrl}`);
   };
-  const handleSignUp = () => {
-    navigate("/register");
-  };
+
   return (
     <LampContainer>
       <motion.h1
@@ -41,12 +42,6 @@ function LampComponent() {
           className="w-40 h-10 rounded-xl bg-black border dark:border-white border-transparent text-white text-sm"
         >
           Join now
-        </button>
-        <button
-          onClick={handleSignUp}
-          className="w-40 h-10 rounded-xl bg-white text-black border border-black text-sm "
-        >
-          Signup
         </button>
       </motion.div>
     </LampContainer>

@@ -1,6 +1,6 @@
 import BackgroundBeamsWithCollision from "../aceternity-ui/background-beams-with-collision";
 // import SearchBar from "../SearchBar";
-import UniversalSearchBar from "../UniversalSeachBar";
+import UniversalSearchBar from "../Search/UniversalSeachBar";
 
 function HeroSection() {
   return (

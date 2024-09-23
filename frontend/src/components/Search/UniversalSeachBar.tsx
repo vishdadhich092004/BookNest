@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
-import { PlaceholdersAndVanishInput } from "./aceternity-ui/placeholders-and-vanish-input";
+import { PlaceholdersAndVanishInput } from "../aceternity-ui/placeholders-and-vanish-input";
 import { useNavigate } from "react-router-dom";
 
 const placeholders = [
