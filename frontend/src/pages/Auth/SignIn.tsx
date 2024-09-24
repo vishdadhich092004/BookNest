@@ -26,7 +26,7 @@ function SignIn() {
 
   const mutation = useMutation(apiClient.signIn, {
     onSuccess: async () => {
-      showToast({ message: "DOne!", type: "SUCCESS" });
+      showToast({ message: "Welcome Back", type: "SUCCESS" });
       await queryClient.invalidateQueries("validate-token");
       navigate("/");
     },
@@ -40,7 +40,6 @@ function SignIn() {
   };
   const onSubmit = handleSubmit((data) => {
     mutation.mutate(data);
-    // console.log(data);
   });
 
   return (

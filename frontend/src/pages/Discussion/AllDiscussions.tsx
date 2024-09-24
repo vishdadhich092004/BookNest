@@ -1,11 +1,14 @@
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import {
+  BentoGrid,
+  BentoGridItem,
+} from "../../components/aceternity-ui/bento-grid";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
 import { useAuth } from "../../contexts/AuthContext";
-import { Skeleton } from "../../components/aceternity-ui/card";
-import DiscussionCard from "../../components/Discussions/DiscussionCard";
+import { DiscussionType } from "../../../../backend/src/shared/types";
+import { BookAIcon } from "lucide-react";
 
 function AllDiscussions() {
   const { isAuthenticated } = useAuth();
@@ -21,11 +24,7 @@ function AllDiscussions() {
   });
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Skeleton />
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
   if (isError || !discussions) {
@@ -47,20 +46,36 @@ function AllDiscussions() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {discussions.map((discussion) => (
-          <motion.div
-            key={discussion._id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <DiscussionCard discussion={discussion} />
-          </motion.div>
+      {/* Display discussions using BentoGrid */}
+      <BentoGrid className="max-w-7xl mx-auto">
+        {discussions.map((discussion: DiscussionType, i: number) => (
+          <BentoGridItem
+            key={i}
+            link={`${discussion._id}`}
+            title={discussion.title}
+            description={discussion.description}
+            header={<DiscussionHeader discussion={discussion} />}
+            icon={<DiscussionIcon />}
+            className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+          />
         ))}
-      </div>
+      </BentoGrid>
     </div>
   );
 }
+
+const DiscussionHeader = ({ discussion }: { discussion: DiscussionType }) => (
+  <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-neutral-200 dark:from-neutral-900 dark:to-neutral-800 to-neutral-100">
+    {/* Customize the header as needed based on discussion content */}
+    <div className="text-xl p-4">{discussion.userId.firstName}</div>
+  </div>
+);
+
+const DiscussionIcon = () => (
+  <div className="h-4 w-4 text-neutral-500">
+    {/* Customize icon for each discussion */}
+    <BookAIcon />
+  </div>
+);
 
 export default AllDiscussions;

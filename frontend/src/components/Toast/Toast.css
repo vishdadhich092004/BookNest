@@ -1,29 +1,29 @@
-@keyframes slide-in-success {
+@keyframes slide-in {
   from {
-    transform: translateY(-100%);
+    transform: translateX(100%);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateX(0);
     opacity: 1;
   }
 }
 
-@keyframes slide-in-error {
+@keyframes slide-out {
   from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
+    transform: translateX(0);
     opacity: 1;
   }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
-.toast-slide-in-success {
-  animation: slide-in-success 0.2s ease-out;
+.toast-slide-in {
+  animation: slide-in 0.3s ease-out forwards;
 }
 
-.toast-slide-in-error {
-  animation: slide-in-error 0.2s ease-out;
+.toast-slide-in.hiding {
+  animation: slide-out 0.3s ease-in forwards;
 }

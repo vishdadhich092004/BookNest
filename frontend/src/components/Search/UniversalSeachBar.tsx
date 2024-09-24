@@ -30,7 +30,7 @@ function UniversalSearchBar() {
   return (
     <div className="flex flex-col items-center mt-8 px-4">
       <h1 className="font-bold text-white text-3xl mb-6 text-center">
-        Search Shit that comes in your 🧠.
+        A Book For Your Cerebellum 🧠
       </h1>
       <PlaceholdersAndVanishInput
         onSubmit={handleSearch}

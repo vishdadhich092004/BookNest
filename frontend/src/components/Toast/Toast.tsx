@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import "./Toast.css"; // Import the CSS file for custom animations
+import { XCircle, CheckCircle } from "lucide-react";
+import "./Toast.css";
 
 type ToastProps = {
   message: string;
@@ -13,20 +14,24 @@ export default function Toast({ message, type, onClose }: ToastProps) {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  const styles =
+  const Icon = type === "SUCCESS" ? CheckCircle : XCircle;
+  const baseStyles =
+    "fixed top-20 right-4 p-4 rounded-lg shadow-lg max-w-sm w-full flex items-center space-x-3 transition-all duration-300 ease-in-out z-[100]";
+  const typeStyles =
     type === "SUCCESS"
-      ? "toast-slide-in-success fixed top-4 left-1/2 transform -translate-z-50 p-4 rounded-md bg-green-500 text-white max-w-xs flex items-center space-x-4"
-      : "toast-slide-in-error fixed top-4 left-1/2 transform -translate-z-50 p-4 rounded-md bg-red-500 text-white max-w-xs flex items-center space-x-4";
+      ? "bg-green-900 text-green-100 border-l-4 border-green-500"
+      : "bg-red-900 text-red-100 border-l-4 border-red-500";
 
   return (
-    <div className={styles}>
-      <span className="text-lg font-semibold">{message}</span>
+    <div className={`toast-slide-in ${baseStyles} ${typeStyles}`}>
+      <Icon className="w-6 h-6 flex-shrink-0" />
+      <span className="text-sm font-medium flex-grow">{message}</span>
       <button
         onClick={onClose}
-        className="ml-auto text-white hover:text-gray-300 focus:outline-none"
+        className="text-gray-400 hover:text-gray-200 transition-colors duration-200 focus:outline-none"
         aria-label="Close"
       >
-        &times;
+        <XCircle className="w-5 h-5" />
       </button>
     </div>
   );
