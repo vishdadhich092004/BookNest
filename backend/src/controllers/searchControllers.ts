@@ -14,7 +14,7 @@ export const search = async (req: Request, res: Response) => {
 
     const bookResults = await Book.find({
       $text: { $search: searchTerm },
-    }).select("title description author genre");
+    }).select("title description author genre pdfUrl coverPageUrl ");
 
     const discussionResults = await Discussion.find({
       $text: { $search: searchTerm },

@@ -50,15 +50,15 @@ function SingleComment({ comment, discussionId }: SingleCommentType) {
   };
 
   return (
-    <div className="bg-white shadow-md p-4 rounded-lg mb-4">
-      <p className="text-slate-800">{comment.text}</p>
-      <div className="text-sm text-slate-600 mt-2">
+    <div className="bg-gray-900 shadow-lg p-6 rounded-lg mb-6">
+      <p className="text-white">{comment.text}</p>
+      <div className="text-sm text-gray-400 mt-2">
         <p>
-          <span className="font-semibold">Commented by:</span>{" "}
+          <span className="font-semibold text-white">Commented by:</span>{" "}
           {comment.userId ? comment.userId.firstName : "[deleted]"}
         </p>
         <p>
-          <span className="font-semibold">On:</span>{" "}
+          <span className="font-semibold text-white">On:</span>{" "}
           {new Date(comment.timestamp).toLocaleDateString()}
         </p>
 
@@ -66,18 +66,14 @@ function SingleComment({ comment, discussionId }: SingleCommentType) {
           <LikeButton
             onClick={handleLike}
             disabled={likeMutation.isLoading}
-            className={
-              "px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition-colors duration-300"
-            }
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-300"
           >
             {comment.likes.length}
           </LikeButton>
           <DislikeButton
             onClick={handleDislike}
             disabled={dislikeMutation.isLoading}
-            className={
-              "px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors duration-300"
-            }
+            className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition-colors duration-300"
           >
             {comment.dislikes.length}
           </DislikeButton>

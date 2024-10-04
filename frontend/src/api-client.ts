@@ -75,10 +75,21 @@ export const newDiscussion = async (discussionFormData: DiscussionFormData) => {
   return body;
 };
 
-export const allDiscussions = async (): Promise<DiscussionType[]> => {
-  const response = await fetch(`${BASE_URL}/api/discussions`, {
-    credentials: "include",
-  });
+export const fetchDiscussions = async (
+  page: number = 1,
+  limit: number = 10
+): Promise<{
+  discussions: DiscussionType[];
+  currentPage: number;
+  totalPages: number;
+  totalDiscussions: number;
+}> => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions?page=${page}&limit=${limit}`,
+    {
+      credentials: "include",
+    }
+  );
   if (!response.ok) throw new Error("Error fetching discussions");
   return response.json();
 };
@@ -161,18 +172,19 @@ export const fetchBooksWithoutGenre = async (): Promise<BookType[]> => {
   }
 };
 
-// BOOKS:
 export const fetchBooksWithGenre = async (
   genre: string = "",
-  author: string = ""
-): Promise<BookType[]> => {
+  author: string = "",
+  page: number = 1,
+  limit: number = 9 // Fetch 9 books per page
+): Promise<{ books: BookType[]; totalBooks: number }> => {
   try {
-    // Build the query string based on the provided genre and author
     const queryParams = new URLSearchParams();
     if (genre) queryParams.append("genre", genre);
     if (author) queryParams.append("author", author);
+    queryParams.append("page", page.toString());
+    queryParams.append("limit", limit.toString());
 
-    // Construct the full URL with the query string
     const queryString = queryParams.toString()
       ? `?${queryParams.toString()}`
       : "";
@@ -182,10 +194,10 @@ export const fetchBooksWithGenre = async (
 
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || "Failed to fetch books");
-    return data;
+    return { books: data.books, totalBooks: data.totalBooks };
   } catch (e) {
     console.error("Error fetching books", e);
-    return [];
+    return { books: [], totalBooks: 0 };
   }
 };
 

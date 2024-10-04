@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../contexts/AppContext";
+import { Trash2Icon } from "lucide-react";
 
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
@@ -80,7 +81,7 @@ const DeleteButton = ({ id, toBeDeleted }: DeleteButtonProps) => {
           Deleting...
         </>
       ) : (
-        "Delete"
+        <Trash2Icon></Trash2Icon>
       )}
     </button>
   );

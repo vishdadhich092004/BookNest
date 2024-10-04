@@ -68,10 +68,24 @@ router.get(":/discussionId/owner", async (req: Request, res: Response) => {
 // return all the discussions
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const allDiscussions = await Discussion.find({});
-    res.status(200).send(allDiscussions);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const totalDiscussions = await Discussion.countDocuments();
+    const allDiscussions = await Discussion.find({})
+      .skip(skip)
+      .limit(limit)
+      .populate("userId", "firstName"); // Assuming you want to populate user information
+
+    res.status(200).json({
+      discussions: allDiscussions,
+      currentPage: page,
+      totalPages: Math.ceil(totalDiscussions / limit),
+      totalDiscussions: totalDiscussions,
+    });
   } catch (e) {
-    res.status(501).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 });
 

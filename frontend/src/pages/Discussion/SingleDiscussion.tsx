@@ -12,8 +12,15 @@ import LikeButton from "../../components/Buttons/LikeButton";
 import DislikeButton from "../../components/Buttons/DislikeButton";
 import Loader from "../../components/Loader";
 import { useAuth } from "../../contexts/AuthContext";
+import { EditIcon, EggFried, Projector } from "lucide-react";
+import { useState } from "react";
 
 function SingleDiscussion() {
+  const [isDescriptionExpanded, setDescriptionExpanded] = useState(false); // Add state for controlling description dropdown
+
+  const toggleDescription = () => {
+    setDescriptionExpanded(!isDescriptionExpanded);
+  };
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
@@ -36,7 +43,6 @@ function SingleDiscussion() {
     () => apiClient.likeDiscussion(discussionId!),
     {
       onSuccess: async () => {
-        // Invalidate and refetch the discussion data
         await queryClient.invalidateQueries([
           "fetchDiscussionById",
           discussionId,
@@ -53,17 +59,13 @@ function SingleDiscussion() {
     () => apiClient.dislikeDiscussion(discussionId!),
     {
       onSuccess: async () => {
-        // Invalidate and refetch the discussion data
         await queryClient.invalidateQueries([
           "fetchDiscussionById",
           discussionId,
         ]);
       },
       onError: () => {
-        showToast({
-          message: "Already disliked",
-          type: "ERROR",
-        });
+        showToast({ message: "Already disliked", type: "ERROR" });
       },
     }
   );
@@ -83,121 +85,117 @@ function SingleDiscussion() {
   if (isError || !data) {
     navigate("/");
     return (
-      <div className="flex justify-center items-center h-screen text-xl text-slate-800">
+      <div className="flex justify-center items-center h-screen text-xl text-red-500">
         404 Not Found
       </div>
     );
   }
 
-  const {
-    title,
-    description,
-    userId,
-    createdAt,
-    updatedAt,
-    comments,
-    book,
-    likes,
-    dislikes,
-  } = data as DiscussionType;
-
+  const { title, description, userId, comments, likes, dislikes } =
+    data as DiscussionType;
   return (
-    <div className="container mx-auto px-4 py-6 bg-slate-50">
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-slate-800 mb-4">{title}</h1>
-        <div className="flex justify-between mb-4">
-          <p className="text-slate-600">{description}</p>
+    <div className="container mx-auto px-4 py-6">
+      {/* Back Button at the Top */}
+      <div className="mb-6">
+        <Link
+          className="text-red-400 hover:text-red-600 transition-colors duration-300"
+          to="/discussions"
+        >
+          ← Back
+        </Link>
+      </div>
+
+      <div className="bg-gray-900 shadow-lg rounded-lg p-6 relative">
+        {/* Title and Edit/Delete Buttons */}
+        <div className="flex items-center mb-6">
+          <EggFried size={40} className="text-yellow-400 mr-4" />
+          <h1 className="text-4xl font-bold text-white">{title}</h1>
+
+          {/* Edit and Delete buttons positioned at the top-right */}
           {isAuthenticated &&
             userId._id.toString() === user?._id.toString() && (
-              <Link
-                className="text-teal-600 hover:text-teal-800 transition-colors duration-300"
-                to={`/discussions/${discussionId}/edit`}
-              >
-                Edit Discussion
-              </Link>
+              <div className="absolute top-0 right-0 flex space-x-2 p-4">
+                <Link
+                  className="flex items-center px-4 py-2 bg-yellow-500 text-white rounded-md shadow-md transition duration-300 font-bold"
+                  to={`/discussions/${discussionId}/edit`}
+                >
+                  <EditIcon></EditIcon>
+                </Link>
+                <DeleteButton id={discussionId!} toBeDeleted="discussions" />
+              </div>
             )}
         </div>
-        <div className="text-sm text-slate-500 mb-6">
-          <p>
-            <span className="font-semibold">Created by:</span>{" "}
-            {userId ? userId.firstName : "[deleted]"}
-          </p>
-          <p>
-            <span className="font-semibold">Created at:</span>{" "}
-            {new Date(createdAt).toLocaleDateString()}
-          </p>
-          <p>
-            <span className="font-semibold">Updated at:</span>{" "}
-            {new Date(updatedAt).toLocaleDateString()}
-          </p>
-          <p>
-            <span className="font-semibold">About: </span> {book}
-          </p>
 
-          <div className="mt-4 flex space-x-4">
-            <LikeButton
-              onClick={handleLike}
-              disabled={likeMutation.isLoading}
-              className={
-                "px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700"
-              }
-            >
-              {likes.length}
-            </LikeButton>
-            <DislikeButton
-              onClick={handleDislike}
-              disabled={dislikeMutation.isLoading}
-              className={
-                "px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              }
-            >
-              {dislikes.length}
-            </DislikeButton>
+        {/* Description with 'Read More' functionality */}
+        <div className="mb-4">
+          <p className="text-gray-300">
+            {isDescriptionExpanded
+              ? description // Show full description when expanded
+              : `${description.slice(0, 10)}...`}{" "}
+          </p>
+          <button
+            className="text-red-600 hover:underline mt-2 focus:outline-none"
+            onClick={toggleDescription}
+          >
+            {isDescriptionExpanded ? "Read Less" : "Read More"}
+          </button>
+        </div>
+
+        {/* Like and Dislike Buttons */}
+        <div className="flex space-x-4 items-center">
+          <LikeButton
+            onClick={handleLike}
+            disabled={likeMutation.isLoading}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-300"
+          >
+            {likes.length}
+          </LikeButton>
+
+          <DislikeButton
+            onClick={handleDislike}
+            disabled={dislikeMutation.isLoading}
+            className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition-colors duration-300"
+          >
+            {dislikes.length}
+          </DislikeButton>
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      <div className="mt-6">
+        <div className="flex mb-3">
+          <Projector size={40} className="text-yellow-400 mr-4" />
+          <p className="text-3xl font-semibold text-white mb-4">
+            What others say
+          </p>
+        </div>
+        {comments && comments.length > 0 ? (
+          <div className="space-y-4">
+            {comments.map((comment: CommentType) => (
+              <SingleComment
+                key={comment._id}
+                comment={comment}
+                discussionId={discussionId!}
+              />
+            ))}
           </div>
-        </div>
-        <div className="flex justify-between mb-6">
-          <Link
-            className="text-teal-600 hover:text-teal-800 transition-colors duration-300"
-            // to={`/discussions/${discussionId}/comments`}
-            to={`${
-              isAuthenticated
-                ? `/discussions/${discussionId}/comments`
-                : "/sign-in"
-            }`}
-          >
-            New Comment
-          </Link>
-          <Link
-            className="text-teal-600 hover:text-teal-800 transition-colors duration-300"
-            to="/discussions"
-          >
-            Back
-          </Link>
-          {isAuthenticated &&
-            userId._id.toString() === user?._id.toString() && (
-              <DeleteButton id={discussionId!} toBeDeleted="discussions" />
-            )}
-        </div>
+        ) : (
+          <p className="text-gray-500">Be the first to comment.</p>
+        )}
+      </div>
 
-        {/* Comments Section */}
-        <div>
-          <h2 className="text-2xl font-semibold text-slate-800 mb-4">
-            Comments
-          </h2>
-          {comments && comments.length > 0 ? (
-            <div className="space-y-4">
-              {comments.map((comment: CommentType) => (
-                <SingleComment
-                  key={comment._id}
-                  comment={comment}
-                  discussionId={discussionId!}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-slate-500">Be the first to comment.</p>
-          )}
-        </div>
+      {/* Navigation Links */}
+      <div className="flex justify-between mt-6">
+        <Link
+          className="text-red-400 hover:text-red-600 transition-colors duration-300"
+          to={
+            isAuthenticated
+              ? `/discussions/${discussionId}/comments`
+              : "/sign-in"
+          }
+        >
+          New Comment
+        </Link>
       </div>
     </div>
   );

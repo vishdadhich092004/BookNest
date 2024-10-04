@@ -184,16 +184,29 @@ router.get("/:bookId", async (req: Request, res: Response) => {
 
 router.get("/", async (req: Request, res: Response) => {
   try {
-    // Extract query parameters for genre and author
-    const { genre, author } = req.query;
+    // Extract query parameters for genre, author, page, and limit
+    const { genre, author, page, limit } = req.query;
 
     // Build a dynamic filter object based on query parameters
     const filter: any = {};
     if (genre) filter.genre = genre;
     if (author) filter.author = author;
 
-    // Fetch books from the database based on the filter and sort by creation date (newest first)
-    const books = await Book.find(filter).sort({ _id: -1 }).lean();
+    // Handle pagination only if page and limit are provided
+    const pageNumber = page ? Number(page) : null;
+    const limitNumber = limit ? Number(limit) : null;
+
+    let booksQuery = Book.find(filter).sort({ _id: -1 }).lean();
+
+    // Apply pagination only if page and limit are provided
+    if (pageNumber && limitNumber) {
+      booksQuery = booksQuery
+        .skip((pageNumber - 1) * limitNumber)
+        .limit(limitNumber);
+    }
+
+    // Fetch books from the database
+    const books = await booksQuery;
 
     const booksWithSignedUrls = await Promise.all(
       books.map(async (book) => {
@@ -221,7 +234,17 @@ router.get("/", async (req: Request, res: Response) => {
       })
     );
 
-    res.status(200).json(booksWithSignedUrls);
+    // Respond with the books (and pagination info if applicable)
+    if (pageNumber && limitNumber) {
+      res.status(200).json({
+        currentPage: pageNumber,
+        totalBooks: await Book.countDocuments(filter), // Total number of books matching the filter
+        booksPerPage: limitNumber,
+        books: booksWithSignedUrls,
+      });
+    } else {
+      res.status(200).json(booksWithSignedUrls); // No pagination, just return the books
+    }
   } catch (error) {
     console.error("Error fetching books:", error);
     res.status(500).json({ error: "Failed to fetch books" });
@@ -258,18 +281,6 @@ router.delete(
     }
   }
 );
-
-router.get("/books", async (req: Request, res: Response) => {
-  const { genre } = req.query;
-  try {
-    const filter = genre ? { genre: genre.toString() } : {};
-
-    const books = await Book.find(filter);
-    res.status(200).json(books);
-  } catch (e) {
-    res.status(500).json({ message: "ERROR FETCHING BOOKS", e });
-  }
-});
 
 router.post("/:bookId/mark-read", verifyToken, bookController.markBookAsRead);
 

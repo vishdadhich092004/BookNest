@@ -39,7 +39,7 @@ function LampComponent() {
       >
         <button
           onClick={handleJoinNow}
-          className="w-40 h-10 rounded-xl bg-black border dark:border-white border-transparent text-white text-sm"
+          className="w-40 h-14  rounded-xl bg-black border dark:border-white border-transparent text-white text-xl font-bold"
         >
           Join now
         </button>

@@ -11,6 +11,7 @@ import ClubsTab from "./Tabs/ClubsTab";
 import CommentsTab from "./Tabs/CommentsTab";
 import DiscussionsTab from "./Tabs/DiscussionsTab";
 import ReviewsTab from "./Tabs/ReviewsTab";
+import { cn } from "../../lib/utills"; // Assuming you have this utility
 
 type SearchResultsProps = {
   results: {
@@ -52,8 +53,26 @@ function ResultTabs({ results }: SearchResultsProps) {
   ];
 
   return (
-    <div className="h-[20rem] md:h-[40rem] [perspective:1000px] relative flex flex-col w-full items-start justify-start my-40">
-      <Tabs tabs={tabs} />
+    <div
+      className={cn(
+        "h-[20rem] md:h-[40rem] [perspective:1000px] relative flex flex-col w-full items-start justify-start my-20",
+        "bg-black bg-opacity-70 backdrop-blur-md rounded-lg shadow-lg",
+        "border border-indigo-500/20"
+      )}
+    >
+      <Tabs
+        tabs={tabs}
+        containerClassName="p-4"
+        tabClassName={cn(
+          "text-white hover:text-indigo-400 transition-colors duration-300",
+          "border-b-2 border-transparent hover:border-indigo-500"
+        )}
+        activeTabClassName={cn(
+          "text-indigo-400 border-b-2 border-indigo-500",
+          "bg-gradient-to-r from-indigo-500/10 to-purple-500/10"
+        )}
+        contentClassName="mt-4 text-white"
+      />
     </div>
   );
 }
