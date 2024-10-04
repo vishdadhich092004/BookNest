@@ -5,7 +5,7 @@ import { BookType } from "../../../../backend/src/shared/types";
 import Loader from "../../components/Loader";
 import AuthorFilter from "../../components/Filters/AuthorFilter";
 import GenreFilter from "../../components/Filters/GenreFilter";
-
+import UniversalSearchBar from "../../components/Search/UniversalSeachBar";
 function BookFocusCards() {
   const [books, setBooks] = useState<BookType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,14 +61,13 @@ function BookFocusCards() {
 
   return (
     <div className="max-w-7xl mx-auto mt-8 px-6">
-      <div className="mb-6 flex items-center space-x-4">
+      <div className="mb-8 flex items-center space-x-4">
         {/* Genre Filter */}
         <GenreFilter
           genres={genres}
           selectedGenre={genre}
           onGenreChange={setGenre}
         />
-
         {/* Author Filter */}
         <AuthorFilter
           authors={authors}
@@ -78,7 +77,8 @@ function BookFocusCards() {
       </div>
 
       {/* Title */}
-      <h1 className="text-4xl font-bold text-white mb-8">Books List</h1>
+      <h1 className="text-4xl font-bold text-white mb-8">Books Mania</h1>
+      <UniversalSearchBar />
 
       {/* Display Book Cards */}
       <FocusCards cards={cards} />

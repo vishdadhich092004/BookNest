@@ -8,8 +8,10 @@ function HeroSection() {
       <div className="flex flex-col h-full">
         {/* Display the PlaceholdersAndVanishInputComponent only on smaller screens at the top */}
         <div>
+          <h1 className="font-bold text-white text-3xl mb-6 text-center mt-8">
+            A Book For Your Cerebellum 🧠
+          </h1>
           <UniversalSearchBar />
-          {/* <SearchBar /> */}
         </div>
 
         {/* Main content */}
