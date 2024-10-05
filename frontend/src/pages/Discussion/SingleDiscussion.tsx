@@ -163,11 +163,21 @@ function SingleDiscussion() {
 
       {/* Comments Section */}
       <div className="mt-6">
-        <div className="flex mb-3">
+        <div className="flex mb-3 justify-">
           <Projector size={40} className="text-yellow-400 mr-4" />
           <p className="text-3xl font-semibold text-white mb-4">
             What others say
           </p>
+          <Link
+            className="text-red-400 hover:text-red-600 transition-colors duration-300"
+            to={
+              isAuthenticated
+                ? `/discussions/${discussionId}/comments`
+                : "/sign-in"
+            }
+          >
+            New Comment
+          </Link>
         </div>
         {comments && comments.length > 0 ? (
           <div className="space-y-4">
@@ -182,20 +192,6 @@ function SingleDiscussion() {
         ) : (
           <p className="text-gray-500">Be the first to comment.</p>
         )}
-      </div>
-
-      {/* Navigation Links */}
-      <div className="flex justify-between mt-6">
-        <Link
-          className="text-red-400 hover:text-red-600 transition-colors duration-300"
-          to={
-            isAuthenticated
-              ? `/discussions/${discussionId}/comments`
-              : "/sign-in"
-          }
-        >
-          New Comment
-        </Link>
       </div>
     </div>
   );

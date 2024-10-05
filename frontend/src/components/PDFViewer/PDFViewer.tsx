@@ -19,16 +19,21 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl }) => {
   const [currentScale, setCurrentScale] = useState<number | SpecialZoomLevel>(
     0.9
   );
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const viewerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchPdf = async () => {
       try {
         const response = await fetch(pdfUrl, { credentials: "include" });
+        if (!response.ok) {
+          throw new Error(`Error fetching PDF: ${response.statusText}`);
+        }
         const arrayBuffer = await response.arrayBuffer();
         setPdfData(new Uint8Array(arrayBuffer));
       } catch (error) {
         console.error("Error fetching PDF:", error);
+        setErrorMessage("Failed to load PDF. Please try again later.");
       }
     };
 
@@ -41,22 +46,37 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl }) => {
   }, [pdfUrl]);
 
   const handleDocumentLoad = () => {
-    if (viewerRef.current) {
-      viewerRef.current.querySelector(".rpv-core__viewer")?.scrollTo(0, 0);
+    const viewerElement = viewerRef.current?.querySelector(".rpv-core__viewer");
+    if (viewerElement) {
+      viewerElement.scrollTo(0, 0);
     }
   };
 
   const handlePageChange = (e: { currentPage: number }) => {
     const { currentPage } = e;
     setCurrentPage(currentPage);
-    localStorage.setItem("currentPage", currentPage.toString());
   };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      localStorage.setItem("currentPage", currentPage.toString());
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [currentPage]);
 
   const handleZoomChange = (e: ZoomEvent) => {
     const scale = e.scale;
     setCurrentScale(scale);
-    localStorage.setItem("currentScale", scale.toString());
   };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      localStorage.setItem("currentScale", currentScale.toString());
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [currentScale]);
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
     renderToolbar: (Toolbar) => (
@@ -99,20 +119,24 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl }) => {
 
   return (
     <div style={{ height: "100vh" }} ref={viewerRef}>
-      <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-        {pdfData && (
-          <Viewer
-            fileUrl={pdfData}
-            plugins={[defaultLayoutPluginInstance]}
-            defaultScale={currentScale}
-            initialPage={currentPage - 1}
-            onPageChange={handlePageChange}
-            onZoom={handleZoomChange}
-            onDocumentLoad={handleDocumentLoad}
-            withCredentials={true}
-          />
-        )}
-      </Worker>
+      {errorMessage ? (
+        <div>{errorMessage}</div>
+      ) : (
+        <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+          {pdfData && (
+            <Viewer
+              fileUrl={pdfData}
+              plugins={[defaultLayoutPluginInstance]}
+              defaultScale={currentScale}
+              initialPage={currentPage - 1}
+              onPageChange={handlePageChange}
+              onZoom={handleZoomChange}
+              onDocumentLoad={handleDocumentLoad}
+              withCredentials={true}
+            />
+          )}
+        </Worker>
+      )}
     </div>
   );
 };

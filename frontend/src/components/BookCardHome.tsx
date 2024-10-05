@@ -42,7 +42,7 @@ function BookCardHome({ book }: BookCardProps) {
             Wishlist
           </Link> */}
           <Link
-            to={`/books/${book._id}/read`}
+            to={`/books/${book._id}`}
             className={cn(
               "bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-5 py-2 rounded-full shadow-lg",
               "hover:from-purple-500 hover:to-indigo-500 transition-transform duration-300 transform hover:scale-105"
