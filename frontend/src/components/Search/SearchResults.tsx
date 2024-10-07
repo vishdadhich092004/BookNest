@@ -8,7 +8,6 @@ import {
   CommentType,
   DiscussionType,
   ReviewType,
-  ClubType,
 } from "../../../../backend/src/shared/types";
 import { cn } from "../../lib/utills"; // Assuming you have this utility
 import Loader from "../Loader";
@@ -18,7 +17,6 @@ type SearchResults = {
   comments: CommentType[];
   discussions: DiscussionType[];
   reviews: ReviewType[];
-  clubs: ClubType[];
 };
 
 const SearchResults: React.FC = () => {

@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express";
 import Book from "../models/book";
 import Discussion from "../models/discussion";
-import Club from "../models/club";
 import Comment from "../models/comment";
 import Review from "../models/review";
 
@@ -20,10 +19,6 @@ export const search = async (req: Request, res: Response) => {
       $text: { $search: searchTerm },
     }).select("title description");
 
-    const clubResults = await Club.find({
-      $text: { $search: searchTerm },
-    }).select("title description");
-
     const commentResults = await Comment.find({
       $text: { $search: searchTerm },
     }).select("text");
@@ -32,15 +27,14 @@ export const search = async (req: Request, res: Response) => {
       $text: { $search: searchTerm },
     }).select("text");
 
-    const [books, comments, discussions, reviews, clubs] = await Promise.all([
+    const [books, comments, discussions, reviews] = await Promise.all([
       bookResults,
       commentResults,
       discussionResults,
       reviewResults,
-      clubResults,
     ]);
 
-    res.status(200).json({ books, comments, discussions, reviews, clubs });
+    res.status(200).json({ books, comments, discussions, reviews });
   } catch (e) {
     console.error(e);
     res.status(500).json({

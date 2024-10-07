@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 const placeholders = [
   "What's the best mystery novel of the decade?",
   "Who wrote 'The Catcher in the Rye'?",
-  "Best book clubs to join?",
   "Most discussed books recently?",
   "What are people saying about '1984'?",
 ];

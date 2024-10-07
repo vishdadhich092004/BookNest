@@ -1,13 +1,11 @@
 import {
   BookType,
-  ClubType,
   CommentType,
   DiscussionType,
   ReviewType,
 } from "../../../../backend/src/shared/types";
 import { Tabs } from "../aceternity-ui/tabs";
 import BooksTab from "./Tabs/BooksTab";
-import ClubsTab from "./Tabs/ClubsTab";
 import CommentsTab from "./Tabs/CommentsTab";
 import DiscussionsTab from "./Tabs/DiscussionsTab";
 import ReviewsTab from "./Tabs/ReviewsTab";
@@ -19,7 +17,6 @@ type SearchResultsProps = {
     comments: CommentType[];
     discussions: DiscussionType[];
     reviews: ReviewType[];
-    clubs: ClubType[];
   };
 };
 
@@ -44,11 +41,6 @@ function ResultTabs({ results }: SearchResultsProps) {
       title: "Comments",
       value: "comments",
       content: <CommentsTab comments={results.comments} />,
-    },
-    {
-      title: "Clubs",
-      value: "clubs",
-      content: <ClubsTab clubs={results.clubs} />,
     },
   ];
 

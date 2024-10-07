@@ -5,7 +5,6 @@ import Comment from "../models/comment";
 import { check, validationResult } from "express-validator";
 import { Role, assignPermissions } from "../config/rolesConfig";
 import Book from "../models/book";
-import Club from "../models/club";
 import Discussion from "../models/discussion";
 const router = express.Router();
 
@@ -79,17 +78,7 @@ router.get("/:userId/discussions", async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Something went wrong" });
   }
 });
-router.get("/:userId/clubs", async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  try {
-    const clubs = await Club.find({
-      $or: [{ admin: userId }, { members: userId }],
-    });
-    return res.status(200).json(clubs);
-  } catch (e) {
-    return res.status(500).json({ message: "Something went wrong" });
-  }
-});
+
 router.get("/:userId/books", async (req: Request, res: Response) => {
   const { userId } = req.params;
   try {

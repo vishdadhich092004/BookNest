@@ -54,7 +54,6 @@ const Header = () => {
         <ul className="hidden lg:flex space-x-8">
           <NavLink to="/discussions">Discussions</NavLink>
           <NavLink to="/books">Books</NavLink>
-          <NavLink to="/clubs">Clubs</NavLink>
         </ul>
 
         {/* User Greeting and Auth Buttons */}
@@ -87,13 +86,7 @@ const Header = () => {
             >
               Books
             </NavLink>
-            <NavLink
-              to="/clubs"
-              onClick={toggleMenu}
-              className="text-white hover:text-indigo-400 transition-colors duration-300"
-            >
-              Clubs
-            </NavLink>
+
             {isAuthenticated && user && (
               <Link
                 to={`/${user._id}`}

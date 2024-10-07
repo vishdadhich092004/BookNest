@@ -12,10 +12,7 @@ import AllBooks from "./pages/Book/AllBooks";
 import NewReview from "./pages/Review/NewReview";
 import SingleBook from "./components/SingleBook";
 import HomePage from "./pages/HomePage";
-import NewClub from "./pages/Club/NewClub";
 import { useAuth } from "./contexts/AuthContext";
-import AllClubs from "./pages/Club/AllClubs";
-import SingleClub from "./pages/Club/SingleClub";
 import UserPage from "./pages/UserPage";
 import SearchResults from "./components/Search/SearchResults";
 function App() {
@@ -149,42 +146,7 @@ function App() {
             </Layout>
           }
         />
-        {isAuthenticated ? (
-          <Route
-            path="/clubs/new"
-            element={
-              <Layout>
-                <NewClub />
-              </Layout>
-            }
-          />
-        ) : (
-          <Route
-            path="/sign-in"
-            element={
-              <Layout>
-                <SignIn />
-              </Layout>
-            }
-          />
-        )}
 
-        <Route
-          path="/clubs"
-          element={
-            <Layout>
-              <AllClubs />
-            </Layout>
-          }
-        />
-        <Route
-          path="/clubs/:clubId"
-          element={
-            <Layout>
-              <SingleClub />
-            </Layout>
-          }
-        />
         <Route
           path="/:userId"
           element={

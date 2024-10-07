@@ -3,7 +3,6 @@ import { SignInFormData } from "./pages/Auth/SignIn";
 import { DiscussionFormData } from "./pages/Discussion/NewDiscussion";
 import {
   BookType,
-  ClubType,
   CommentType,
   DiscussionType,
 } from "../../backend/src/shared/types";
@@ -286,40 +285,6 @@ export const fetchCommentByDiscussionId = async (discussionId: string) => {
   return response.json();
 };
 
-export const fetchClubs = async (): Promise<ClubType[]> => {
-  const response = await fetch(`${BASE_URL}/api/clubs`, {
-    credentials: "include",
-  });
-  if (!response.ok) throw new Error("Error fetching Clubs");
-  return response.json();
-};
-
-export const fetchClubById = async (clubId: string): Promise<ClubType> => {
-  const response = await fetch(`${BASE_URL}/api/clubs/${clubId}`, {
-    credentials: "include",
-  });
-  if (!response.ok) throw new Error("Error fetching club");
-  const body = await response.json();
-  return body;
-};
-
-export const joinClub = async (clubId: string) => {
-  const response = await fetch(`${BASE_URL}/api/clubs/${clubId}/join`, {
-    credentials: "include",
-    method: "POST",
-  });
-  if (!response.ok) throw new Error("Failed to Join the Club");
-  return response.json();
-};
-export const leaveClub = async (clubId: string) => {
-  const response = await fetch(`${BASE_URL}/api/clubs/${clubId}/leave`, {
-    credentials: "include",
-    method: "POST",
-  });
-  if (!response.ok) throw new Error("Failed to Leave the Club");
-  return response.json();
-};
-
 export const fetchUserComments = async (
   userId: string
 ): Promise<CommentType[]> => {
@@ -337,14 +302,6 @@ export const fetchUserDiscussions = async (
     credentials: "include",
   });
   if (!response.ok) throw new Error("Error fetching discussions");
-  return response.json();
-};
-
-export const fetchUserClubs = async (userId: string): Promise<ClubType[]> => {
-  const response = await fetch(`${BASE_URL}/api/users/${userId}/clubs`, {
-    credentials: "include",
-  });
-  if (!response.ok) throw new Error("Error fetching clubs");
   return response.json();
 };
 

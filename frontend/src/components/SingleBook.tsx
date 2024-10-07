@@ -8,7 +8,6 @@ import { useAuth } from "../contexts/AuthContext";
 import {
   Book,
   ArrowLeft,
-  Trash2,
   Eye,
   Signature,
   BookmarkPlus,
@@ -17,6 +16,7 @@ import {
 import { cn } from "../lib/utills";
 import BookReader from "./Books/BookReader";
 import AllReviewsSectionForABook from "./Reviews/AllReviewsSectionForABook";
+import DeleteButton from "./Buttons/DeleteButton";
 
 const SingleBook: React.FC = () => {
   const [isBookReaderOpen, setIsBookReaderOpen] = useState(false);
@@ -143,13 +143,7 @@ const SingleBook: React.FC = () => {
                   </button>
                 </Link>
                 {userId.toString() === user?._id.toString() && (
-                  <button
-                    onClick={() => console.log("Delete book")}
-                    className="bg-red-600 text-white px-6 py-3 rounded-full flex items-center shadow-lg hover:bg-red-700 hover:shadow-xl transition-all duration-300"
-                  >
-                    <Trash2 className="mr-2" size={18} />
-                    Delete Book
-                  </button>
+                  <DeleteButton id={bookId!} toBeDeleted="books" />
                 )}
               </div>
             </div>

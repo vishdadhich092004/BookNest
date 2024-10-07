@@ -4,7 +4,6 @@ import { useAppContext } from "../contexts/AppContext";
 import * as apiClient from "../api-client";
 import Loader from "../components/Loader";
 import BookCard from "../components/UserCards/BooksCard";
-import ClubCard from "../components/UserCards/ClubsCard";
 import CommentCard from "../components/UserCards/CommentsCard";
 import DiscussionCard from "../components/UserCards/DiscussionsCard";
 
@@ -31,16 +30,6 @@ function UserPage() {
     }
   );
 
-  const { data: clubs, isLoading: loadingClubs } = useQuery(
-    ["userClubs", userId],
-    () => apiClient.fetchUserClubs(userId as string),
-    {
-      onError: () => {
-        showToast({ message: "Error fetching clubs", type: "ERROR" });
-      },
-    }
-  );
-
   const { data: books, isLoading: loadingBooks } = useQuery(
     ["userBooks", userId],
     () => apiClient.fetchUserBooks(userId as string),
@@ -51,7 +40,7 @@ function UserPage() {
     }
   );
 
-  if (loadingComments || loadingDiscussions || loadingClubs || loadingBooks) {
+  if (loadingComments || loadingDiscussions || loadingBooks) {
     return <Loader />;
   }
 
@@ -76,18 +65,6 @@ function UserPage() {
             title={discussion.title}
             description={discussion.description}
             discussionId={discussion._id}
-          />
-        ))}
-      </section>
-
-      <section className="mb-8">
-        <h3 className="text-xl font-semibold text-slate-800 mb-4">Clubs</h3>
-        {clubs?.map((club, index) => (
-          <ClubCard
-            key={index}
-            name={club.title}
-            description={club.description}
-            clubId={club._id}
           />
         ))}
       </section>
