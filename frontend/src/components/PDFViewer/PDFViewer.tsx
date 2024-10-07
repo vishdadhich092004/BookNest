@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Viewer,
   Worker,
@@ -11,14 +11,31 @@ import { pageNavigationPlugin } from "@react-pdf-viewer/page-navigation";
 import "@react-pdf-viewer/page-navigation/lib/styles/index.css";
 
 interface PDFViewerProps {
-  pdfUrl: string;
-  onDocumentLoad?: () => void;
-  onError?: (error: Error) => void;
-  isMobile: boolean;
-  scale: number;
+  pdfUrl: string; // URL of the PDF to be displayed
+  onDocumentLoad?: () => void; // Optional callback function when the document loads
+  onError?: (error: Error) => void; // Optional callback function to handle errors
+  isMobile: boolean; // Boolean indicating if the viewer is on a mobile device
+  scale: number; // Number indicating the scale factor for the PDF viewer
+}
+// Define the theme context props
+interface ThemeContextProps {
+  currentTheme: string; // You can change this type to be more specific if needed
+  setCurrentTheme: (theme: string) => void; // A function to set the current theme
+  viewer: { background: string };
+  page: {
+    background: string;
+    border: string;
+    boxShadow: string;
+    color: string;
+  };
+  toolbar: { backgroundColor: string; color: string };
+  sidebar: { backgroundColor: string; color: string };
 }
 
-const darkTheme = {
+// Dark theme definition
+const darkTheme: ThemeContextProps = {
+  currentTheme: "dark",
+  setCurrentTheme: () => {}, // Placeholder function; you'll implement the actual logic
   viewer: {
     background: "#000",
   },
@@ -38,14 +55,17 @@ const darkTheme = {
   },
 };
 
-const PDFViewer: React.FC<PDFViewerProps> = ({
+const PDFViewer = ({
   pdfUrl,
   onDocumentLoad,
   onError,
   isMobile,
   scale,
-}) => {
+}: PDFViewerProps) => {
   const [pdfData, setPdfData] = useState<Uint8Array | null>(null);
+
+  // State for managing current theme
+  const [currentTheme, setCurrentTheme] = useState<string>("dark");
 
   useEffect(() => {
     const fetchPdf = async () => {
@@ -71,7 +91,9 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
   return (
     <div style={{ height: "100%", width: "100%" }}>
       <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-        <ThemeContext.Provider value={darkTheme}>
+        <ThemeContext.Provider
+          value={{ ...darkTheme, currentTheme, setCurrentTheme }}
+        >
           {pdfData && (
             <Viewer
               fileUrl={pdfData}
@@ -82,7 +104,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
               }
               onDocumentLoad={onDocumentLoad}
               withCredentials={true}
-              theme="dark"
+              // No theme prop since we are using context
             />
           )}
         </ThemeContext.Provider>
