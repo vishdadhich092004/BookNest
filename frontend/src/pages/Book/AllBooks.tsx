@@ -50,7 +50,7 @@ function BookFocusCards() {
     }
 
     loadBooks();
-  }, [genre, author, page]);
+  }, [genre, author, page, limit]);
 
   const totalPages = Math.ceil(totalBooks / limit);
 

@@ -15,6 +15,7 @@ import HomePage from "./pages/HomePage";
 import { useAuth } from "./contexts/AuthContext";
 import UserPage from "./pages/UserPage";
 import SearchResults from "./components/Search/SearchResults";
+import NotFound from "./pages/NotFound";
 function App() {
   const { isAuthenticated } = useAuth();
   return (
@@ -159,7 +160,7 @@ function App() {
           path="*"
           element={
             <Layout>
-              <HomePage />
+              <NotFound />
             </Layout>
           }
         />

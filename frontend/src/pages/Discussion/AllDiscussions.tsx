@@ -9,15 +9,17 @@ import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { DiscussionType } from "../../../../backend/src/shared/types";
-import { BookAIcon } from "lucide-react";
-import Pagination from "../../components/Pagination"; // Assuming you have this component
+import { BookAIcon, PlusCircle } from "lucide-react";
+import Pagination from "../../components/Pagination";
 import Loader from "../../components/Loader";
+import { cn } from "../../lib/utills";
+import NotFound from "../NotFound";
 
 function AllDiscussions() {
   const { isAuthenticated } = useAuth();
   const { showToast } = useAppContext();
   const [page, setPage] = useState(1);
-  const limit = 10; // You can adjust this or make it dynamic
+  const limit = 10;
 
   const { isLoading, data, isError } = useQuery(
     ["allDiscussions", page],
@@ -34,23 +36,25 @@ function AllDiscussions() {
   }
 
   if (isError || !data) {
-    return (
-      <div className="text-center text-red-600 text-2xl font-bold">
-        404 Not found
-      </div>
-    );
+    return <NotFound />;
   }
 
   const { discussions, currentPage, totalPages } = data;
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold mb-4 sm:mb-0">Discussions</h1>
         <Link
           to={isAuthenticated ? "/discussions/new" : "/sign-in"}
-          className="px-4 py-2 bg-teal-600 text-white rounded-sm hover:bg-teal-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+          className={cn(
+            "bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-5 py-2 rounded-full shadow-lg",
+            "hover:from-purple-500 hover:to-indigo-500 transition-transform duration-300 transform hover:scale-105 flex items-center",
+            "ml-0 sm:ml-4 lg:mt-4" // Adjust margin-left for small screens
+          )}
         >
-          Create New Discussion
+          <PlusCircle className="mr-2" />
+          Create Your Discussion
         </Link>
       </div>
 

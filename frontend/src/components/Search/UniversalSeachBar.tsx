@@ -10,7 +10,11 @@ const placeholders = [
   "What are people saying about '1984'?",
 ];
 
-function UniversalSearchBar() {
+interface UniversalSearchBarProps {
+  className?: string; // Optional className prop
+}
+
+function UniversalSearchBar({ className = "" }: UniversalSearchBarProps) {
   const [query, setQuery] = useState<string>(""); // State for the search query
   const navigate = useNavigate(); // useNavigate for programmatic navigation
 
@@ -26,8 +30,9 @@ function UniversalSearchBar() {
       navigate(`/search-results?q=${query}`); // Navigate to SearchResultsPage with query
     }
   };
+
   return (
-    <div className="flex flex-col items-center mt-8 px-4">
+    <div className={`flex flex-col items-center mt-8 px-4 ${className}`}>
       <PlaceholdersAndVanishInput
         onSubmit={handleSearch}
         className="w-full"

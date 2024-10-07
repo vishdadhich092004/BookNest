@@ -1,25 +1,26 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { LibraryBig } from "lucide-react"; // Importing the icon
 import SignOutButton from "./Buttons/SignOutButton";
 import { useAuth } from "../contexts/AuthContext";
-import { FaRegUser } from "react-icons/fa";
+import UserDisplay from "./UserDisplay";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { cn } from "../lib/utills"; // Assuming you're using this for classnames
+import { cn } from "../lib/utills";
+import SignInButton from "./Buttons/SignInButton";
+import NavLink from "./Navbar/NavLink";
 
 const Header = () => {
   const { isAuthenticated, user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // New state for dropdown
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen); // Toggle dropdown
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setHasScrolled(true); // When scrolled down
-      } else {
-        setHasScrolled(false); // When at the top
-      }
+      setHasScrolled(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -33,14 +34,21 @@ const Header = () => {
       className={cn(
         "w-full z-50 fixed top-0 transition-colors duration-300",
         hasScrolled
-          ? "bg-black bg-opacity-70 backdrop-blur-md" // Faded background on scroll
-          : "bg-transparent"
+          ? "bg-black bg-opacity-70 backdrop-blur-md"
+          : "bg-transparent",
+        "mb-4 sm:mb-0"
       )}
     >
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        {/* Logo */}
-        <div className="text-white text-3xl font-bold tracking-wider">
-          <Link to="/">BookNest</Link>
+        {/* Logo with Icon */}
+        <div className="flex items-center space-x-2 text-white text-3xl font-bold tracking-wider">
+          <LibraryBig
+            className="w-8 h-8 sm:w-10 sm:h-10 text-indigo-400"
+            aria-label="Library Icon"
+          />
+          <Link to="/" className="hover:text-indigo-400">
+            BookNest
+          </Link>
         </div>
 
         {/* Hamburger Menu for Mobile */}
@@ -57,14 +65,27 @@ const Header = () => {
         </ul>
 
         {/* User Greeting and Auth Buttons */}
-        <div className="hidden md:flex items-center space-x-6">
-          {isAuthenticated && user && (
-            <Link to={`/${user._id}`} className="flex items-center text-white">
-              <FaRegUser className="text-xl mr-2" />
-              <span className="text-sm font-medium">{user.firstName}</span>
-            </Link>
+        <div className="hidden md:flex items-center space-x-6 relative">
+          {isAuthenticated && user ? (
+            <>
+              <UserDisplay user={user} onClick={toggleDropdown} />
+              {/* Dropdown Menu */}
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-black bg-opacity-80 rounded-lg shadow-lg p-4">
+                  <Link
+                    to={`/${user._id}`}
+                    className="block text-white hover:text-indigo-400 transition-colors duration-300"
+                    onClick={() => setIsDropdownOpen(false)} // Close dropdown on click
+                  >
+                    My Profile
+                  </Link>
+                  <SignOutButton onClick={() => setIsDropdownOpen(false)} />
+                </div>
+              )}
+            </>
+          ) : (
+            <SignInButton />
           )}
-          {isAuthenticated ? <SignOutButton /> : <SignInButton />}
         </div>
       </div>
 
@@ -91,10 +112,12 @@ const Header = () => {
               <Link
                 to={`/${user._id}`}
                 className="flex items-center text-white hover:text-indigo-400 transition-colors duration-300 ml-2"
-                onClick={toggleMenu} // Close menu on click
+                onClick={toggleMenu}
               >
-                <FaRegUser className="text-xl mr-2" />
-                <span className="text-sm font-medium">{user.firstName}</span>
+                <UserDisplay
+                  user={user}
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                />
               </Link>
             )}
             {isAuthenticated ? <SignOutButton /> : <SignInButton />}
@@ -104,42 +127,5 @@ const Header = () => {
     </nav>
   );
 };
-
-type NavProps = {
-  to: string;
-  children: React.ReactNode; // Change to React.ReactNode for better flexibility
-  onClick?: () => void;
-  className?: string; // Make className optional
-};
-const NavLink = ({ to, children, onClick, className }: NavProps) => (
-  <Link
-    to={to}
-    className={cn(
-      "text-white text-lg font-medium relative group",
-      "hover:text-indigo-400 transition-all duration-300 ease-in-out",
-      className // Apply className here
-    )}
-    onClick={onClick}
-  >
-    {children}
-    <span
-      className={cn(
-        "absolute left-0 bottom-0 w-0 h-[2px] bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 ease-in-out group-hover:w-full"
-      )}
-    />
-  </Link>
-);
-
-const SignInButton = () => (
-  <Link
-    to="/sign-in"
-    className={cn(
-      "bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-5 py-2 rounded-full shadow-lg",
-      "hover:from-purple-500 hover:to-indigo-500 transition-transform duration-300 transform hover:scale-105"
-    )}
-  >
-    Sign In
-  </Link>
-);
 
 export default Header;

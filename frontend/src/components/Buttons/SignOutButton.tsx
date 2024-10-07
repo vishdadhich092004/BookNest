@@ -4,7 +4,11 @@ import { useAppContext } from "../../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utills"; // Assuming you're using this for classnames
 
-const SignOutButton = () => {
+interface SignOutButtonProps {
+  onClick?: () => void; // Optional prop to close dropdown
+}
+
+const SignOutButton = ({ onClick }: SignOutButtonProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { showToast } = useAppContext();
@@ -15,6 +19,7 @@ const SignOutButton = () => {
       queryClient.setQueryData("validate-token", null);
       showToast({ message: "Signed Out!", type: "SUCCESS" });
       navigate("/");
+      if (onClick) onClick(); // Call onClick prop to close dropdown
     },
     onError: (error: Error) => {
       showToast({ message: error.message, type: "ERROR" });
