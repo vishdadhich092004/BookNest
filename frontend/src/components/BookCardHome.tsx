@@ -35,12 +35,6 @@ function BookCardHome({ book }: BookCardProps) {
 
         {/* Buttons Section */}
         <div className="mt-8 flex justify-center space-x-4">
-          {/* <Link
-            to={`/books/${book._id}`}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition"
-          >
-            Wishlist
-          </Link> */}
           <Link
             to={`/books/${book._id}`}
             className={cn(

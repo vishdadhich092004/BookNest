@@ -149,6 +149,14 @@ function App() {
         />
 
         <Route
+          path="/settings"
+          element={
+            <Layout>
+              <NotFound />
+            </Layout>
+          }
+        />
+        <Route
           path="/:userId"
           element={
             <Layout>

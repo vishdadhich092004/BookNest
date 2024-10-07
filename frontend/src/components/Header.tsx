@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { LibraryBig } from "lucide-react"; // Importing the icon
+import { LibraryBig, User, LogOut, Settings } from "lucide-react";
 import SignOutButton from "./Buttons/SignOutButton";
 import { useAuth } from "../contexts/AuthContext";
 import UserDisplay from "./UserDisplay";
@@ -9,51 +9,70 @@ import { cn } from "../lib/utills";
 import SignInButton from "./Buttons/SignInButton";
 import NavLink from "./Navbar/NavLink";
 
-const Header = () => {
+const Header: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // New state for dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen); // Toggle dropdown
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   useEffect(() => {
     const handleScroll = () => {
       setHasScrolled(window.scrollY > 50);
     };
 
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
     window.addEventListener("scroll", handleScroll);
+    document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
     <nav
       className={cn(
-        "w-full z-50 fixed top-0 transition-colors duration-300",
+        "w-full z-50 fixed top-0 transition-all duration-300",
         hasScrolled
-          ? "bg-black bg-opacity-70 backdrop-blur-md"
+          ? "bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg"
           : "bg-transparent",
         "mb-4 sm:mb-0"
       )}
     >
-      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div className="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
         {/* Logo with Icon */}
-        <div className="flex items-center space-x-2 text-white text-3xl font-bold tracking-wider">
+        <div className="flex items-center space-x-2 text-white text-2xl sm:text-3xl font-bold tracking-wider">
           <LibraryBig
-            className="w-8 h-8 sm:w-10 sm:h-10 text-indigo-400"
+            className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-400"
             aria-label="Library Icon"
           />
-          <Link to="/" className="hover:text-indigo-400">
+          <Link
+            to="/"
+            className="hover:text-indigo-400 transition-colors duration-300"
+          >
             BookNest
           </Link>
         </div>
 
         {/* Hamburger Menu for Mobile */}
-        <div className="md:hidden">
-          <button onClick={toggleMenu} className="text-white">
+        <div className="lg:hidden">
+          <button
+            onClick={toggleMenu}
+            className="text-white focus:outline-none"
+          >
             {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
           </button>
         </div>
@@ -65,24 +84,48 @@ const Header = () => {
         </ul>
 
         {/* User Greeting and Auth Buttons */}
-        <div className="hidden md:flex items-center space-x-6 relative">
+        <div className="hidden lg:flex items-center space-x-6 relative">
           {isAuthenticated && user ? (
-            <>
+            <div ref={dropdownRef} className="relative">
               <UserDisplay user={user} onClick={toggleDropdown} />
               {/* Dropdown Menu */}
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-black bg-opacity-80 rounded-lg shadow-lg p-4">
-                  <Link
-                    to={`/${user._id}`}
-                    className="block text-white hover:text-indigo-400 transition-colors duration-300"
-                    onClick={() => setIsDropdownOpen(false)} // Close dropdown on click
-                  >
-                    My Profile
-                  </Link>
-                  <SignOutButton onClick={() => setIsDropdownOpen(false)} />
+                <div
+                  className="absolute right-0 mt-2 w-56 bg-gray-800 rounded-lg shadow-lg overflow-hidden transform origin-top-right transition-all duration-200 ease-out border border-gray-700"
+                  style={{
+                    opacity: isDropdownOpen ? 1 : 0,
+                    transform: `scale(${isDropdownOpen ? 1 : 0.95})`,
+                  }}
+                >
+                  <div className="py-2">
+                    <Link
+                      to={`/${user._id}`}
+                      className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      <User className="w-4 h-4 mr-3 text-indigo-400" />
+                      My Profile
+                    </Link>
+                    <Link
+                      to="/settings"
+                      className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      <Settings className="w-4 h-4 mr-3 text-indigo-400" />
+                      Settings
+                    </Link>
+                    <div className="border-t border-gray-700 my-2"></div>
+                    <SignOutButton
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      <LogOut className="w-4 h-4 mr-3 text-indigo-400" />
+                      Sign Out
+                    </SignOutButton>
+                  </div>
                 </div>
               )}
-            </>
+            </div>
           ) : (
             <SignInButton />
           )}
@@ -91,36 +134,48 @@ const Header = () => {
 
       {/* Mobile Menu Dropdown */}
       {isMenuOpen && (
-        <div className="md:hidden mt-4 bg-black bg-opacity-80 p-4 rounded-lg shadow-lg">
+        <div className="lg:hidden mt-4 bg-gray-800 bg-opacity-95 p-4 rounded-b-lg shadow-lg">
           <nav className="flex flex-col space-y-4">
             <NavLink
               to="/discussions"
               onClick={toggleMenu}
-              className="text-white hover:text-indigo-400 transition-colors duration-300"
+              className="text-gray-300 hover:text-white transition-colors duration-300"
             >
               Discussions
             </NavLink>
             <NavLink
               to="/books"
               onClick={toggleMenu}
-              className="text-white hover:text-indigo-400 transition-colors duration-300"
+              className="text-gray-300 hover:text-white transition-colors duration-300"
             >
               Books
             </NavLink>
 
             {isAuthenticated && user && (
-              <Link
-                to={`/${user._id}`}
-                className="flex items-center text-white hover:text-indigo-400 transition-colors duration-300 ml-2"
-                onClick={toggleMenu}
-              >
-                <UserDisplay
-                  user={user}
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                />
-              </Link>
+              <>
+                <Link
+                  to={`/${user._id}`}
+                  className="flex items-center text-gray-300 hover:text-white transition-colors duration-300"
+                  onClick={toggleMenu}
+                >
+                  <User className="w-5 h-5 mr-2 text-indigo-400" />
+                  My Profile
+                </Link>
+                <Link
+                  to="/settings"
+                  className="flex items-center text-gray-300 hover:text-white transition-colors duration-300"
+                  onClick={toggleMenu}
+                >
+                  <Settings className="w-5 h-5 mr-2 text-indigo-400" />
+                  Settings
+                </Link>
+              </>
             )}
-            {isAuthenticated ? <SignOutButton /> : <SignInButton />}
+            {isAuthenticated ? (
+              <SignOutButton>Sign Out</SignOutButton>
+            ) : (
+              <SignInButton />
+            )}
           </nav>
         </div>
       )}

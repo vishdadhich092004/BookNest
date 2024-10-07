@@ -11,15 +11,20 @@ import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
 interface PDFViewerProps {
   pdfUrl: string;
+  onDocumentLoad?: () => void;
+  onError?: (error: Error) => void;
 }
 
-const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl }) => {
+const PDFViewer: React.FC<PDFViewerProps> = ({
+  pdfUrl,
+  onDocumentLoad,
+  onError,
+}) => {
   const [pdfData, setPdfData] = useState<Uint8Array | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [currentScale, setCurrentScale] = useState<number | SpecialZoomLevel>(
     0.9
   );
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const viewerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,9 +36,10 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl }) => {
         }
         const arrayBuffer = await response.arrayBuffer();
         setPdfData(new Uint8Array(arrayBuffer));
+        onDocumentLoad?.();
       } catch (error) {
         console.error("Error fetching PDF:", error);
-        setErrorMessage("Failed to load PDF. Please try again later.");
+        onError?.(error as Error);
       }
     };
 
@@ -43,7 +49,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl }) => {
     const savedScale = localStorage.getItem("currentScale");
     if (savedPage) setCurrentPage(parseInt(savedPage, 10));
     if (savedScale) setCurrentScale(parseFloat(savedScale));
-  }, [pdfUrl]);
+  }, [pdfUrl, onDocumentLoad, onError]);
 
   const handleDocumentLoad = () => {
     const viewerElement = viewerRef.current?.querySelector(".rpv-core__viewer");
@@ -118,25 +124,21 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl }) => {
   });
 
   return (
-    <div style={{ height: "100vh" }} ref={viewerRef}>
-      {errorMessage ? (
-        <div>{errorMessage}</div>
-      ) : (
-        <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-          {pdfData && (
-            <Viewer
-              fileUrl={pdfData}
-              plugins={[defaultLayoutPluginInstance]}
-              defaultScale={currentScale}
-              initialPage={currentPage - 1}
-              onPageChange={handlePageChange}
-              onZoom={handleZoomChange}
-              onDocumentLoad={handleDocumentLoad}
-              withCredentials={true}
-            />
-          )}
-        </Worker>
-      )}
+    <div style={{ height: "100%" }} ref={viewerRef}>
+      <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+        {pdfData && (
+          <Viewer
+            fileUrl={pdfData}
+            plugins={[defaultLayoutPluginInstance]}
+            defaultScale={currentScale}
+            initialPage={currentPage - 1}
+            onPageChange={handlePageChange}
+            onZoom={handleZoomChange}
+            onDocumentLoad={handleDocumentLoad}
+            withCredentials={true}
+          />
+        )}
+      </Worker>
     </div>
   );
 };
