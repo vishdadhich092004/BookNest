@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Loader } from "lucide-react";
 import PDFViewer from "../PDFViewer/PDFViewer";
 
@@ -10,6 +10,18 @@ interface BookReaderProps {
 const BookReader = ({ pdfUrl, onClose }: BookReaderProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // Adjust this breakpoint as needed
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const handlePDFLoad = () => {
     setIsLoading(false);
@@ -21,9 +33,25 @@ const BookReader = ({ pdfUrl, onClose }: BookReaderProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 backdrop-blur-sm p-4 sm:p-6 md:p-8">
-      <div className="w-full h-full bg-gray-800 rounded-lg shadow-2xl overflow-hidden flex flex-col max-w-7xl max-h-[90vh]">
-        <div className="flex justify-between items-center p-4 bg-gray-900">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-center ${
+        isMobile
+          ? ""
+          : "bg-black bg-opacity-75 backdrop-blur-sm p-4 sm:p-6 md:p-8"
+      }`}
+    >
+      <div
+        className={`bg-gray-800 overflow-hidden flex flex-col ${
+          isMobile
+            ? "w-full h-full"
+            : "w-full h-full max-w-7xl max-h-[90vh] rounded-lg shadow-2xl"
+        }`}
+      >
+        <div
+          className={`flex justify-between items-center p-4 bg-gray-900 ${
+            isMobile ? "sticky top-0 z-10" : ""
+          }`}
+        >
           <h2 className="text-lg font-semibold text-gray-100">PDF Viewer</h2>
           <button
             onClick={onClose}
@@ -51,6 +79,7 @@ const BookReader = ({ pdfUrl, onClose }: BookReaderProps) => {
             pdfUrl={pdfUrl}
             onDocumentLoad={handlePDFLoad}
             onError={handlePDFError}
+            isMobile={isMobile}
           />
         </div>
       </div>

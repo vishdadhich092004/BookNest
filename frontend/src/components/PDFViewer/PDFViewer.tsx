@@ -13,17 +13,19 @@ interface PDFViewerProps {
   pdfUrl: string;
   onDocumentLoad?: () => void;
   onError?: (error: Error) => void;
+  isMobile: boolean;
 }
 
 const PDFViewer: React.FC<PDFViewerProps> = ({
   pdfUrl,
   onDocumentLoad,
   onError,
+  isMobile,
 }) => {
   const [pdfData, setPdfData] = useState<Uint8Array | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [currentScale, setCurrentScale] = useState<number | SpecialZoomLevel>(
-    0.9
+    SpecialZoomLevel.PageFit
   );
   const viewerRef = useRef<HTMLDivElement>(null);
 
@@ -48,8 +50,8 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
     const savedPage = localStorage.getItem("currentPage");
     const savedScale = localStorage.getItem("currentScale");
     if (savedPage) setCurrentPage(parseInt(savedPage, 10));
-    if (savedScale) setCurrentScale(parseFloat(savedScale));
-  }, [pdfUrl, onDocumentLoad, onError]);
+    if (savedScale && !isMobile) setCurrentScale(parseFloat(savedScale));
+  }, [pdfUrl, onDocumentLoad, onError, isMobile]);
 
   const handleDocumentLoad = () => {
     const viewerElement = viewerRef.current?.querySelector(".rpv-core__viewer");
@@ -72,17 +74,21 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
   }, [currentPage]);
 
   const handleZoomChange = (e: ZoomEvent) => {
-    const scale = e.scale;
-    setCurrentScale(scale);
+    if (!isMobile) {
+      const scale = e.scale;
+      setCurrentScale(scale);
+    }
   };
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      localStorage.setItem("currentScale", currentScale.toString());
-    }, 300);
+    if (!isMobile) {
+      const timeoutId = setTimeout(() => {
+        localStorage.setItem("currentScale", currentScale.toString());
+      }, 300);
 
-    return () => clearTimeout(timeoutId);
-  }, [currentScale]);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [currentScale, isMobile]);
 
   const defaultLayoutPluginInstance = defaultLayoutPlugin({
     renderToolbar: (Toolbar) => (
@@ -95,12 +101,11 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
           ZoomIn,
           ZoomOut,
           EnterFullScreen,
-          SwitchTheme,
         }) => (
           <div
             style={{
               display: "flex",
-              justifyContent: "space-evenly",
+              justifyContent: "space-between",
               alignItems: "center",
               width: "100%",
             }}
@@ -111,12 +116,13 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
               <GoToNextPage />
               <NumberOfPages />
             </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <ZoomOut />
-              <ZoomIn />
-              <EnterFullScreen />
-              <SwitchTheme />
-            </div>
+            {!isMobile && (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <ZoomOut />
+                <ZoomIn />
+                <EnterFullScreen />
+              </div>
+            )}
           </div>
         )}
       </Toolbar>
