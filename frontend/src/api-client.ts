@@ -60,6 +60,25 @@ export const initiateGoogleAuth = () => {
   window.location.href = `${BASE_URL}/api/auth/google`;
 };
 
+export const deleteUserAccount = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/delete`, {
+      method: "DELETE",
+      credentials: "include", // Include cookies for authentication
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to delete account");
+    }
+
+    const data = await response.json();
+    alert(data.message); // Show success message or handle as needed
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    alert("An error occurred while trying to delete the account.");
+  }
+};
 export const newDiscussion = async (discussionFormData: DiscussionFormData) => {
   const response = await fetch(`${BASE_URL}/api/discussions/new`, {
     credentials: "include",

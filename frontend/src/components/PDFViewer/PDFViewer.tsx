@@ -1,33 +1,51 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Viewer,
   Worker,
+  ScrollMode,
+  ThemeContext,
   SpecialZoomLevel,
-  ZoomEvent,
 } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import { pageNavigationPlugin } from "@react-pdf-viewer/page-navigation";
+import "@react-pdf-viewer/page-navigation/lib/styles/index.css";
 
 interface PDFViewerProps {
   pdfUrl: string;
   onDocumentLoad?: () => void;
   onError?: (error: Error) => void;
   isMobile: boolean;
+  scale: number;
 }
+
+const darkTheme = {
+  viewer: {
+    background: "#000",
+  },
+  page: {
+    background: "#000",
+    border: "1px solid #3a3a3a",
+    boxShadow: "rgba(0, 0, 0, 0.3) 0px 0px 8px",
+    color: "#000",
+  },
+  toolbar: {
+    backgroundColor: "#000",
+    color: "#000",
+  },
+  sidebar: {
+    backgroundColor: "#2a2a2a",
+    color: "#000",
+  },
+};
 
 const PDFViewer: React.FC<PDFViewerProps> = ({
   pdfUrl,
   onDocumentLoad,
   onError,
   isMobile,
+  scale,
 }) => {
   const [pdfData, setPdfData] = useState<Uint8Array | null>(null);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [currentScale, setCurrentScale] = useState<number | SpecialZoomLevel>(
-    SpecialZoomLevel.PageFit
-  );
-  const viewerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchPdf = async () => {
@@ -46,104 +64,28 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
     };
 
     fetchPdf();
+  }, [pdfUrl, onDocumentLoad, onError]);
 
-    const savedPage = localStorage.getItem("currentPage");
-    const savedScale = localStorage.getItem("currentScale");
-    if (savedPage) setCurrentPage(parseInt(savedPage, 10));
-    if (savedScale && !isMobile) setCurrentScale(parseFloat(savedScale));
-  }, [pdfUrl, onDocumentLoad, onError, isMobile]);
-
-  const handleDocumentLoad = () => {
-    const viewerElement = viewerRef.current?.querySelector(".rpv-core__viewer");
-    if (viewerElement) {
-      viewerElement.scrollTo(0, 0);
-    }
-  };
-
-  const handlePageChange = (e: { currentPage: number }) => {
-    const { currentPage } = e;
-    setCurrentPage(currentPage);
-  };
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      localStorage.setItem("currentPage", currentPage.toString());
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [currentPage]);
-
-  const handleZoomChange = (e: ZoomEvent) => {
-    if (!isMobile) {
-      const scale = e.scale;
-      setCurrentScale(scale);
-    }
-  };
-
-  useEffect(() => {
-    if (!isMobile) {
-      const timeoutId = setTimeout(() => {
-        localStorage.setItem("currentScale", currentScale.toString());
-      }, 300);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [currentScale, isMobile]);
-
-  const defaultLayoutPluginInstance = defaultLayoutPlugin({
-    renderToolbar: (Toolbar) => (
-      <Toolbar>
-        {({
-          CurrentPageInput,
-          GoToNextPage,
-          GoToPreviousPage,
-          NumberOfPages,
-          ZoomIn,
-          ZoomOut,
-          EnterFullScreen,
-        }) => (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <GoToPreviousPage />
-              <CurrentPageInput />
-              <GoToNextPage />
-              <NumberOfPages />
-            </div>
-            {!isMobile && (
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <ZoomOut />
-                <ZoomIn />
-                <EnterFullScreen />
-              </div>
-            )}
-          </div>
-        )}
-      </Toolbar>
-    ),
-  });
+  const pageNavigationPluginInstance = pageNavigationPlugin();
 
   return (
-    <div style={{ height: "100%" }} ref={viewerRef}>
+    <div style={{ height: "100%", width: "100%" }}>
       <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-        {pdfData && (
-          <Viewer
-            fileUrl={pdfData}
-            plugins={[defaultLayoutPluginInstance]}
-            defaultScale={currentScale}
-            initialPage={currentPage - 1}
-            onPageChange={handlePageChange}
-            onZoom={handleZoomChange}
-            onDocumentLoad={handleDocumentLoad}
-            withCredentials={true}
-          />
-        )}
+        <ThemeContext.Provider value={darkTheme}>
+          {pdfData && (
+            <Viewer
+              fileUrl={pdfData}
+              plugins={[pageNavigationPluginInstance]}
+              defaultScale={isMobile ? SpecialZoomLevel.PageFit : scale}
+              scrollMode={
+                isMobile ? ScrollMode.Horizontal : ScrollMode.Vertical
+              }
+              onDocumentLoad={onDocumentLoad}
+              withCredentials={true}
+              theme="dark"
+            />
+          )}
+        </ThemeContext.Provider>
       </Worker>
     </div>
   );

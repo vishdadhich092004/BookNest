@@ -105,7 +105,7 @@ function SingleDiscussion() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 shadow-lg rounded-lg p-6 relative">
+      <div className="bg-gray-900 opacity-70 shadow-lg rounded-lg p-6 relative">
         {/* Title and Edit/Delete Buttons */}
         <div className="flex items-center mb-6">
           <EggFried size={40} className="text-yellow-400 mr-4" />

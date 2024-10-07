@@ -1,4 +1,4 @@
-import { BookOpen } from "lucide-react";
+import { MessageCircleCode } from "lucide-react";
 import { ReviewType } from "../../../../backend/src/shared/types";
 import SingleReviewComponent from "./SingleReviewComponent";
 interface AllReviewsSectionForABookProps {
@@ -9,9 +9,9 @@ function AllReviewsSectionForABook({
   reviews,
 }: AllReviewsSectionForABookProps) {
   return (
-    <div className="mt-12 bg-gray-800 bg-opacity-70 backdrop-blur-md rounded-lg p-8 shadow-2xl">
+    <div className="mt-12 bg-black bg-opacity-70 backdrop-blur-md rounded-lg p-8 shadow-2xl">
       <h2 className="text-3xl font-semibold text-white mb-8 flex items-center">
-        <BookOpen className="mr-3 text-indigo-400" size={28} />
+        <MessageCircleCode className="mr-3 text-indigo-400" size={28} />
         Reviews
       </h2>
       {reviews && reviews.length > 0 ? (

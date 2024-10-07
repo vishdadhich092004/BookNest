@@ -6,6 +6,7 @@ import { check, validationResult } from "express-validator";
 import { Role, assignPermissions } from "../config/rolesConfig";
 import Book from "../models/book";
 import Discussion from "../models/discussion";
+import { AuthRequest, verifyToken } from "../middleware/auth";
 const router = express.Router();
 
 router.post(
@@ -88,5 +89,29 @@ router.get("/:userId/books", async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Something went wrong" });
   }
 });
+
+router.delete(
+  "/delete",
+  verifyToken,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user?.userId; // Assuming you attach the user ID to the request in verifyToken
+
+      // Delete the user
+      await User.findByIdAndDelete(userId);
+      res.cookie("auth_token", "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        expires: new Date(0),
+      });
+      return res.status(200).json({ message: "Account deleted successfully." });
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(500)
+        .json({ message: "Server error, please try again later." });
+    }
+  }
+);
 
 export default router;

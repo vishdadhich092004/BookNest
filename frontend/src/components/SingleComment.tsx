@@ -50,7 +50,7 @@ function SingleComment({ comment, discussionId }: SingleCommentType) {
   };
 
   return (
-    <div className="bg-gray-900 shadow-lg p-6 rounded-lg mb-6">
+    <div className="bg-gray-900 opacity-70 shadow-lg p-6 rounded-lg mb-6">
       <p className="text-white">{comment.text}</p>
       <div className="text-sm text-gray-400 mt-2">
         <p>

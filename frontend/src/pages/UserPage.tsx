@@ -6,6 +6,7 @@ import Loader from "../components/Loader";
 import BookCard from "../components/UserCards/BooksCard";
 import CommentCard from "../components/UserCards/CommentsCard";
 import DiscussionCard from "../components/UserCards/DiscussionsCard";
+import DeleteUserButton from "../components/Buttons/DeleteUserButton";
 
 function UserPage() {
   const { userId } = useParams<{ userId: string }>();
@@ -47,7 +48,7 @@ function UserPage() {
   return (
     <div className="container mx-auto px-4 py-6 bg-slate-50">
       <h2 className="text-2xl font-bold text-slate-800 mb-6">User Profile</h2>
-
+      <DeleteUserButton />
       <section className="mb-8">
         <h3 className="text-xl font-semibold text-slate-800 mb-4">Comments</h3>
         {comments?.map((comment, index) => (

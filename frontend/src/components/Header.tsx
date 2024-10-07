@@ -47,7 +47,7 @@ const Header: React.FC = () => {
       className={cn(
         "w-full z-50 fixed top-0 transition-all duration-300",
         hasScrolled
-          ? "bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg"
+          ? "bg-black bg-opacity-70 backdrop-blur-md"
           : "bg-transparent",
         "mb-4 sm:mb-0"
       )}

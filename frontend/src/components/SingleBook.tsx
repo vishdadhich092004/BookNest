@@ -13,7 +13,6 @@ import {
   BookmarkPlus,
   Bookmark,
 } from "lucide-react";
-import { cn } from "../lib/utills";
 import BookReader from "./Books/BookReader";
 import AllReviewsSectionForABook from "./Reviews/AllReviewsSectionForABook";
 import DeleteButton from "./Buttons/DeleteButton";
@@ -21,7 +20,7 @@ import DeleteButton from "./Buttons/DeleteButton";
 const SingleBook: React.FC = () => {
   const [isBookReaderOpen, setIsBookReaderOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, refetchUser } = useAuth();
+  const { user, refetchUser, isAuthenticated } = useAuth();
   const { showToast } = useAppContext();
   const { bookId } = useParams<{ bookId: string }>();
 
@@ -66,7 +65,10 @@ const SingleBook: React.FC = () => {
     markBookAsReadMutation.mutate();
   };
 
-  const handleBookView = () => setIsBookReaderOpen(true);
+  const handleBookView = () => {
+    if (isAuthenticated) setIsBookReaderOpen(true);
+    else navigate("/sign-in");
+  };
   const closeBookReader = () => setIsBookReaderOpen(false);
 
   const isBookAlreadyRead = user?.readBooks.includes(bookId!);
@@ -85,7 +87,7 @@ const SingleBook: React.FC = () => {
           <span className="text-lg font-medium">Back</span>
         </Link>
 
-        <div className="bg-gray-800 bg-opacity-70 shadow-2xl rounded-lg overflow-hidden transform hover:scale-[1.01] transition-all duration-300">
+        <div className="bg-black bg-opacity-70 shadow-2xl rounded-lg overflow-hidden transform hover:scale-[1.01] transition-all duration-300">
           <div className="flex flex-col md:flex-row">
             <div className="relative w-full md:w-2/5 h-[300px] md:h-[400px] overflow-hidden">
               <img
@@ -114,17 +116,14 @@ const SingleBook: React.FC = () => {
               </p>
               <div className="flex flex-wrap gap-4 mb-8">
                 {isBookAlreadyRead ? (
-                  <button className="bg-gray-700 text-white px-6 py-3 rounded-full flex items-center shadow-lg hover:shadow-xl transition-all duration-300">
+                  <button className="bg-gray-700 text-white px-6 py-3 rounded-full flex items-center shadow-md hover:bg-gray-600 transition-all duration-300">
                     <Bookmark className="mr-2" size={18} />
                     Already Read
                   </button>
                 ) : (
                   <button
                     onClick={handleBookRead}
-                    className={cn(
-                      "bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-6 py-3 rounded-full flex items-center shadow-lg",
-                      "hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 transform hover:scale-105"
-                    )}
+                    className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white px-6 py-3 rounded-full flex items-center shadow-md hover:from-indigo-500 hover:to-indigo-300 transition-all duration-300 transform hover:scale-105"
                   >
                     <BookmarkPlus className="mr-2" size={18} />
                     Mark as Read
@@ -132,13 +131,13 @@ const SingleBook: React.FC = () => {
                 )}
                 <button
                   onClick={handleBookView}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-full flex items-center shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all duration-300"
+                  className="bg-gray-800 text-white px-6 py-3 rounded-full flex items-center shadow-md hover:bg-gray-700 transition-all duration-300"
                 >
                   <Eye className="mr-2" size={18} />
                   Start Reading Book
                 </button>
                 <Link to={`/books/${bookId}/reviews`}>
-                  <button className="bg-purple-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-purple-700 hover:shadow-xl transition-all duration-300">
+                  <button className="bg-gradient-to-r from-purple-600 to-purple-400 text-white px-6 py-3 rounded-full shadow-md hover:from-purple-500 hover:to-purple-300 transition-all duration-300">
                     Add Review
                   </button>
                 </Link>
