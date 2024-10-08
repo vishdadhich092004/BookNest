@@ -52,7 +52,7 @@ const Header: React.FC = () => {
         "mb-4 sm:mb-0"
       )}
     >
-      <div className="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+      <div className="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
         {/* Logo with Icon */}
         <div className="flex items-center space-x-2 text-white text-2xl sm:text-3xl font-bold tracking-wider">
           <LibraryBig
