@@ -59,24 +59,29 @@ export const signOut = async () => {
 export const initiateGoogleAuth = () => {
   window.location.href = `${BASE_URL}/api/auth/google`;
 };
-
 export const deleteUserAccount = async () => {
   try {
-    const response = await fetch(`${BASE_URL}/users/delete`, {
+    const response = await fetch(`${BASE_URL}/api/users/delete`, {
       method: "DELETE",
-      credentials: "include", // Include cookies for authentication
+      credentials: "include",
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to delete account");
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete account");
+      }
+      return data;
+    } else {
+      // If the response is not JSON, read it as text
+      const text = await response.text();
+      console.error("Received non-JSON response:", text);
+      throw new Error("Received invalid response from server");
     }
-
-    const data = await response.json();
-    alert(data.message); // Show success message or handle as needed
   } catch (error) {
-    console.error("Error deleting account:", error);
-    alert("An error occurred while trying to delete the account.");
+    console.error("Error in deleteUserAccount:", error);
+    throw error; // Re-throw the error so it can be caught by the mutation
   }
 };
 export const newDiscussion = async (discussionFormData: DiscussionFormData) => {
