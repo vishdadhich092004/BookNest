@@ -40,6 +40,7 @@ router.post(
         role,
         permissions,
       });
+      user.setRandomAvatar();
       await user.save();
       const token = jwt.sign(
         { userId: user._id, role: user.role, permissions },

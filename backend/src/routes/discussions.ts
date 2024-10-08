@@ -76,7 +76,8 @@ router.get("/", async (req: Request, res: Response) => {
     const allDiscussions = await Discussion.find({})
       .skip(skip)
       .limit(limit)
-      .populate("userId", "firstName"); // Assuming you want to populate user information
+      .sort({ _id: -1 })
+      .populate("userId"); // Assuming you want to populate user information
 
     res.status(200).json({
       discussions: allDiscussions,
@@ -93,12 +94,11 @@ router.get("/", async (req: Request, res: Response) => {
 router.get("/:discussionId", async (req: Request, res: Response) => {
   try {
     const discussion = await Discussion.findById(req.params.discussionId)
-      .populate("userId", "firstName lastName")
+      .populate("userId")
       .populate({
         path: "comments",
         populate: {
           path: "userId",
-          select: "firstName lastName",
         },
       });
 
@@ -190,6 +190,39 @@ router.post(
 );
 
 router.post(
+  "/:discussionId/unlike",
+  verifyToken,
+  async (req: AuthRequest, res: Response) => {
+    const { discussionId } = req.params;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(400).json({ message: "User Access Denied" });
+
+    try {
+      const discussion = await Discussion.findById(discussionId);
+      if (!discussion)
+        return res.status(404).json({ message: "No Discussion Found" });
+
+      if (!discussion.likes.includes(userId))
+        return res
+          .status(400)
+          .json({ message: "You have not liked this post yet" });
+
+      discussion.likes = discussion.likes.filter(
+        (likeId) => likeId.toString() !== userId
+      );
+
+      await discussion.save();
+      res.status(200).json({
+        message: "Post Unliked",
+        likes: discussion.likes.length,
+      });
+    } catch (e) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+
+router.post(
   "/:discussionId/dislike",
   verifyToken,
   async (req: AuthRequest, res: Response) => {
@@ -214,6 +247,38 @@ router.post(
 
       await discussion.save();
       res.status(200).json({ message: "Post Disliked!" });
+    } catch (e) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+router.post(
+  "/:discussionId/undislike",
+  verifyToken,
+  async (req: AuthRequest, res: Response) => {
+    const { discussionId } = req.params;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(400).json({ message: "User Access Denied" });
+
+    try {
+      const discussion = await Discussion.findById(discussionId);
+      if (!discussion)
+        return res.status(404).json({ message: "No Discussion Found" });
+
+      if (!discussion.dislikes.includes(userId))
+        return res
+          .status(400)
+          .json({ message: "You have not disliked this post yet" });
+
+      discussion.dislikes = discussion.dislikes.filter(
+        (dislikeId) => dislikeId.toString() !== userId
+      );
+
+      await discussion.save();
+      res.status(200).json({
+        message: "Post Undisliked",
+        dislikes: discussion.dislikes.length,
+      });
     } catch (e) {
       return res.status(500).json({ message: "Internal Server Error" });
     }

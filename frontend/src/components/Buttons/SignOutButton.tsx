@@ -41,12 +41,13 @@ const SignOutButton = ({
     <button
       onClick={handleClick}
       className={cn(
-        "bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-5 py-2 rounded-full shadow-lg",
-        "hover:from-purple-500 hover:to-indigo-500 transition-transform duration-300 transform hover:scale-105",
+        "bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full",
+        "hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 flex items-center",
+        "font-semibold text-sm sm:text-base",
         `${className}`
       )}
     >
-      {children || <LogOut className="w-4 h-4 mr-3 text-indigo-400" />}
+      {children || <LogOut className="w-4 h-4 mr-3 text-white" />}
     </button>
   );
 };

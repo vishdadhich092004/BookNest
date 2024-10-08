@@ -1,9 +1,9 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
 
 export type EditDiscussionFormData = {
   title: string;
@@ -61,53 +61,53 @@ function EditDiscussion() {
   });
 
   const buttonStyles = isSubmitSuccessful
-    ? "w-full bg-slate-400 text-white py-2 rounded-md"
-    : "w-full bg-teal-600 text-white py-2 rounded-md shadow-md hover:bg-teal-700 transition-colors duration-300 transform hover:scale-105";
+    ? "w-full bg-gray-600 text-gray-300 py-2 rounded-md cursor-not-allowed"
+    : "w-full bg-purple-600 text-white py-2 rounded-md shadow-md hover:bg-purple-700 transition-all duration-300 transform hover:scale-105";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+    <div className="flex items-center justify-center min-h-screen bg-black">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
         <form className="space-y-4" onSubmit={onSubmit}>
-          <h2 className="text-3xl font-bold text-center text-teal-600">
+          <h2 className="text-3xl font-bold text-center text-purple-400">
             Edit Discussion
           </h2>
           <label className="block">
-            <span className="text-slate-800">Title</span>
+            <span className="text-gray-300">Title</span>
             <input
               type="text"
-              className="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-500 focus:ring-opacity-50"
+              className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 text-gray-300 p-3"
               {...register("title", { required: "Title cannot be empty" })}
             />
             {errors.title && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-400 text-sm">
                 {errors.title.message}
               </span>
             )}
           </label>
           <label className="block">
-            <span className="text-slate-800">Description</span>
+            <span className="text-gray-300">Description</span>
             <textarea
-              className="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-500 focus:ring-opacity-50"
+              className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 text-gray-300 p-3"
               {...register("description", {
                 required: "This field is required",
               })}
               rows={4}
             ></textarea>
             {errors.description && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-400 text-sm">
                 {errors.description.message}
               </span>
             )}
           </label>
           <label className="block">
-            <span className="text-slate-800">Book</span>
+            <span className="text-gray-300">Book</span>
             <input
               type="text"
-              className="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-500 focus:ring-opacity-50"
+              className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 text-gray-300 p-3"
               {...register("book", { required: "Book cannot be empty" })}
             />
             {errors.book && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-400 text-sm">
                 {errors.book.message}
               </span>
             )}

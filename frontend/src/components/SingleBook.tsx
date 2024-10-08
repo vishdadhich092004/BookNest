@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
@@ -12,13 +12,17 @@ import {
   Signature,
   BookmarkPlus,
   Bookmark,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import BookReader from "./Books/BookReader";
 import AllReviewsSectionForABook from "./Reviews/AllReviewsSectionForABook";
 import DeleteButton from "./Buttons/DeleteButton";
+import NotFound from "../pages/NotFound";
 
-const SingleBook: React.FC = () => {
+const SingleBook = () => {
   const [isBookReaderOpen, setIsBookReaderOpen] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const navigate = useNavigate();
   const { user, refetchUser, isAuthenticated } = useAuth();
   const { showToast } = useAppContext();
@@ -50,16 +54,19 @@ const SingleBook: React.FC = () => {
     );
 
   if (isError || !data) {
-    navigate("/");
-    return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-gray-900 to-black text-xl text-gray-400">
-        404 Not Found
-      </div>
-    );
+    return <NotFound />;
   }
 
-  const { title, author, description, coverPageUrl, pdfUrl, reviews, userId } =
-    data as BookType;
+  const {
+    title,
+    author,
+    description,
+    coverPageUrl,
+    pdfUrl,
+    reviews,
+    userId,
+    genre,
+  } = data as BookType;
 
   const handleBookRead = () => {
     markBookAsReadMutation.mutate();
@@ -73,47 +80,72 @@ const SingleBook: React.FC = () => {
 
   const isBookAlreadyRead = user?.readBooks.includes(bookId!);
 
+  const toggleDescription = () =>
+    setIsDescriptionExpanded(!isDescriptionExpanded);
+
   return (
-    <div className="min-h-screen text-white pt-16">
-      <div className="container mx-auto px-6">
+    <div className="min-h-screen  text-white pt-16 pb-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           to="/books"
-          className="inline-flex items-center text-indigo-400 hover:text-indigo-300 transition-all duration-300 mb-6 group"
+          className="inline-flex items-center text-indigo-400 hover:text-indigo-300 transition-all duration-300 mb-8 group"
         >
           <ArrowLeft
             className="mr-2 group-hover:-translate-x-1 transition-transform duration-300"
             size={20}
           />
-          <span className="text-lg font-medium">Back</span>
+          <span className="text-lg font-medium">Back to Books</span>
         </Link>
 
-        <div className="bg-black bg-opacity-70 shadow-2xl rounded-lg overflow-hidden transform hover:scale-[1.01] transition-all duration-300">
-          <div className="flex flex-col md:flex-row">
-            <div className="relative w-full md:w-2/5 h-[300px] md:h-[400px] overflow-hidden">
+        <div className="bg-gray-900 shadow-2xl rounded-lg overflow-hidden transform hover:shadow-indigo-500/10 transition-all duration-300">
+          <div className="flex flex-col lg:flex-row relative">
+            <div className="absolute top-4 right-4 z-10">
+              <Link
+                to={""}
+                className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white px-6 py-1 rounded-full flex items-center shadow-md hover:from-indigo-500 hover:to-indigo-300 transition-all duration-300 transform hover:scale-105"
+              >
+                {genre}
+              </Link>
+            </div>
+            <div className="relative w-full lg:w-2/5 h-[300px] lg:h-[500px] overflow-hidden">
               <img
                 className="w-full h-full object-contain"
                 src={coverPageUrl}
                 alt={title}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent flex items-end p-6">
-                <h1 className="text-4xl font-bold text-white drop-shadow-lg">
-                  {title}
-                </h1>
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent" />
             </div>
-            <div className="flex-1 p-8">
-              <div className="mb-4">
-                <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-2">
-                  {title}
-                </h1>
-                <div className="flex items-center">
-                  <Signature className="mr-2 text-indigo-400" size={20} />
-                  <p className="text-xl text-gray-300">{author}</p>
-                </div>
+            <div className="flex-1 p-8 lg:p-12">
+              <h1 className="text-4xl font-bold text-white mb-4">{title}</h1>
+              <div className="flex items-center mb-6">
+                <Signature className="mr-2 text-indigo-400" size={20} />
+                <p className="text-xl text-gray-300">{author}</p>
               </div>
-              <p className="text-gray-400 mb-8 leading-relaxed">
-                {description}
-              </p>
+              <div className="mb-8">
+                <p
+                  className={`text-gray-400 leading-relaxed ${
+                    isDescriptionExpanded ? "" : "line-clamp-3"
+                  }`}
+                >
+                  {description}
+                </p>
+                <button
+                  onClick={toggleDescription}
+                  className="mt-2 text-indigo-400 hover:text-indigo-300 transition-all duration-300 flex items-center"
+                >
+                  {isDescriptionExpanded ? (
+                    <>
+                      <ChevronUp size={16} className="mr-1" />
+                      Show Less
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown size={16} className="mr-1" />
+                      Show More
+                    </>
+                  )}
+                </button>
+              </div>
               <div className="flex flex-wrap gap-4 mb-8">
                 {isBookAlreadyRead ? (
                   <button className="bg-gray-700 text-white px-6 py-3 rounded-full flex items-center shadow-md hover:bg-gray-600 transition-all duration-300">
@@ -131,10 +163,10 @@ const SingleBook: React.FC = () => {
                 )}
                 <button
                   onClick={handleBookView}
-                  className="bg-gray-800 text-white px-6 py-3 rounded-full flex items-center shadow-md hover:bg-gray-700 transition-all duration-300"
+                  className="bg-gray-700 text-white px-6 py-3 rounded-full flex items-center shadow-md hover:bg-gray-600 transition-all duration-300"
                 >
                   <Eye className="mr-2" size={18} />
-                  Start Reading Book
+                  Start Reading
                 </button>
                 <Link to={`/books/${bookId}/reviews`}>
                   <button className="bg-gradient-to-r from-purple-600 to-purple-400 text-white px-6 py-3 rounded-full shadow-md hover:from-purple-500 hover:to-purple-300 transition-all duration-300">
@@ -149,11 +181,12 @@ const SingleBook: React.FC = () => {
           </div>
         </div>
 
-        {/* Reviews Section */}
-        <AllReviewsSectionForABook reviews={reviews} />
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold mb-6">Reviews</h2>
+          <AllReviewsSectionForABook reviews={reviews} />
+        </div>
       </div>
 
-      {/* BookReader Component */}
       {isBookReaderOpen && (
         <BookReader pdfUrl={pdfUrl} onClose={closeBookReader} />
       )}

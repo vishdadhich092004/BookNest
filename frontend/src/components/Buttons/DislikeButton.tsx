@@ -1,24 +1,34 @@
 import { ReactNode } from "react";
-import { AiTwotoneDislike } from "react-icons/ai";
+import { AiOutlineArrowDown } from "react-icons/ai";
 
 type Props = {
   onClick: () => void;
   disabled: boolean;
-  className: string;
-  children: ReactNode;
+  downvoted: boolean; // Changed prop name to indicate downvoted
+  className?: string;
+  children?: ReactNode;
 };
 
-// DislikeButton Component
-function DislikeButton({ onClick, disabled, className, children }: Props) {
+// DownvoteButton Component
+function DownvoteButton({
+  onClick,
+  disabled,
+  downvoted,
+  className,
+  children,
+}: Props) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       className={`${className} flex items-center space-x-2`}
     >
-      <AiTwotoneDislike />
+      <AiOutlineArrowDown
+        className={downvoted ? "text-red-500" : "text-gray-400"} // Change color if downvoted
+      />
       <span>{children}</span>
     </button>
   );
 }
-export default DislikeButton;
+
+export default DownvoteButton;

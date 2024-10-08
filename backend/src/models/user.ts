@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import { UserType } from "../shared/types";
+import userProfileSVGs from "../utils/userProfileSVGs";
 
 const userSchema = new Schema({
   email: {
@@ -45,8 +46,16 @@ const userSchema = new Schema({
       rating: Number,
     },
   ],
+  profileAvatar: {
+    type: String, // Store the SVG string
+    default: userProfileSVGs[0], // You can set a default or randomize it if needed
+  },
 });
 
+userSchema.methods.setRandomAvatar = function () {
+  const randomIndex = Math.floor(Math.random() * userProfileSVGs.length);
+  this.profileAvatar = userProfileSVGs[randomIndex];
+};
 userSchema.pre("save", async function (next) {
   if (this.isModified("password") && this.password) {
     this.password = await bcrypt.hash(this.password, 8);

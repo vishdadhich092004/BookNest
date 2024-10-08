@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import { DiscussionType } from "../shared/types";
-import Comment from "./comment";
 const discussionSchema = new Schema({
   title: {
     type: String,

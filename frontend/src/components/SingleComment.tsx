@@ -1,86 +1,160 @@
-import { CommentType } from "../../../backend/src/shared/types";
-import * as apiClient from "../api-client";
+import React from "react";
 import { useMutation, useQueryClient } from "react-query";
-import LikeButton from "./Buttons/LikeButton";
-import DislikeButton from "./Buttons/DislikeButton";
+import { useAuth } from "../contexts/AuthContext";
 import { useAppContext } from "../contexts/AppContext";
+import {
+  likeComment,
+  unlikeComment,
+  dislikeComment,
+  undislikeComment,
+} from "../api-client";
+import { CommentType } from "../../../backend/src/shared/types";
+import UpvoteButton from "./Buttons/LikeButton";
+import DownvoteButton from "./Buttons/DislikeButton";
+import UserDisplay from "./UserDisplay";
+import timeAgo from "../utils/timeAgo";
+import EllipsisMenu from "./EllipsisMenu"; // Import the EllipsisMenu component
+import { useNavigate } from "react-router-dom";
 
-type SingleCommentType = {
+interface SingleCommentProps {
   comment: CommentType;
   discussionId: string;
-};
+}
 
-function SingleComment({ comment, discussionId }: SingleCommentType) {
+const SingleComment: React.FC<SingleCommentProps> = ({
+  comment,
+  discussionId,
+}) => {
   const queryClient = useQueryClient();
+  const { user, isAuthenticated } = useAuth();
   const { showToast } = useAppContext();
+  const navigate = useNavigate();
   const likeMutation = useMutation(
-    () => apiClient.likeComment(discussionId, comment._id),
+    () => likeComment(discussionId, comment._id),
     {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries([
-          "fetchDiscussionById",
-          discussionId,
-        ]);
+      onSuccess: () => {
+        queryClient.invalidateQueries(["fetchDiscussionById", discussionId]);
       },
       onError: () => {
-        showToast({ message: "Already Liked", type: "ERROR" });
+        showToast({ message: "Error liking comment", type: "ERROR" });
       },
     }
   );
+
+  const unlikeMutation = useMutation(
+    () => unlikeComment(discussionId, comment._id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["fetchDiscussionById", discussionId]);
+      },
+      onError: () => {
+        showToast({ message: "Error unliking comment", type: "ERROR" });
+      },
+    }
+  );
+
   const dislikeMutation = useMutation(
-    () => apiClient.dislikeComment(discussionId, comment._id),
+    () => dislikeComment(discussionId, comment._id),
     {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries([
-          "fetchDiscussionById",
-          discussionId,
-        ]);
+      onSuccess: () => {
+        queryClient.invalidateQueries(["fetchDiscussionById", discussionId]);
       },
       onError: () => {
-        showToast({ message: "Already Disliked", type: "ERROR" });
+        showToast({ message: "Error disliking comment", type: "ERROR" });
       },
     }
   );
+
+  const undislikeMutation = useMutation(
+    () => undislikeComment(discussionId, comment._id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["fetchDiscussionById", discussionId]);
+      },
+      onError: () => {
+        showToast({ message: "Error undisliking comment", type: "ERROR" });
+      },
+    }
+  );
+
+  // Determine if the user has liked or disliked the comment
+  const userHasLiked = user && comment.likes.includes(user._id);
+  const userHasDisliked = user && comment.dislikes.includes(user._id);
+
+  const isOwner = isAuthenticated && comment.userId._id === user?._id;
+  console.log(isOwner);
 
   const handleLike = () => {
-    likeMutation.mutate();
+    if (userHasLiked) {
+      unlikeMutation.mutate();
+    } else {
+      likeMutation.mutate();
+    }
   };
+
   const handleDislike = () => {
-    dislikeMutation.mutate();
+    if (userHasDisliked) {
+      undislikeMutation.mutate();
+    } else {
+      dislikeMutation.mutate();
+    }
   };
+
+  // const handleEdit = () => {
+  //   // Handle the edit functionality here
+  //   console.log("Edit comment:", comment._id);
+  // };
 
   return (
-    <div className="bg-gray-900 opacity-70 shadow-lg p-6 rounded-lg mb-6">
-      <p className="text-white">{comment.text}</p>
-      <div className="text-sm text-gray-400 mt-2">
-        <p>
-          <span className="font-semibold text-white">Commented by:</span>{" "}
-          {comment.userId ? comment.userId.firstName : "[deleted]"}
-        </p>
-        <p>
-          <span className="font-semibold text-white">On:</span>{" "}
-          {new Date(comment.timestamp).toLocaleDateString()}
-        </p>
+    <div className="bg-gray-800 rounded-lg p-4 mb-4">
+      <div className="flex items-start justify-between mb-2">
+        {comment.userId ? (
+          <div className="flex flex-col">
+            <UserDisplay user={comment.userId} />
+            <p className="text-sm text-gray-400 ml-14 -mt-3">
+              {timeAgo(new Date(comment.timestamp))}
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            <p className="text-sm text-gray-400">[deleted]</p>
+            <p className="text-sm text-gray-400">
+              {timeAgo(new Date(comment.timestamp))}
+            </p>
+          </div>
+        )}
 
-        <div className="mt-4 flex space-x-4">
-          <LikeButton
+        {isAuthenticated && comment.userId._id === user?._id && (
+          <EllipsisMenu
+            onEdit={() => navigate(``)}
+            id={comment._id!}
+            toBeDeleted="comments"
+          />
+        )}
+      </div>
+      <p className="text-gray-300">{comment.text}</p>
+      <div className="flex justify-between items-center mt-2">
+        <div className="flex space-x-4">
+          <UpvoteButton
             onClick={handleLike}
             disabled={likeMutation.isLoading}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-300"
+            upvoted={userHasLiked!} // Pass upvoted state
+            className="flex items-center text-lg"
           >
-            {comment.likes.length}
-          </LikeButton>
-          <DislikeButton
+            <span>{comment.likes.length}</span>
+          </UpvoteButton>
+          <DownvoteButton
             onClick={handleDislike}
             disabled={dislikeMutation.isLoading}
-            className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition-colors duration-300"
+            downvoted={userHasDisliked!} // Pass downvoted state
+            className="flex items-center text-lg"
           >
-            {comment.dislikes.length}
-          </DislikeButton>
+            <span>{comment.dislikes.length}</span>
+          </DownvoteButton>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default SingleComment;

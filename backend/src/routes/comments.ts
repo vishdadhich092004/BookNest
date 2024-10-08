@@ -73,26 +73,52 @@ router.post(
       await comment.save();
       await discussion.save();
 
-      res.status(200).json(comment);
+      res
+        .status(200)
+        .json({ message: "Post Liked", likes: comment.likes.length });
     } catch (e) {
       res.status(500).json({ message: `Something went wrong , ${e}` });
     }
   }
 );
-// return all the comments under a discussion:
-router.get("/:discussionId/comments", async (req: Request, res: Response) => {
-  const { discussionId } = req.params;
-  try {
-    const discussion = await Discussion.findById(discussionId);
-    if (!discussion)
-      return res.status(404).json({ message: "No Discussion Found" });
-    const allComments = discussion.comments;
+// Unlike Route
+router.post(
+  "/:discussionId/comments/:commentId/unlike",
+  verifyToken,
+  async (req: AuthRequest, res: Response) => {
+    const { discussionId, commentId } = req.params;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(400).json({ message: "User Access Denied" });
+    try {
+      const discussion = await Discussion.findById(discussionId);
+      if (!discussion)
+        return res.status(404).json({ message: "No Discussion Found" });
 
-    res.status(200).json(allComments);
-  } catch (e) {
-    return res.status(500).json({ message: `Something went wrong, ${e}` });
+      const comment = await Comment.findById(commentId);
+      if (!comment)
+        return res.status(404).json({ message: "No Comment Found" });
+
+      if (!comment.likes.includes(userId))
+        return res.status(400).json({ message: "Not liked yet" });
+
+      // Remove user's like from the comment
+      comment.likes = comment.likes.filter(
+        (like) => like.toString() !== userId
+      );
+
+      await comment.save();
+      await discussion.save();
+
+      res.status(200).json({
+        message: "Post Unliked",
+        likes: comment.likes.length,
+      });
+    } catch (e) {
+      res.status(500).json({ message: `Something went wrong , ${e}` });
+    }
   }
-});
+);
+
 // Dislike Route
 router.post(
   "/:discussionId/comments/:commentId/dislike",
@@ -127,5 +153,52 @@ router.post(
     }
   }
 );
+// Undislike Route
+router.post(
+  "/:discussionId/comments/:commentId/undislike",
+  verifyToken,
+  async (req: AuthRequest, res: Response) => {
+    const { discussionId, commentId } = req.params;
+    const userId = req.user?.userId;
+    if (!userId) return res.status(400).json({ message: "User Access Denied" });
+    try {
+      const discussion = await Discussion.findById(discussionId);
+      if (!discussion)
+        return res.status(404).json({ message: "No Discussion Found" });
 
+      const comment = await Comment.findById(commentId);
+      if (!comment)
+        return res.status(404).json({ message: "No Comment Found" });
+
+      if (!comment.dislikes.includes(userId))
+        return res.status(400).json({ message: "Not disliked yet" });
+
+      // Remove user's dislike from the comment
+      comment.dislikes = comment.dislikes.filter(
+        (dislike) => dislike.toString() !== userId
+      );
+
+      await comment.save();
+      await discussion.save();
+
+      res.status(200).json(comment);
+    } catch (e) {
+      res.status(500).json({ message: `Something went wrong , ${e}` });
+    }
+  }
+);
+
+// return all the comments under a discussion:
+router.get("/:discussionId/comments", async (req: Request, res: Response) => {
+  const { discussionId } = req.params;
+  try {
+    const discussion = await Discussion.findById(discussionId);
+    if (!discussion)
+      return res.status(404).json({ message: "No Discussion Found" });
+    const allComments = discussion.comments;
+    res.status(200).json(allComments);
+  } catch (e) {
+    return res.status(500).json({ message: `Something went wrong, ${e}` });
+  }
+});
 export default router;

@@ -88,10 +88,11 @@ const Header: React.FC = () => {
           {isAuthenticated && user ? (
             <div ref={dropdownRef} className="relative">
               <UserDisplay user={user} onClick={toggleDropdown} />
+
               {/* Dropdown Menu */}
               {isDropdownOpen && (
                 <div
-                  className="absolute right-0 mt-2 w-56 bg-gray-800 rounded-lg shadow-lg overflow-hidden transform origin-top-right transition-all duration-200 ease-out border border-gray-700"
+                  className="bg-gray-900 absolute right-0 mt-2 w-56 p-3 rounded-lg shadow-lg overflow-hidden transform origin-top-right transition-all duration-200 ease-out border border-gray-700"
                   style={{
                     opacity: isDropdownOpen ? 1 : 0,
                     transform: `scale(${isDropdownOpen ? 1 : 0.95})`,
@@ -100,7 +101,10 @@ const Header: React.FC = () => {
                   <div className="py-2">
                     <Link
                       to={`/${user._id}`}
-                      className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150"
+                      className={cn(
+                        "text-white font-medium text-lg relative group flex items-center p-2",
+                        "hover:text-indigo-400 transition-all duration-300 ease-in-out"
+                      )}
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       <User className="w-4 h-4 mr-3 text-indigo-400" />
@@ -108,7 +112,10 @@ const Header: React.FC = () => {
                     </Link>
                     <Link
                       to="/settings"
-                      className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150"
+                      className={cn(
+                        "text-white font-medium relative  group flex items-center p-2 text-lg",
+                        "hover:text-indigo-400 transition-all duration-300 ease-in-out"
+                      )}
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       <Settings className="w-4 h-4 mr-3 text-indigo-400" />
@@ -116,7 +123,7 @@ const Header: React.FC = () => {
                     </Link>
                     <div className="border-t border-gray-700 my-2"></div>
                     <SignOutButton
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-150"
+                      className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-gray-700 hover:text-indigo-400 transition-colors duration-150"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       <LogOut className="w-4 h-4 mr-3 text-indigo-400" />

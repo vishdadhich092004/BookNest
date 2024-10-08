@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../contexts/AppContext";
-import { Trash2Icon } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || "";
 
@@ -51,37 +51,19 @@ const DeleteButton = ({ id, toBeDeleted }: DeleteButtonProps) => {
   return (
     <button
       onClick={handleDelete}
+      className="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
       disabled={loading}
-      className={`flex items-center px-4 py-2 bg-red-600 text-white rounded-md shadow-md transition duration-300 ${
-        loading ? "opacity-50 cursor-not-allowed" : "hover:bg-red-700"
-      }`}
     >
       {loading ? (
         <>
-          <svg
-            className="animate-spin h-5 w-5 mr-2 text-white"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v8H4z"
-            ></path>
-          </svg>
+          <Trash2 className="w-4 h-4 mr-2 animate-spin" />
           Deleting...
         </>
       ) : (
-        <Trash2Icon></Trash2Icon>
+        <>
+          <Trash2 className="w-4 h-4 mr-2" />
+          Delete
+        </>
       )}
     </button>
   );

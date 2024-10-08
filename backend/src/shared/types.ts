@@ -11,6 +11,8 @@ export type UserType = {
   picture?: string;
   favoriteGenres: string[];
   readBooks: BookType[];
+  profileAvatar: string;
+  setRandomAvatar: () => void;
 };
 export type CommentType = {
   _id: string;

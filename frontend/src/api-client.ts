@@ -257,6 +257,18 @@ export const likeDiscussion = async (discussionId: string) => {
   if (!response.ok) throw new Error("Failed to like discussion");
   return response.json();
 };
+export const unlikeDiscussion = async (discussionId: string) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/unlike`,
+    {
+      method: "POST",
+      credentials: "include",
+    }
+  );
+  if (!response.ok) throw new Error("Failed to unlike discussion");
+  return response.json();
+};
+
 export const dislikeDiscussion = async (discussionId: string) => {
   const response = await fetch(
     `${BASE_URL}/api/discussions/${discussionId}/dislike`,
@@ -266,6 +278,17 @@ export const dislikeDiscussion = async (discussionId: string) => {
     }
   );
   if (!response.ok) throw new Error("Error disliking discussion");
+  return response.json();
+};
+export const undislikeDiscussion = async (discussionId: string) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/undislike`,
+    {
+      method: "POST",
+      credentials: "include",
+    }
+  );
+  if (!response.ok) throw new Error("Error undisliking discussion");
   return response.json();
 };
 
@@ -278,6 +301,20 @@ export const likeComment = async (discussionId: string, commentId: string) => {
     }
   );
   if (!response.ok) throw new Error("Failed to Like Comment");
+  return response.json();
+};
+export const unlikeComment = async (
+  discussionId: string,
+  commentId: string
+) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/comments/${commentId}/unlike`,
+    {
+      credentials: "include",
+      method: "POST",
+    }
+  );
+  if (!response.ok) throw new Error("Failed to Unlike Comment");
   return response.json();
 };
 
@@ -293,6 +330,20 @@ export const dislikeComment = async (
     }
   );
   if (!response.ok) throw new Error("Failed to Dislike Comment");
+  return response.json();
+};
+export const undislikeComment = async (
+  discussionId: string,
+  commentId: string
+) => {
+  const response = await fetch(
+    `${BASE_URL}/api/discussions/${discussionId}/comments/${commentId}/undislike`,
+    {
+      credentials: "include",
+      method: "POST",
+    }
+  );
+  if (!response.ok) throw new Error("Failed to Undislike Comment");
   return response.json();
 };
 
