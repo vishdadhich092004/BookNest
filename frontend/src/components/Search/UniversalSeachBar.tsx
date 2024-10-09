@@ -27,12 +27,15 @@ function UniversalSearchBar({ className = "" }: UniversalSearchBarProps) {
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (query.trim()) {
-      navigate(`/search-results?q=${query}`); // Navigate to SearchResultsPage with query
+      // Introduce a delay of 500 milliseconds
+      setTimeout(() => {
+        navigate(`/search-results?q=${query}`); // Navigate to SearchResultsPage with query
+      }, 500);
     }
   };
 
   return (
-    <div className={`flex flex-col items-center mt-8 px-4 ${className}`}>
+    <div className={`flex flex-col items-center lg:mt-8  px-4 ${className}`}>
       <PlaceholdersAndVanishInput
         onSubmit={handleSearch}
         className="w-full"
