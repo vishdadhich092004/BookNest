@@ -16,6 +16,7 @@ import { useAuth } from "./contexts/AuthContext";
 import UserPage from "./pages/UserPage";
 import SearchResults from "./components/Search/SearchResults";
 import NotFound from "./pages/NotFound";
+import AboutMe from "./pages/AboutMe";
 function App() {
   const { isAuthenticated } = useAuth();
   return (
@@ -163,6 +164,14 @@ function App() {
             }
           />
         )}
+        <Route
+          path="/aboutme"
+          element={
+            <Layout>
+              <AboutMe />
+            </Layout>
+          }
+        />
         <Route
           path="*"
           element={

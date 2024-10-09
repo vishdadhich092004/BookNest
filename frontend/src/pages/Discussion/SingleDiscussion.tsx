@@ -6,7 +6,13 @@ import * as apiClient from "../../api-client";
 import { DiscussionType } from "../../../../backend/src/shared/types";
 import Loader from "../../components/Loader";
 import { useAuth } from "../../contexts/AuthContext";
-import { ChevronLeft, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronDown,
+  ChevronUp,
+  BookOpen,
+  CircleOff,
+} from "lucide-react";
 import UserDisplay from "../../components/UserDisplay";
 import timeAgo from "../../utils/timeAgo";
 import EllipsisMenu from "../../components/EllipsisMenu"; // Import the EllipsisMenu component
@@ -119,9 +125,16 @@ const SingleDiscussion = () => {
     );
   }
 
-  const { title, description, userId, comments, likes, dislikes, createdAt } =
-    data as DiscussionType;
-
+  const {
+    title,
+    description,
+    userId,
+    comments,
+    likes,
+    dislikes,
+    createdAt,
+    bookId,
+  } = data as DiscussionType;
   // Determine if the user has liked or disliked the discussion
   const userHasDisliked = user && dislikes.includes(user?._id);
   const userHasLiked = user && likes.includes(user?._id);
@@ -132,7 +145,6 @@ const SingleDiscussion = () => {
     } else {
       likeMutation.mutate();
     }
-    // console.log("hii");
   };
 
   const handleDislike = () => {
@@ -158,17 +170,33 @@ const SingleDiscussion = () => {
             <div className="flex items-start justify-between mb-4">
               <div className="flex flex-col">
                 <UserDisplay user={userId} />
-                <p className="text-sm text-gray-400 ml-14 -mt-3">
+                <p className="text-sm text-gray-400 ml-14 lg:-mt-3">
                   {timeAgo(new Date(createdAt))}
                 </p>
               </div>
-              {isAuthenticated && userId._id === user?._id && (
-                <EllipsisMenu
-                  onEdit={() => navigate(`/discussions/${discussionId}/edit`)}
-                  id={discussionId!}
-                  toBeDeleted="discussions"
-                />
-              )}
+              <div className="flex items-center space-x-4">
+                {bookId ? (
+                  <Link
+                    to={`/books/${bookId._id}`}
+                    className="bg-purple-600 text-white text-xs px-2 py-2 rounded-full flex items-center hover:bg-purple-700 transition-colors duration-300"
+                  >
+                    <BookOpen size={12} className="mr-1" />
+                    {bookId.title}
+                  </Link>
+                ) : (
+                  <div className="bg-blue-600 text-white text-xs px-2 py-2 rounded-full flex items-center ">
+                    <CircleOff size={12} className="mr-1" />
+                    Non-Book
+                  </div>
+                )}
+                {isAuthenticated && userId._id === user?._id && (
+                  <EllipsisMenu
+                    onEdit={() => navigate(`/discussions/${discussionId}/edit`)}
+                    id={discussionId!}
+                    toBeDeleted="discussions"
+                  />
+                )}
+              </div>
             </div>
 
             <h1 className="text-3xl font-bold mb-4">{title}</h1>

@@ -5,7 +5,13 @@ import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { DiscussionType } from "../../../../backend/src/shared/types";
-import { PlusCircle, MessageCircle, ChevronRight } from "lucide-react";
+import {
+  PlusCircle,
+  MessageCircle,
+  ChevronRight,
+  BookOpen,
+  CircleOff,
+} from "lucide-react";
 import Pagination from "../../components/Pagination";
 import { cn } from "../../lib/utills";
 import UserDisplay from "../../components/UserDisplay";
@@ -85,21 +91,31 @@ const AllDiscussions = () => {
 
 const DiscussionCard = ({ discussion }: { discussion: DiscussionType }) => (
   <Link to={`${discussion._id}`} className="block group">
-    <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/10 transition-all duration-300 h-full flex flex-col">
+    <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/10 transition-all duration-300 h-full flex flex-col relative">
+      {discussion.bookId ? (
+        <Link
+          to={`/books/${discussion.bookId._id}`}
+          className="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-2 rounded-full flex items-center hover:bg-purple-700 transition-colors duration-300"
+        >
+          <BookOpen size={12} className="mr-1" />
+          {discussion.bookId.title}
+        </Link>
+      ) : (
+        <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-2 rounded-full flex items-center">
+          <CircleOff size={12} className="mr-1" />
+          Non-Book
+        </div>
+      )}
       <div className="p-6 flex-grow">
-        <div className="flex items-center mb-4">
+        <div className="flex flex-col items-start mb-4">
           <UserDisplay user={discussion.userId || null} />
-          <div className="ml-3">
-            {discussion.userId ? (
-              <>
-                <p className="text-xs text-gray-400 ">
-                  {timeAgo(new Date(discussion.createdAt))}
-                </p>
-              </>
-            ) : (
-              <p className="text-sm font-medium text-gray-400">[deleted]</p>
-            )}
-          </div>
+          {discussion.userId ? (
+            <p className="text-xs text-gray-400 ml-14 -mt-2">
+              {timeAgo(new Date(discussion.createdAt))}
+            </p>
+          ) : (
+            <p className="text-sm font-medium text-gray-400 mt-1">[deleted]</p>
+          )}
         </div>
         <h2 className="text-xl font-semibold mb-2 group-hover:text-purple-400 transition-colors duration-300">
           {discussion.title}
@@ -121,7 +137,6 @@ const DiscussionCard = ({ discussion }: { discussion: DiscussionType }) => (
     </div>
   </Link>
 );
-
 const DiscussionsSkeleton = () => (
   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     {[...Array(6)].map((_, i) => (

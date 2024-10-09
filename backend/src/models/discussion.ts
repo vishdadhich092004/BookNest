@@ -32,9 +32,10 @@ const discussionSchema = new Schema({
       ref: "Comment",
     },
   ],
-  book: {
-    type: String,
-    required: true,
+  bookId: {
+    type: Schema.Types.ObjectId,
+    ref: "Book",
+    required: false,
   },
   likes: [
     {
@@ -50,6 +51,9 @@ const discussionSchema = new Schema({
   ],
 });
 
+// discussionSchema.pre("find", function () {
+//   this.populate("book");
+// });
 // Replace text index with regular index
 discussionSchema.index({ title: 1, description: 1 });
 

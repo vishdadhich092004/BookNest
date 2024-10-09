@@ -27,7 +27,8 @@ module.exports = {
       },
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
-        irina: ['Inria Sans', 'sans-serif'] // Set 'Roboto' as the default sans-serif font
+        irina: ['Inria Sans', 'sans-serif'], // Set 'Roboto' as the default sans-serif font
+        greatVibe: ['Great Vibes', 'sans-serif']
       },
       container: {
         // padding: {

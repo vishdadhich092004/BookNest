@@ -32,23 +32,10 @@ router.post(
   [
     check("title", "Title is required").notEmpty(),
     check("description", "Description cannot be empty").notEmpty(),
-    check("book", "Book is required").notEmpty(),
   ],
   discussionControllers.createNewDiscussion
 );
-router.get(":/discussionId/owner", async (req: Request, res: Response) => {
-  const { discussionId } = req.params;
-  try {
-    const discussion = await Discussion.findById(discussionId);
-    if (!discussion)
-      return res.status(404).json({ message: "No discussion Found" });
-    const user = discussion.userId;
-    if (!user) return res.status(404).json({ message: "No user Found" });
-    return res.status(200).json({ user });
-  } catch (e) {
-    return res.status(500).json({ message: "Something went Wrong" });
-  }
-});
+
 // return all the discussions
 router.get("/", discussionControllers.getAllDiscussions);
 
@@ -60,24 +47,7 @@ router.put(
   "/:discussionId/edit",
   verifyToken,
   checkOwnership,
-  async (req: AuthRequest, res: Response) => {
-    try {
-      const EditDiscussionFormData = req.body;
-      const { discussionId } = req.params;
-      const updatedDiscussion = await Discussion.findByIdAndUpdate(
-        discussionId,
-        EditDiscussionFormData,
-        { new: true }
-      );
-      if (!updatedDiscussion) {
-        return res.status(404).json({ message: "Discussion not found" });
-      }
-      await updatedDiscussion.save();
-      res.status(200).json(updatedDiscussion);
-    } catch (e) {
-      res.status(500).json({ message: "Error updating discussion", e });
-    }
-  }
+  discussionControllers.editDiscussion
 );
 
 router.delete(

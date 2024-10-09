@@ -4,10 +4,16 @@ import { PlaceholdersAndVanishInput } from "../aceternity-ui/placeholders-and-va
 import { useNavigate } from "react-router-dom";
 
 const placeholders = [
-  "What's the best mystery novel of the decade?",
-  "Who wrote 'The Catcher in the Rye'?",
-  "Most discussed books recently?",
-  "What are people saying about '1984'?",
+  "To Kill a Mockingbird",
+  "Fiction",
+  "Romance",
+  "Harper Lee",
+  "Dystopian",
+  "The Great Gatsby",
+  "Classic",
+  "Pride and Prejudice",
+  "Jane Austen",
+  "Literary Fiction",
 ];
 
 interface UniversalSearchBarProps {

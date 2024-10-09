@@ -48,7 +48,7 @@ const UserDisplay: React.FC<UserDisplayProps> = ({ user, onClick }) => {
           </div>
         )}
       </div>
-      <span className="text-gray-200 font-medium">
+      <span className="text-gray-200 font-medium lg:ml-0 ml-2">
         {user.firstName} {user.lastName || ""}
       </span>
     </div>

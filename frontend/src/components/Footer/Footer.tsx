@@ -17,9 +17,9 @@ const Footer = () => {
 
           {/* Navigation Links */}
           <ul className="flex flex-wrap justify-center space-x-4 md:space-x-8 mb-4 md:mb-0">
-            <FooterLink to="/privacy">Privacy Policy</FooterLink>
-            <FooterLink to="/terms">Terms of Service</FooterLink>
-            <FooterLink to="/contact">Contact</FooterLink>
+            <FooterLink to="/aboutme">Dev's Message</FooterLink>
+            {/* <FooterLink to="/terms">Terms of Service</FooterLink> */}
+            {/* <FooterLink to="/contact">Contact</FooterLink> */}
           </ul>
 
           {/* Social Icons */}

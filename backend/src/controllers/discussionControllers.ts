@@ -3,6 +3,8 @@ import { validationResult } from "express-validator";
 import Discussion from "../models/discussion";
 import { AuthRequest } from "../middleware/auth";
 import Comment from "../models/comment";
+import Book from "../models/book";
+
 export const createNewDiscussion = async (req: AuthRequest, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -12,12 +14,22 @@ export const createNewDiscussion = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?.userId;
     if (!userId) return res.status(400).json({ message: "User Access Denied" });
-    const { title, description, book } = req.body;
-    const discussion = new Discussion({ userId, title, description, book });
+
+    const { title, description, bookId } = req.body; // Expecting bookId from request body
+
+    const discussion = new Discussion({
+      userId,
+      title,
+      description,
+      bookId: bookId ? bookId : null, // Store bookId as reference
+    });
+
+    // res.send(discussion);
     await discussion.save();
+
     res.status(200).send({ message: "Discussion created successfully." });
   } catch (e) {
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong", e });
   }
 };
 
@@ -32,7 +44,9 @@ export const getAllDiscussions = async (req: Request, res: Response) => {
       .skip(skip)
       .limit(limit)
       .sort({ _id: -1 })
-      .populate("userId"); // Assuming you want to populate user information
+      .populate("userId")
+      .populate("bookId");
+    // Assuming you want to populate user information
 
     res.status(200).json({
       discussions: allDiscussions,
@@ -54,7 +68,8 @@ export const getADiscussion = async (req: Request, res: Response) => {
         populate: {
           path: "userId",
         },
-      });
+      })
+      .populate("bookId");
 
     if (!discussion) {
       return res.status(404).json({ message: "No discussion found" });
@@ -189,5 +204,24 @@ export const undislikeDiscussion = async (req: AuthRequest, res: Response) => {
     });
   } catch (e) {
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const editDiscussion = async (req: AuthRequest, res: Response) => {
+  try {
+    const EditDiscussionFormData = req.body;
+    const { discussionId } = req.params;
+    const updatedDiscussion = await Discussion.findByIdAndUpdate(
+      discussionId,
+      EditDiscussionFormData,
+      { new: true }
+    );
+    if (!updatedDiscussion) {
+      return res.status(404).json({ message: "Discussion not found" });
+    }
+    await updatedDiscussion.save();
+    res.status(200).json(updatedDiscussion);
+  } catch (e) {
+    res.status(500).json({ message: "Error updating discussion", e });
   }
 };

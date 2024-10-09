@@ -1,16 +1,17 @@
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
 import { PlusCircle } from "lucide-react";
 import { cn } from "../../lib/utills";
+import { BookType } from "../../../../backend/src/shared/types";
 
 export type DiscussionFormData = {
   title: string;
   description: string;
   updatedAt: Date;
-  book: string;
+  bookId: string | null; // Now stores the book ID
 };
 
 const NewDiscussion = () => {
@@ -22,24 +23,22 @@ const NewDiscussion = () => {
     handleSubmit,
   } = useForm<DiscussionFormData>();
 
+  // Fetch the list of available books
+  const { data: books } = useQuery("books", apiClient.fetchBooksWithoutGenre); // FetchBooks is an API to get the list of books
+
   const mutation = useMutation(apiClient.newDiscussion, {
     onSuccess: () => {
-      showToast({
-        message: "New Discussion created",
-        type: "SUCCESS",
-      });
+      showToast({ message: "New Discussion created", type: "SUCCESS" });
       navigate("/discussions");
     },
     onError: () => {
-      showToast({
-        message: "Error creating Discussion",
-        type: "ERROR",
-      });
+      showToast({ message: "Error creating Discussion", type: "ERROR" });
     },
   });
 
   const onSubmit = handleSubmit((data) => {
-    mutation.mutate(data);
+    const bookId = data.bookId === "non-book" ? null : data.bookId;
+    mutation.mutate({ ...data, bookId });
   });
 
   return (
@@ -52,6 +51,7 @@ const NewDiscussion = () => {
         </header>
 
         <form onSubmit={onSubmit} className="space-y-6">
+          {/* Title input */}
           <div>
             <label
               htmlFor="title"
@@ -77,6 +77,7 @@ const NewDiscussion = () => {
             )}
           </div>
 
+          {/* Book selector */}
           <div>
             <label
               htmlFor="book"
@@ -84,22 +85,33 @@ const NewDiscussion = () => {
             >
               Book
             </label>
-            <input
-              type="text"
-              id="book"
+            <select
+              id="bookId"
+              defaultValue="non-book"
               className={cn(
                 "mt-1 p-3 block w-full rounded-md bg-gray-900 border-gray-700",
                 "text-white placeholder-gray-400",
                 "focus:ring-purple-500 focus:border-purple-500"
               )}
-              placeholder="Enter book title"
-              {...register("book", { required: "Book cannot be empty" })}
-            />
-            {errors.book && (
-              <p className="mt-2 text-sm text-red-500">{errors.book.message}</p>
+              {...register("bookId", {
+                required: "Please select a book or 'Non-Book' option",
+              })}
+            >
+              <option value="non-book">Non-Book Related</option>
+              {books?.map((book: BookType) => (
+                <option key={book._id} value={book._id}>
+                  {book.title}
+                </option>
+              ))}
+            </select>
+            {errors.bookId && (
+              <p className="mt-2 text-sm text-red-500">
+                {errors.bookId.message}
+              </p>
             )}
           </div>
 
+          {/* Description input */}
           <div>
             <label
               htmlFor="description"
@@ -127,6 +139,7 @@ const NewDiscussion = () => {
             )}
           </div>
 
+          {/* Submit button */}
           <button
             type="submit"
             className={cn(
