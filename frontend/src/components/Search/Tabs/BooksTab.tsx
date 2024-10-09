@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import { BookType } from "../../../../../backend/src/shared/types";
 
-interface BookTypeProps {
+interface BooksTypeProps {
   books: BookType[];
 }
 
-const BooksTab = ({ books }: BookTypeProps) => {
+const BooksTab = ({ books }: BooksTypeProps) => {
   if (!books) {
     return (
       <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg p-6 text-center">

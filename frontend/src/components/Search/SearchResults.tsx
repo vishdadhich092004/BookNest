@@ -12,12 +12,12 @@ import {
 import { cn } from "../../lib/utills";
 import Loader from "../../components/Loader";
 import { Book, MessageCircle, Star, PenTool } from "lucide-react";
-import DiscussionTab from "./Tabs/DiscussionsTab";
-import CommentTab from "./Tabs/CommentsTab";
-import ReviewTab from "./Tabs/ReviewsTab";
 import NoResultCard from "./Tabs/NoResultCard";
 import UniversalSearchBar from "./UniversalSeachBar";
 import BooksTab from "./Tabs/BooksTab";
+import DiscussionsTab from "./Tabs/DiscussionsTab";
+import CommentsTab from "./Tabs/CommentsTab";
+import ReviewsTab from "./Tabs/ReviewsTab";
 
 type SearchResults = {
   books: BookType[];
@@ -74,31 +74,19 @@ const SearchResultsPage = () => {
         );
       case "discussions":
         return results.discussions.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {results.discussions.map((discussion) => (
-              <DiscussionTab key={discussion._id} discussion={discussion} />
-            ))}
-          </div>
+          <DiscussionsTab discussions={results.discussions} />
         ) : (
           noDataMessage()
         );
       case "comments":
         return results.comments.length > 0 ? (
-          <div className="space-y-4">
-            {results.comments.map((comment) => (
-              <CommentTab key={comment._id} comment={comment} />
-            ))}
-          </div>
+          <CommentsTab comments={results.comments} />
         ) : (
           noDataMessage()
         );
       case "reviews":
         return results.reviews.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {results.reviews.map((review) => (
-              <ReviewTab key={review._id} review={review} />
-            ))}
-          </div>
+          <ReviewsTab reviews={results.reviews} />
         ) : (
           noDataMessage()
         );
