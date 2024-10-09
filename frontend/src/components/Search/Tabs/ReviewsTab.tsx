@@ -1,8 +1,11 @@
-import React from "react";
 import { Star } from "lucide-react";
 import { ReviewType } from "../../../../../backend/src/shared/types";
 
-const ReviewTab: React.FC<{ review: ReviewType }> = ({ review }) => {
+interface ReviewTypeProps {
+  review: ReviewType;
+}
+
+const ReviewTab = ({ review }: ReviewTypeProps) => {
   if (!review) {
     return (
       <div className="bg-gray-800 rounded-lg p-4 shadow-lg text-center">

@@ -1,13 +1,13 @@
-import React from "react";
 import { MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { DiscussionType } from "../../../../../backend/src/shared/types";
 import timeAgo from "../../../utils/timeAgo";
 import NoResultCard from "./NoResultCard";
 
-const DiscussionTab: React.FC<{ discussion: DiscussionType }> = ({
-  discussion,
-}) => {
+interface DiscussionTypeProps {
+  discussion: DiscussionType;
+}
+const DiscussionTab = ({ discussion }: DiscussionTypeProps) => {
   if (!discussion) {
     return (
       <div className="bg-gray-800 rounded-lg p-6 shadow-lg text-center">

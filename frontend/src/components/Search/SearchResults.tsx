@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import * as apiClient from "../../api-client";
@@ -28,7 +28,7 @@ type SearchResults = {
 
 type ResultType = "books" | "discussions" | "comments" | "reviews";
 
-const SearchResultsPage: React.FC = () => {
+const SearchResultsPage = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
   const { showToast } = useAppContext();
@@ -60,9 +60,9 @@ const SearchResultsPage: React.FC = () => {
     if (!results) return null;
 
     const noDataMessage = () => (
-      <p className="text-center text-gray-400 p-4 bg-gray-800 rounded-lg">
+      <div className="text-center text-gray-400 p-4 bg-gray-800 rounded-lg">
         <NoResultCard />
-      </p>
+      </div>
     );
 
     switch (activeTab) {
