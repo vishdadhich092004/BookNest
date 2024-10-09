@@ -5,7 +5,7 @@ import { DiscussionType } from "../../../../../backend/src/shared/types";
 import timeAgo from "../../../utils/timeAgo";
 import NoResultCard from "./NoResultCard";
 
-const DiscussionTab: React.FC<{ discussion: DiscussionType | null }> = ({
+const DiscussionTab: React.FC<{ discussion: DiscussionType }> = ({
   discussion,
 }) => {
   if (!discussion) {

@@ -2,7 +2,7 @@ import React from "react";
 import { CommentType } from "../../../../../backend/src/shared/types";
 import timeAgo from "../../../utils/timeAgo";
 
-const CommentTab: React.FC<{ comment: CommentType | null }> = ({ comment }) => {
+const CommentTab: React.FC<{ comment: CommentType }> = ({ comment }) => {
   if (!comment) {
     return (
       <div className="bg-gray-800 rounded-lg p-4 shadow-lg text-center">

@@ -14,7 +14,6 @@ import DownvoteButton from "./Buttons/DislikeButton";
 import UserDisplay from "./UserDisplay";
 import timeAgo from "../utils/timeAgo";
 import EllipsisMenu from "./EllipsisMenu"; // Import the EllipsisMenu component
-import { useNavigate } from "react-router-dom";
 
 interface SingleCommentProps {
   comment: CommentType;
@@ -28,7 +27,6 @@ const SingleComment: React.FC<SingleCommentProps> = ({
   const queryClient = useQueryClient();
   const { user, isAuthenticated } = useAuth();
   const { showToast } = useAppContext();
-  const navigate = useNavigate();
   const likeMutation = useMutation(
     () => likeComment(discussionId, comment._id),
     {
@@ -97,10 +95,10 @@ const SingleComment: React.FC<SingleCommentProps> = ({
     }
   };
 
-  // const handleEdit = () => {
-  //   // Handle the edit functionality here
-  //   console.log("Edit comment:", comment._id);
-  // };
+  const handleEdit = () => {
+    //   // Handle the edit functionality here
+    alert("Feature Under Maintainence");
+  };
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 mb-4">
@@ -125,7 +123,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
           isAuthenticated &&
           comment.userId._id === user?._id && (
             <EllipsisMenu
-              onEdit={() => navigate(``)}
+              onEdit={handleEdit}
               id={comment._id!}
               toBeDeleted="comments"
             />

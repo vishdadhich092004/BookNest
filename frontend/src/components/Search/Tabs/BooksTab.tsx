@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { BookType } from "../../../../../backend/src/shared/types";
 
-const BookTab: React.FC<{ book: BookType | null }> = ({ book }) => {
+const BookTab: React.FC<{ book: BookType }> = ({ book }) => {
   if (!book) {
     return (
       <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg p-6 text-center">
