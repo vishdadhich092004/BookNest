@@ -30,7 +30,7 @@ function HeroSection() {
               {/* A{" "} */}
               <FlipWords
                 words={words}
-                className="font-bold text-white text-xl sm:text-2xl md:text-3xl  text-center"
+                className="font-bold text-white text-xl sm:text-2xl md:text-3xl  text-center -mr-2"
               />
               For Your Cerebrum 🧠
             </h1>
