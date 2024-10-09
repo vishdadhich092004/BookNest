@@ -13,11 +13,11 @@ import { cn } from "../../lib/utills";
 import Loader from "../../components/Loader";
 import { Book, MessageCircle, Star, PenTool } from "lucide-react";
 import DiscussionTab from "./Tabs/DiscussionsTab";
-import BookTab from "./Tabs/BooksTab";
 import CommentTab from "./Tabs/CommentsTab";
 import ReviewTab from "./Tabs/ReviewsTab";
 import NoResultCard from "./Tabs/NoResultCard";
 import UniversalSearchBar from "./UniversalSeachBar";
+import BooksTab from "./Tabs/BooksTab";
 
 type SearchResults = {
   books: BookType[];
@@ -68,11 +68,7 @@ const SearchResultsPage = () => {
     switch (activeTab) {
       case "books":
         return results.books.length > 0 ? (
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-            {results.books.map((book) => (
-              <BookTab key={book._id} book={book} />
-            ))}
-          </div>
+          <BooksTab books={results.books} />
         ) : (
           noDataMessage()
         );
