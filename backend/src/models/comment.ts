@@ -1,3 +1,4 @@
+// Comment Model
 import mongoose, { Schema } from "mongoose";
 import { CommentType } from "../shared/types";
 
@@ -31,7 +32,10 @@ export const commentSchema = new Schema({
     },
   ],
 });
-commentSchema.index({ text: "text" });
+
+// Replace text index with regular index
+commentSchema.index({ text: 1 });
+
 const Comment = mongoose.model<CommentType>("Comment", commentSchema);
 
 export default Comment;

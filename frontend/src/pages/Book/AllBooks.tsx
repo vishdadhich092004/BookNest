@@ -7,6 +7,8 @@ import AuthorFilter from "../../components/Filters/AuthorFilter";
 import GenreFilter from "../../components/Filters/GenreFilter";
 import UniversalSearchBar from "../../components/Search/UniversalSeachBar";
 import Pagination from "../../components/Pagination"; // Import the Pagination component
+import NoResultCard from "../../components/Search/Tabs/NoResultCard";
+import NotFound from "../NotFound";
 
 function BookFocusCards() {
   const [books, setBooks] = useState<BookType[]>([]);
@@ -72,7 +74,7 @@ function BookFocusCards() {
   }
 
   if (error) {
-    return <p className="text-red-500">{error}</p>;
+    return <NotFound />;
   }
 
   return (
@@ -96,15 +98,20 @@ function BookFocusCards() {
         <UniversalSearchBar />
       </div>
 
-      {/* Display Book Cards */}
-      <FocusCards cards={cards} />
-
-      {/* Pagination Component */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      {books.length === 0 ? (
+        <NoResultCard />
+      ) : (
+        <>
+          <FocusCards cards={cards} />
+          <div className="mt-8">
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

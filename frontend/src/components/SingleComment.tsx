@@ -81,9 +81,6 @@ const SingleComment: React.FC<SingleCommentProps> = ({
   const userHasLiked = user && comment.likes.includes(user._id);
   const userHasDisliked = user && comment.dislikes.includes(user._id);
 
-  const isOwner = isAuthenticated && comment.userId._id === user?._id;
-  console.log(isOwner);
-
   const handleLike = () => {
     if (userHasLiked) {
       unlikeMutation.mutate();
@@ -110,7 +107,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
       <div className="flex items-start justify-between mb-2">
         {comment.userId ? (
           <div className="flex flex-col">
-            <UserDisplay user={comment.userId} />
+            {<UserDisplay user={comment.userId} />}
             <p className="text-sm text-gray-400 ml-14 -mt-3">
               {timeAgo(new Date(comment.timestamp))}
             </p>
@@ -124,13 +121,15 @@ const SingleComment: React.FC<SingleCommentProps> = ({
           </div>
         )}
 
-        {isAuthenticated && comment.userId._id === user?._id && (
-          <EllipsisMenu
-            onEdit={() => navigate(``)}
-            id={comment._id!}
-            toBeDeleted="comments"
-          />
-        )}
+        {comment.userId &&
+          isAuthenticated &&
+          comment.userId._id === user?._id && (
+            <EllipsisMenu
+              onEdit={() => navigate(``)}
+              id={comment._id!}
+              toBeDeleted="comments"
+            />
+          )}
       </div>
       <p className="text-gray-300">{comment.text}</p>
       <div className="flex justify-between items-center mt-2">

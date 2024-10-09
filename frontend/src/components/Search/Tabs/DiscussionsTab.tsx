@@ -1,57 +1,45 @@
 import React from "react";
+import { MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import { DiscussionType } from "../../../../../backend/src/shared/types";
-import { motion } from "framer-motion";
-import { FaComments, FaUser } from "react-icons/fa";
+import timeAgo from "../../../utils/timeAgo";
+import NoResultCard from "./NoResultCard";
 
-interface DiscussionsTabProps {
-  discussions: DiscussionType[];
-}
-
-const DiscussionCard: React.FC<{ discussion: DiscussionType }> = ({
+const DiscussionTab: React.FC<{ discussion: DiscussionType | null }> = ({
   discussion,
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3 }}
-    className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-700"
-  >
-    <h3 className="text-2xl font-bold mb-2 text-cyan-400">
-      {discussion.title}
-    </h3>
-    <p className="text-gray-300 mb-4 line-clamp-3">{discussion.description}</p>
-    <div className="flex items-center text-sm text-gray-400 mb-2">
-      <FaUser className="mr-2" />
-      <span>{discussion.userId?.firstName}</span>
-    </div>
-  </motion.div>
-);
-
-function DiscussionsTab({ discussions }: DiscussionsTabProps) {
+}) => {
+  if (!discussion) {
+    return (
+      <div className="bg-gray-800 rounded-lg p-6 shadow-lg text-center">
+        <NoResultCard />
+      </div>
+    );
+  }
   return (
-    <div className="w-full h-full overflow-y-auto p-6 bg-gray-900">
-      {discussions.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {discussions.map((discussion, index) => (
-            <DiscussionCard key={index} discussion={discussion} />
-          ))}
-        </div>
-      ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col items-center justify-center h-full text-center"
-        >
-          <FaComments className="text-6xl text-gray-600 mb-4" />
-          <p className="text-xl text-white">No discussions found.</p>
-          <p className="text-gray-400 mt-2">
-            Try adjusting your search or filters.
+    <Link to={`/discussions/${discussion._id}`} className="block group">
+      <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/10 transition-all duration-300 h-full flex flex-col">
+        <div className="p-6 flex-grow">
+          <div className="flex items-center mb-4">
+            <p className="text-xs text-gray-400">
+              {timeAgo(new Date(discussion.createdAt))}
+            </p>
+          </div>
+          <h2 className="text-xl font-semibold mb-2 group-hover:text-purple-400 transition-colors duration-300">
+            {discussion.title}
+          </h2>
+          <p className="text-gray-400 text-sm line-clamp-2">
+            {discussion.description}
           </p>
-        </motion.div>
-      )}
-    </div>
+        </div>
+        <div className="px-6 py-4 bg-gray-700 flex justify-between items-center">
+          <div className="flex items-center text-sm text-gray-400">
+            <MessageCircle size={16} className="mr-2" />
+            <span>{discussion.comments?.length || 0} comments</span>
+          </div>
+        </div>
+      </div>
+    </Link>
   );
-}
+};
 
-export default DiscussionsTab;
+export default DiscussionTab;

@@ -3,6 +3,8 @@ import { useMutation } from "react-query";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
 import { useNavigate, useParams } from "react-router-dom";
+import { cn } from "../../lib/utills";
+import ReactStars from "react-rating-stars-component";
 
 export type ReviewFormData = {
   text: string;
@@ -17,6 +19,7 @@ const ReviewForm = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitSuccessful },
   } = useForm<ReviewFormData>();
 
@@ -34,50 +37,53 @@ const ReviewForm = () => {
     }
   );
 
-  const buttonStyles = isSubmitSuccessful
-    ? "w-full bg-gray-400 text-white py-2 rounded-md"
-    : "w-full bg-teal-600 text-white py-2 rounded-md shadow-md hover:bg-teal-700 transition-transform transform hover:scale-105";
+  const buttonStyles = cn(
+    "w-full text-white py-2 rounded-full font-semibold text-sm sm:text-base",
+    "transition-all duration-300 transform hover:scale-105",
+    isSubmitSuccessful
+      ? "bg-gray-400"
+      : "bg-gradient-to-r from-purple-400 to-pink-600 hover:from-purple-600 hover:to-pink-600"
+  );
 
   const onSubmit = handleSubmit((data) => {
     mutation.mutate(data);
   });
 
+  const ratingChanged = (newRating: number) => {
+    setValue("rating", newRating); // Set the rating value in the form
+  };
+
   return (
     <form
       onSubmit={onSubmit}
-      className="bg-white shadow-md rounded-lg p-6 mt-3"
+      className="bg-gray-900 rounded-lg p-6 shadow-lg mt-48"
     >
       <div className="mb-4">
-        <label className="block text-slate-700 text-sm font-bold mb-2">
+        <label className="block text-white text-sm font-bold mb-2">
           Review
           <textarea
-            className="w-full px-3 py-2 text-slate-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="w-full px-3 py-2 text-white bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             rows={4}
             {...register("text", { required: "This field cannot be empty" })}
           ></textarea>
         </label>
         {errors.text && (
-          <span className="text-red-500 text-sm">{errors.text.message}</span>
+          <span className="text-pink-500 text-sm">{errors.text.message}</span>
         )}
       </div>
 
       <div className="mb-4">
-        <label className="block text-slate-700 text-sm font-bold mb-2">
+        <label className="block text-white text-sm font-bold mb-2">
           Rating
-          <select
-            className="w-full px-3 py-2 text-slate-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-            {...register("rating", { required: "Rating is required" })}
-          >
-            <option value="">Select a rating</option>
-            {[1, 2, 3, 4, 5].map((num) => (
-              <option key={num} value={num}>
-                {num}
-              </option>
-            ))}
-          </select>
+          <ReactStars
+            count={5}
+            onChange={ratingChanged} // Handle rating change
+            size={24}
+            activeColor="#ffd700"
+          />
         </label>
         {errors.rating && (
-          <span className="text-red-500 text-sm">{errors.rating.message}</span>
+          <span className="text-pink-500 text-sm">{errors.rating.message}</span>
         )}
       </div>
 

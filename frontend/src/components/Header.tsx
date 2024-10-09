@@ -110,17 +110,7 @@ const Header: React.FC = () => {
                       <User className="w-4 h-4 mr-3 text-indigo-400" />
                       My Profile
                     </Link>
-                    <Link
-                      to="/settings"
-                      className={cn(
-                        "text-white font-medium relative  group flex items-center p-2 text-lg",
-                        "hover:text-indigo-400 transition-all duration-300 ease-in-out"
-                      )}
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      <Settings className="w-4 h-4 mr-3 text-indigo-400" />
-                      Settings
-                    </Link>
+
                     <div className="border-t border-gray-700 my-2"></div>
                     <SignOutButton
                       className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-gray-700 hover:text-indigo-400 transition-colors duration-150"

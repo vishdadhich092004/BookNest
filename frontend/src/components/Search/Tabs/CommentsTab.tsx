@@ -1,24 +1,24 @@
+import React from "react";
 import { CommentType } from "../../../../../backend/src/shared/types";
+import timeAgo from "../../../utils/timeAgo";
 
-interface CommentsTabProps {
-  comments: CommentType[];
-}
-function CommentsTab({ comments }: CommentsTabProps) {
+const CommentTab: React.FC<{ comment: CommentType | null }> = ({ comment }) => {
+  if (!comment) {
+    return (
+      <div className="bg-gray-800 rounded-lg p-4 shadow-lg text-center">
+        <p className="text-gray-400">No comment available</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 shadow-lg">
-      {comments.length > 0 ? (
-        <ul className="space-y-4">
-          {comments.map((comment, index) => (
-            <li key={index} className="bg-gray-800 p-4 rounded-lg shadow-md">
-              <strong className="text-cyan-400">Comment:</strong> {comment.text}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No comments found.</p>
-      )}
+    <div className="bg-gray-800 rounded-lg p-4 shadow-lg">
+      <p className="text-gray-300">{comment.text}</p>
+      <div className="mt-2 text-xs text-gray-500">
+        {timeAgo(new Date(comment.timestamp))}
+      </div>
     </div>
   );
-}
+};
 
-export default CommentsTab;
+export default CommentTab;

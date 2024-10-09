@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { BookType } from "../shared/types";
+
 const bookSchema = new Schema({
   title: {
     type: String,
@@ -35,12 +36,9 @@ const bookSchema = new Schema({
   ],
 });
 
-bookSchema.index({
-  title: "text",
-  author: "text",
-  description: "text",
-  genre: "text",
-});
+// Remove the text index
+bookSchema.index({ title: 1, author: 1, description: 1, genre: 1 });
+
 const Book = mongoose.model<BookType>("Book", bookSchema);
 
 export default Book;

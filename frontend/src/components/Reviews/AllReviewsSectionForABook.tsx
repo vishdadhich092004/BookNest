@@ -17,7 +17,7 @@ function AllReviewsSectionForABook({
       {reviews && reviews.length > 0 ? (
         <div className="space-y-6">
           {reviews.map((review: ReviewType) => (
-            <SingleReviewComponent review={review} />
+            <SingleReviewComponent key={review._id} review={review} />
           ))}
         </div>
       ) : (

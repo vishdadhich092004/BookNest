@@ -1,5 +1,7 @@
+// Discussion Model
 import mongoose, { Schema } from "mongoose";
 import { DiscussionType } from "../shared/types";
+
 const discussionSchema = new Schema({
   title: {
     type: String,
@@ -48,7 +50,9 @@ const discussionSchema = new Schema({
   ],
 });
 
-discussionSchema.index({ title: "text", description: "text" });
+// Replace text index with regular index
+discussionSchema.index({ title: 1, description: 1 });
+
 const Discussion = mongoose.model<DiscussionType>(
   "Discussion",
   discussionSchema

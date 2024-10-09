@@ -19,6 +19,7 @@ import {
 } from "../../../backend/src/shared/types";
 import timeAgo from "../utils/timeAgo";
 import DeleteUserButton from "../components/Buttons/DeleteUserButton";
+const ADMIN_ID = (import.meta.env.VITE_ADMIN_ID as string) || "";
 
 function UserPage() {
   const { userId } = useParams<{ userId: string }>();
@@ -26,7 +27,6 @@ function UserPage() {
   const [activeTab, setActiveTab] = useState<
     "comments" | "discussions" | "books"
   >("comments");
-
   const { data: comments, isLoading: loadingComments } = useQuery<
     CommentType[]
   >(
@@ -69,12 +69,13 @@ function UserPage() {
     );
   }
 
+  const isAdmin = userId === ADMIN_ID;
   return (
     <div className="min-h-screen bg-black text-white px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10">
       <div className="max-w-md mx-auto sm:max-w-2xl md:max-w-4xl lg:max-w-6xl mt-8">
         <header className="mb-6 sm:mb-8 md:mb-10">
           <div className="flex justify-between items-center mb-4 sm:mb-6">
-            <DeleteUserButton className="mr-2 sm:mr-3" />
+            {!isAdmin && <DeleteUserButton className="mr-2 sm:mr-3" />}
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-purple-400">
               User Profile
             </h1>

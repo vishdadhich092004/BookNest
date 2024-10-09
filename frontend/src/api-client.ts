@@ -400,7 +400,7 @@ export const markBookAsRead = async (bookId: string) => {
 export const universalSearch = async (q: string = "") => {
   try {
     const queryParams = new URLSearchParams();
-    if (q) queryParams.append("q", q); // Fixed query parameter name
+    if (q) queryParams.append("q", q);
 
     const queryString = queryParams.toString()
       ? `?${queryParams.toString()}`
@@ -409,11 +409,12 @@ export const universalSearch = async (q: string = "") => {
       credentials: "include",
     });
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Failed to search");
-    return data;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
   } catch (e) {
-    console.log(e);
-    throw new Error("Error at frontend");
+    console.error(e);
+    throw new Error("Error performing universal search");
   }
 };

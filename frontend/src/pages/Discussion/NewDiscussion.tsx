@@ -1,8 +1,10 @@
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
-import { useNavigate } from "react-router-dom";
+import { PlusCircle } from "lucide-react";
+import { cn } from "../../lib/utills";
 
 export type DiscussionFormData = {
   title: string;
@@ -11,12 +13,12 @@ export type DiscussionFormData = {
   book: string;
 };
 
-function NewDiscussion() {
+const NewDiscussion = () => {
   const navigate = useNavigate();
   const { showToast } = useAppContext();
   const {
     register,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors },
     handleSubmit,
   } = useForm<DiscussionFormData>();
 
@@ -40,65 +42,107 @@ function NewDiscussion() {
     mutation.mutate(data);
   });
 
-  const buttonStyles = isSubmitSuccessful
-    ? "w-full bg-slate-400 text-white py-2 rounded-md"
-    : "w-full bg-teal-600 text-white py-2 rounded-md shadow-md hover:bg-teal-700 transition-colors duration-300 transform hover:scale-105";
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-        <form className="space-y-4" onSubmit={onSubmit}>
-          <h2 className="text-3xl font-bold text-center text-teal-600">
+    <div className="min-h-screen bg-black text-white px-4 py-12 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <header className="mb-12">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
             Create a New Discussion
-          </h2>
-          <label className="block">
-            <span className="text-slate-800">Title</span>
+          </h1>
+        </header>
+
+        <form onSubmit={onSubmit} className="space-y-6">
+          <div>
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Title
+            </label>
             <input
               type="text"
-              className="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-500 focus:ring-opacity-50"
+              id="title"
+              className={cn(
+                "mt-1 p-3 block w-full rounded-md bg-gray-900 border-gray-700",
+                "text-white placeholder-gray-400",
+                "focus:ring-purple-500 focus:border-purple-500"
+              )}
+              placeholder="Enter discussion title"
               {...register("title", { required: "Title cannot be empty" })}
             />
             {errors.title && (
-              <span className="text-red-500 text-sm">
+              <p className="mt-2 text-sm text-red-500">
                 {errors.title.message}
-              </span>
+              </p>
             )}
-          </label>
-          <label className="block">
-            <span className="text-slate-800">Book</span>
+          </div>
+
+          <div>
+            <label
+              htmlFor="book"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Book
+            </label>
             <input
               type="text"
-              className="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-500 focus:ring-opacity-50"
+              id="book"
+              className={cn(
+                "mt-1 p-3 block w-full rounded-md bg-gray-900 border-gray-700",
+                "text-white placeholder-gray-400",
+                "focus:ring-purple-500 focus:border-purple-500"
+              )}
+              placeholder="Enter book title"
               {...register("book", { required: "Book cannot be empty" })}
             />
             {errors.book && (
-              <span className="text-red-500 text-sm">
-                {errors.book.message}
-              </span>
+              <p className="mt-2 text-sm text-red-500">{errors.book.message}</p>
             )}
-          </label>
-          <label className="block">
-            <span className="text-slate-800">Description</span>
+          </div>
+
+          <div>
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Description
+            </label>
             <textarea
-              className="mt-1 block w-full border-slate-300 rounded-md shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-500 focus:ring-opacity-50"
+              id="description"
+              rows={4}
+              className={cn(
+                "mt-1 p-3 block w-full rounded-md bg-gray-900 border-gray-700",
+                "text-white placeholder-gray-400",
+                "focus:ring-purple-500 focus:border-purple-500"
+              )}
+              placeholder="Enter discussion description"
               {...register("description", {
                 required: "This field is required",
               })}
-              rows={4}
             ></textarea>
             {errors.description && (
-              <span className="text-red-500 text-sm">
+              <p className="mt-2 text-sm text-red-500">
                 {errors.description.message}
-              </span>
+              </p>
             )}
-          </label>
-          <button type="submit" className={buttonStyles}>
+          </div>
+
+          <button
+            type="submit"
+            className={cn(
+              "w-full flex items-center justify-center px-4 py-2 border border-transparent",
+              "text-sm font-medium rounded-md text-white bg-purple-600",
+              "hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2",
+              "focus:ring-purple-500 transition-all duration-300 transform hover:scale-105"
+            )}
+          >
+            <PlusCircle className="mr-2" size={20} />
             Create Discussion
           </button>
         </form>
       </div>
     </div>
   );
-}
+};
 
 export default NewDiscussion;

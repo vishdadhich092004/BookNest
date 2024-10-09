@@ -168,7 +168,9 @@ const SingleBook = () => {
                   <Eye className="mr-2" size={18} />
                   Start Reading
                 </button>
-                <Link to={`/books/${bookId}/reviews`}>
+                <Link
+                  to={isAuthenticated ? `/books/${bookId}/reviews` : "/sign-in"}
+                >
                   <button className="bg-gradient-to-r from-purple-600 to-purple-400 text-white px-6 py-3 rounded-full shadow-md hover:from-purple-500 hover:to-purple-300 transition-all duration-300">
                     Add Review
                   </button>
@@ -183,7 +185,7 @@ const SingleBook = () => {
 
         <div className="mt-12">
           <h2 className="text-2xl font-semibold mb-6">Reviews</h2>
-          <AllReviewsSectionForABook reviews={reviews} />
+          <AllReviewsSectionForABook key={bookId} reviews={reviews} />
         </div>
       </div>
 

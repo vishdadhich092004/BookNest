@@ -88,6 +88,7 @@ function App() {
             </Layout>
           }
         />
+
         <Route
           path="/discussions/:discussionId/comments"
           element={
@@ -96,14 +97,16 @@ function App() {
             </Layout>
           }
         />
-        <Route
-          path="/discussions/:discussionId/edit"
-          element={
-            <Layout>
-              <EditDiscussion />
-            </Layout>
-          }
-        />
+        {isAuthenticated && (
+          <Route
+            path="/discussions/:discussionId/edit"
+            element={
+              <Layout>
+                <EditDiscussion />
+              </Layout>
+            }
+          />
+        )}
         {isAuthenticated ? (
           <Route
             path="/books/new"
@@ -139,31 +142,27 @@ function App() {
             </Layout>
           }
         />
-        <Route
-          path="/books/:bookId/reviews"
-          element={
-            <Layout>
-              <NewReview />
-            </Layout>
-          }
-        />
+        {isAuthenticated && (
+          <Route
+            path="/books/:bookId/reviews"
+            element={
+              <Layout>
+                <NewReview />
+              </Layout>
+            }
+          />
+        )}
 
-        <Route
-          path="/settings"
-          element={
-            <Layout>
-              <NotFound />
-            </Layout>
-          }
-        />
-        <Route
-          path="/:userId"
-          element={
-            <Layout>
-              <UserPage />
-            </Layout>
-          }
-        />
+        {isAuthenticated && (
+          <Route
+            path="/:userId"
+            element={
+              <Layout>
+                <UserPage />
+              </Layout>
+            }
+          />
+        )}
         <Route
           path="*"
           element={

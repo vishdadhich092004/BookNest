@@ -1,3 +1,4 @@
+// Review Model
 import { ReviewType } from "../shared/types";
 import mongoose, { Schema } from "mongoose";
 
@@ -26,7 +27,9 @@ const reviewSchema = new Schema({
   },
 });
 
-reviewSchema.index({ text: "text" });
+// Replace text index with regular index
+reviewSchema.index({ text: 1 });
+
 const Review = mongoose.model<ReviewType>("Review", reviewSchema);
 
 export default Review;

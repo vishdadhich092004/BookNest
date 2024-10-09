@@ -1,24 +1,25 @@
+import React from "react";
+import { Star } from "lucide-react";
 import { ReviewType } from "../../../../../backend/src/shared/types";
 
-interface ReviewsTabProps {
-  reviews: ReviewType[];
-}
-function ReviewsTab({ reviews }: ReviewsTabProps) {
+const ReviewTab: React.FC<{ review: ReviewType | null }> = ({ review }) => {
+  if (!review) {
+    return (
+      <div className="bg-gray-800 rounded-lg p-4 shadow-lg text-center">
+        <p className="text-gray-400">No review available</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full overflow-hidden relative h-full rounded-2xl p-10 text-xl md:text-4xl font-bold text-white bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 shadow-lg">
-      {reviews.length > 0 ? (
-        <ul className="space-y-4">
-          {reviews.map((review, index) => (
-            <li key={index} className="bg-gray-800 p-4 rounded-lg shadow-md">
-              <strong className="text-cyan-400">Review:</strong> {review.text}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No reviews found.</p>
-      )}
+    <div className="bg-gray-800 rounded-lg p-4 shadow-lg">
+      <p className="text-gray-300 mb-2">{review.text}</p>
+      <div className="flex items-center text-yellow-500">
+        <Star size={16} className="mr-1" />
+        <span>{review.rating} / 5</span>
+      </div>
     </div>
   );
-}
+};
 
-export default ReviewsTab;
+export default ReviewTab;

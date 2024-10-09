@@ -8,10 +8,10 @@ import { DiscussionType } from "../../../../backend/src/shared/types";
 import { PlusCircle, MessageCircle, ChevronRight } from "lucide-react";
 import Pagination from "../../components/Pagination";
 import { cn } from "../../lib/utills";
-import NotFound from "../NotFound";
 import UserDisplay from "../../components/UserDisplay";
 import timeAgo from "../../utils/timeAgo";
 import Loader from "../../components/Loader";
+import NoResultCard from "../../components/Search/Tabs/NoResultCard";
 
 const AllDiscussions = () => {
   const { isAuthenticated } = useAuth();
@@ -33,7 +33,11 @@ const AllDiscussions = () => {
     return <Loader />;
   }
   if (isError || !data) {
-    return <NotFound />;
+    return (
+      <div className="flex justify-center items-center mt-52">
+        <NoResultCard />;
+      </div>
+    );
   }
 
   const { discussions, currentPage, totalPages } = data;
