@@ -4,7 +4,7 @@ import User from "../models/user";
 
 const backendUrl =
   process.env.NODE_ENV === "production"
-    ? "https://booknest-e8f0.onrender.com"
+    ? "https://booknest.life"
     : "http://localhost:4000";
 
 const callbackURL = `${backendUrl}/api/auth/google/callback`;

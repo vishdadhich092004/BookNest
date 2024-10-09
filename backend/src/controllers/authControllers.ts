@@ -8,7 +8,7 @@ import { validationResult } from "express-validator";
 
 const frontendUrl =
   process.env.NODE_ENV === "production"
-    ? "https://booknest-e8f0.onrender.com"
+    ? "https://booknest.life"
     : "http://localhost:5173";
 
 export const validateToken = async (req: AuthRequest, res: Response) => {
