@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { AiOutlineArrowDown } from "react-icons/ai";
 
 type Props = {
   onClick: () => void;
@@ -21,12 +20,23 @@ function DownvoteButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`${className} flex items-center space-x-2`}
+      className={`${className} flex items-center`}
     >
-      <AiOutlineArrowDown
-        className={downvoted ? "text-red-500" : "text-gray-400"} // Change color if downvoted
-      />
-      <span>{children}</span>
+      <svg
+        className={`w-6 h-6 ${downvoted ? "text-blue-500" : "text-gray-400"}`}
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 20 3 9h6V4h6v5h6z"
+          fill={downvoted ? "currentColor" : "none"}
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      {children}
     </button>
   );
 }

@@ -28,8 +28,9 @@ const UserDisplay: React.FC<UserDisplayProps> = ({ user, onClick }) => {
       <div className="relative">
         {user.profileAvatar ? (
           <div
-            className="w-12 h-12 rounded-full flex items-center justify-center mr-2 shadow-md border-2 border-gray-700"
+            className="w-12 h-12 rounded-full flex items-center justify-center mr-2 shadow-md border-2 border-gray-700 overflow-hidden"
             dangerouslySetInnerHTML={{ __html: user.profileAvatar }}
+            style={{ maxHeight: "100%", maxWidth: "100%" }} // Enforce limits for inner content
           />
         ) : (
           <div className="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center mr-2 shadow-md">

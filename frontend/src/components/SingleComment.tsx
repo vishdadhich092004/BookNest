@@ -130,7 +130,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
           )}
       </div>
       <p className="text-gray-300">{comment.text}</p>
-      <div className="flex justify-between items-center mt-2">
+      <div className="flex justify-between items-center mt-3">
         <div className="flex space-x-4">
           <UpvoteButton
             onClick={handleLike}

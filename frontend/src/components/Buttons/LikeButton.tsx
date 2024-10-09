@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { AiOutlineArrowUp } from "react-icons/ai";
 
 type ButtonProps = {
   onClick: () => void;
@@ -21,14 +20,24 @@ function UpvoteButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`${className} flex items-center space-x-2`}
+      className={`${className} flex items-center`}
     >
-      <AiOutlineArrowUp
-        className={upvoted ? "text-blue-500" : "text-gray-400"} // Change color if upvoted
-      />
-      <span>{children}</span>
+      <svg
+        className={`w-6 h-6 ${upvoted ? "text-orange-500" : "text-gray-400"}`}
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 4 3 15h6v5h6v-5h6z"
+          fill={upvoted ? "currentColor" : "none"}
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      {children}
     </button>
   );
 }
-
 export default UpvoteButton;

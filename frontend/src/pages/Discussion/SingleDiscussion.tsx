@@ -36,6 +36,7 @@ const SingleDiscussion = () => {
     () => apiClient.likeDiscussion(discussionId!),
     {
       onSuccess: async () => {
+        showToast({ message: "Discussion Upvoted", type: "SUCCESS" });
         await queryClient.invalidateQueries([
           "fetchDiscussionById",
           discussionId,
@@ -108,22 +109,6 @@ const SingleDiscussion = () => {
     }
   );
 
-  const handleLike = () => {
-    if (userHasLiked) {
-      unlikeMutation.mutate();
-    } else {
-      likeMutation.mutate();
-    }
-  };
-
-  const handleDislike = () => {
-    if (userHasDisliked) {
-      undislikeMutation.mutate();
-    } else {
-      dislikeMutation.mutate();
-    }
-  };
-
   if (isLoading) return <Loader />;
   if (isError || !data) {
     navigate("/");
@@ -141,6 +126,22 @@ const SingleDiscussion = () => {
   const userHasDisliked = user && dislikes.includes(user?._id);
   const userHasLiked = user && likes.includes(user?._id);
 
+  const handleLike = () => {
+    if (userHasLiked) {
+      unlikeMutation.mutate();
+    } else {
+      likeMutation.mutate();
+    }
+    // console.log("hii");
+  };
+
+  const handleDislike = () => {
+    if (userHasDisliked) {
+      undislikeMutation.mutate();
+    } else {
+      dislikeMutation.mutate();
+    }
+  };
   return (
     <div className="min-h-screen bg-black text-white px-4 py-12 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -197,23 +198,23 @@ const SingleDiscussion = () => {
               </button>
             )}
           </div>
-          <div className="px-6 py-4 bg-gray-800 flex justify-between items-center">
-            <div className="flex space-x-4">
+          <div className="p-4 bg-gray-800 flex justify-between items-center">
+            <div className="flex space-x-6">
               <UpvoteButton
                 onClick={handleLike}
                 disabled={likeMutation.isLoading}
-                upvoted={userHasLiked!} // Pass upvoted state
+                upvoted={userHasLiked!}
                 className="flex items-center text-lg"
               >
-                <span>{likes.length}</span>
+                <span className="ml-2">{likes.length}</span>
               </UpvoteButton>
               <DownvoteButton
                 onClick={handleDislike}
                 disabled={dislikeMutation.isLoading}
-                downvoted={userHasDisliked!} // Pass downvoted state
+                downvoted={userHasDisliked!}
                 className="flex items-center text-lg"
               >
-                <span>{dislikes.length}</span>
+                <span className="ml-2">{dislikes.length}</span>
               </DownvoteButton>
             </div>
           </div>
