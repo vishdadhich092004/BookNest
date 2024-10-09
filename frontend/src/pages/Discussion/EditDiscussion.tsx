@@ -1,124 +1,194 @@
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useQuery, useMutation } from "react-query";
+import { useNavigate, useParams } from "react-router-dom";
 import * as apiClient from "../../api-client";
 import { useAppContext } from "../../contexts/AppContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { Save } from "lucide-react";
+import { cn } from "../../lib/utills";
+import { BookType } from "../../../../backend/src/shared/types";
 
 export type EditDiscussionFormData = {
   title: string;
   description: string;
   updatedAt: Date;
-  book: string;
+  bookId: string | null;
 };
 
-function EditDiscussion() {
-  const { showToast } = useAppContext();
+const EditDiscussion = () => {
   const { discussionId } = useParams<{ discussionId: string }>();
   const navigate = useNavigate();
+  const { showToast } = useAppContext();
   const {
     register,
-    handleSubmit,
     setValue,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors },
+    handleSubmit,
   } = useForm<EditDiscussionFormData>();
 
-  useEffect(() => {
-    const fetchDiscussion = async () => {
-      if (discussionId) {
-        try {
-          const fetchedDiscussion = await apiClient.fetchDiscussionById(
-            discussionId
-          );
-          setValue("title", fetchedDiscussion.title);
-          setValue("description", fetchedDiscussion.description);
-          setValue("book", fetchedDiscussion.book);
-          setValue("updatedAt", new Date());
-        } catch (e) {
-          console.error("Error fetching discussion", e);
-        }
-      }
-    };
-    fetchDiscussion();
-  }, [discussionId, setValue]);
+  // Fetch the discussion data
+  const { isLoading: isLoadingDiscussion } = useQuery(
+    ["discussion", discussionId],
+    () => apiClient.fetchDiscussionById(discussionId!),
+    {
+      enabled: !!discussionId,
+      onSuccess: (data) => {
+        setValue("title", data.title);
+        setValue("description", data.description);
+        setValue("bookId", data.bookId?._id || "non-book");
+      },
+      onError: () => {
+        showToast({ message: "Error fetching discussion", type: "ERROR" });
+      },
+    }
+  );
+
+  // Fetch the list of available books
+  const { data: books, isLoading: isLoadingBooks } = useQuery(
+    "books",
+    apiClient.fetchBooksWithoutGenre
+  );
 
   const mutation = useMutation(
     (editDiscussionFormData: EditDiscussionFormData) =>
       apiClient.updateDiscussion(discussionId!, editDiscussionFormData),
     {
       onSuccess: () => {
-        showToast({ message: "Update Successful", type: "SUCCESS" });
-        navigate(`/discussions/${discussionId}`);
+        showToast({
+          message: "Discussion updated successfully",
+          type: "SUCCESS",
+        });
+        navigate("/discussions");
       },
-      onError: (e) => {
-        console.log("Error updating discussion", e);
+      onError: () => {
+        showToast({ message: "Error updating discussion", type: "ERROR" });
       },
     }
   );
 
   const onSubmit = handleSubmit((data) => {
-    mutation.mutate(data);
+    const bookId: string | null =
+      data.bookId === "non-book" ? null : data.bookId || null; // Ensure bookId is either string or null
+    mutation.mutate({ ...data, bookId, updatedAt: new Date() });
   });
 
-  const buttonStyles = isSubmitSuccessful
-    ? "w-full bg-gray-600 text-gray-300 py-2 rounded-md cursor-not-allowed"
-    : "w-full bg-purple-600 text-white py-2 rounded-md shadow-md hover:bg-purple-700 transition-all duration-300 transform hover:scale-105";
+  if (isLoadingDiscussion || isLoadingBooks) {
+    return <div className="text-white">Loading...</div>;
+  }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-black">
-      <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
-        <form className="space-y-4" onSubmit={onSubmit}>
-          <h2 className="text-3xl font-bold text-center text-purple-400">
+    <div className="min-h-screen bg-black text-white px-4 py-12 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <header className="mb-12">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
             Edit Discussion
-          </h2>
-          <label className="block">
-            <span className="text-gray-300">Title</span>
+          </h1>
+        </header>
+
+        <form onSubmit={onSubmit} className="space-y-6">
+          {/* Title input */}
+          <div>
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Title
+            </label>
             <input
               type="text"
-              className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 text-gray-300 p-3"
+              id="title"
+              className={cn(
+                "mt-1 p-3 block w-full rounded-md bg-gray-900 border-gray-700",
+                "text-white placeholder-gray-400",
+                "focus:ring-purple-500 focus:border-purple-500"
+              )}
+              placeholder="Enter discussion title"
               {...register("title", { required: "Title cannot be empty" })}
             />
             {errors.title && (
-              <span className="text-red-400 text-sm">
+              <p className="mt-2 text-sm text-red-500">
                 {errors.title.message}
-              </span>
+              </p>
             )}
-          </label>
-          <label className="block">
-            <span className="text-gray-300">Description</span>
+          </div>
+
+          {/* Book selector */}
+          <div>
+            <label
+              htmlFor="book"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Book
+            </label>
+            <select
+              id="bookId"
+              className={cn(
+                "mt-1 p-3 block w-full rounded-md bg-gray-900 border-gray-700",
+                "text-white placeholder-gray-400",
+                "focus:ring-purple-500 focus:border-purple-500"
+              )}
+              {...register("bookId", {
+                required: "Please select a book or 'Non-Book' option",
+              })}
+            >
+              <option value="non-book">Non-Book Related</option>
+              {books?.map((book: BookType) => (
+                <option key={book._id} value={book._id}>
+                  {book.title}
+                </option>
+              ))}
+            </select>
+            {errors.bookId && (
+              <p className="mt-2 text-sm text-red-500">
+                {errors.bookId.message}
+              </p>
+            )}
+          </div>
+
+          {/* Description input */}
+          <div>
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Description
+            </label>
             <textarea
-              className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 text-gray-300 p-3"
+              id="description"
+              rows={4}
+              className={cn(
+                "mt-1 p-3 block w-full rounded-md bg-gray-900 border-gray-700",
+                "text-white placeholder-gray-400",
+                "focus:ring-purple-500 focus:border-purple-500"
+              )}
+              placeholder="Enter discussion description"
               {...register("description", {
                 required: "This field is required",
               })}
-              rows={4}
             ></textarea>
             {errors.description && (
-              <span className="text-red-400 text-sm">
+              <p className="mt-2 text-sm text-red-500">
                 {errors.description.message}
-              </span>
+              </p>
             )}
-          </label>
-          <label className="block">
-            <span className="text-gray-300">Book</span>
-            <input
-              type="text"
-              className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm focus:border-purple-500 focus:ring focus:ring-purple-500 focus:ring-opacity-50 text-gray-300 p-3"
-              {...register("book", { required: "Book cannot be empty" })}
-            />
-            {errors.book && (
-              <span className="text-red-400 text-sm">
-                {errors.book.message}
-              </span>
+          </div>
+
+          {/* Submit button */}
+          <button
+            type="submit"
+            className={cn(
+              "w-full flex items-center justify-center px-4 py-2 border border-transparent",
+              "text-sm font-medium rounded-md text-white bg-purple-600",
+              "hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2",
+              "focus:ring-purple-500 transition-all duration-300 transform hover:scale-105"
             )}
-          </label>
-          <button type="submit" className={buttonStyles}>
+          >
+            <Save className="mr-2" size={20} />
             Update Discussion
           </button>
         </form>
       </div>
     </div>
   );
-}
+};
 
 export default EditDiscussion;

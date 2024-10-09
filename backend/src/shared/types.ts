@@ -32,7 +32,7 @@ export type DiscussionType = {
   comments: CommentType[];
   createdAt: Date;
   updatedAt: Date;
-  bookId: BookType | null;
+  bookId: BookType | null | undefined;
   likes: string[];
   dislikes: string[];
 };
