@@ -41,8 +41,8 @@ export type BookType = {
   _id: string;
   title: string;
   description: string;
-  author: string;
-  genre: string;
+  author: AuthorType;
+  genre: GenreType;
   pdfUrl: string;
   coverPageUrl: string;
   userId: UserType;
@@ -56,4 +56,19 @@ export type ReviewType = {
   bookId: BookType;
   userId: UserType;
   createdAt: Date;
+};
+
+export type GenreType = {
+  _id: string;
+  name: string;
+  description?: string;
+  books?: BookType[]; // Array of book IDs associated with this genre
+};
+export type AuthorType = {
+  _id: string;
+  name: string;
+  biography?: string;
+  birthDate?: Date;
+  books?: BookType[]; // Array of book IDs written by this author
+  profileImageUrl?: string;
 };

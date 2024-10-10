@@ -183,6 +183,8 @@ export const getABook = async (req: Request, res: Response) => {
         path: "reviews",
         populate: { path: "userId", model: "User" },
       })
+      .populate("genre")
+      .populate("author")
       .exec();
 
     if (!book) return res.status(404).json({ message: "No Book Found" });

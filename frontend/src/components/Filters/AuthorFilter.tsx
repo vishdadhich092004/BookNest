@@ -1,7 +1,9 @@
+import { AuthorType } from "../../../../backend/src/shared/types";
+
 type AuthorFilterProps = {
-  authors: string[];
+  authors: AuthorType[];
   selectedAuthor: string;
-  onAuthorChange: (author: string) => void;
+  onAuthorChange: (authorId: string) => void;
 };
 
 function AuthorFilter({
@@ -20,13 +22,14 @@ function AuthorFilter({
         className="block w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-gray-200"
       >
         <option value="">All Authors</option>
-        {authors.map((a) => (
-          <option key={a} value={a}>
-            {a}
+        {authors.map((author) => (
+          <option key={author._id} value={author._id}>
+            {author.name}
           </option>
         ))}
       </select>
     </div>
   );
 }
+
 export default AuthorFilter;

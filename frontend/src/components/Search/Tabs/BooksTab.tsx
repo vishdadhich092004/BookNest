@@ -23,8 +23,8 @@ const BooksTab = ({ books }: BooksTypeProps) => {
               <h2 className="text-xl font-semibold mb-2 group-hover:text-purple-400 transition-colors duration-300">
                 {book.title}
               </h2>
-              <p className="text-gray-400 text-sm mb-2">{book.author}</p>
-              <p className="text-gray-500 text-xs">{book.genre}</p>
+              <p className="text-gray-400 text-sm mb-2">{book.author.name}</p>
+              <p className="text-gray-500 text-xs">{book.genre.name}</p>
             </div>
           </div>
         </Link>

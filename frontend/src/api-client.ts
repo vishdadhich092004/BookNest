@@ -2,9 +2,11 @@ import { RegisterFormData } from "./pages/Auth/Register";
 import { SignInFormData } from "./pages/Auth/SignIn";
 import { DiscussionFormData } from "./pages/Discussion/NewDiscussion";
 import {
+  AuthorType,
   BookType,
   CommentType,
   DiscussionType,
+  GenreType,
 } from "../../backend/src/shared/types";
 import { CommentFormData } from "./pages/Comment/NewComment";
 import { ReviewFormData } from "./pages/Review/NewReview";
@@ -417,4 +419,20 @@ export const universalSearch = async (q: string = "") => {
     console.error(e);
     throw new Error("Error performing universal search");
   }
+};
+
+export const fetchAllGenres = async (): Promise<GenreType[]> => {
+  const response = await fetch(`${BASE_URL}/api/genres`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch genres");
+  }
+  return response.json();
+};
+
+export const fetchAllAuthors = async (): Promise<AuthorType[]> => {
+  const response = await fetch(`${BASE_URL}/api/authors`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch authors");
+  }
+  return response.json();
 };

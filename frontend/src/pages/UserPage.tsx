@@ -226,7 +226,9 @@ const BooksSection: React.FC<{ books: BookType[] | undefined }> = ({
           <h3 className="text-lg sm:text-xl font-semibold mb-1 group-hover:text-purple-400 transition-colors duration-300">
             {book.title}
           </h3>
-          <p className="text-gray-300 text-sm sm:text-base">{book.author}</p>
+          <p className="text-gray-300 text-sm sm:text-base">
+            {book.author.name}
+          </p>
         </Link>
       </motion.div>
     ))}

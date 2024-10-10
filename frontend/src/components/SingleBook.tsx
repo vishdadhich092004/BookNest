@@ -67,7 +67,7 @@ const SingleBook = () => {
     userId,
     genre,
   } = data as BookType;
-
+  console.log(data);
   const handleBookRead = () => {
     markBookAsReadMutation.mutate();
   };
@@ -104,7 +104,7 @@ const SingleBook = () => {
                 to={""}
                 className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white px-6 py-1 rounded-full flex items-center shadow-md hover:from-indigo-500 hover:to-indigo-300 transition-all duration-300 transform hover:scale-105"
               >
-                {genre}
+                {genre.name}
               </Link>
             </div>
             <div className="relative w-full lg:w-2/5 h-[300px] lg:h-[500px] overflow-hidden">
@@ -119,7 +119,7 @@ const SingleBook = () => {
               <h1 className="text-4xl font-bold text-white mb-4">{title}</h1>
               <div className="flex items-center mb-6">
                 <Signature className="mr-2 text-indigo-400" size={20} />
-                <p className="text-xl text-gray-300">{author}</p>
+                <p className="text-xl text-gray-300">{author.name}</p>
               </div>
               <div className="mb-8">
                 <p

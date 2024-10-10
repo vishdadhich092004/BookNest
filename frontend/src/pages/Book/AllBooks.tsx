@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { FocusCards } from "../../components/aceternity-ui/focus-cards";
 import * as apiClient from "../../api-client";
-import { BookType } from "../../../../backend/src/shared/types";
+import {
+  BookType,
+  GenreType,
+  AuthorType,
+} from "../../../../backend/src/shared/types";
 import Loader from "../../components/Loader";
 import AuthorFilter from "../../components/Filters/AuthorFilter";
 import GenreFilter from "../../components/Filters/GenreFilter";
 import UniversalSearchBar from "../../components/Search/UniversalSeachBar";
-import Pagination from "../../components/Pagination"; // Import the Pagination component
+import Pagination from "../../components/Pagination";
 import NoResultCard from "../../components/Search/Tabs/NoResultCard";
 import NotFound from "../NotFound";
 
@@ -14,10 +18,10 @@ function BookFocusCards() {
   const [books, setBooks] = useState<BookType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [genre, setGenre] = useState<string>("");
-  const [author, setAuthor] = useState<string>("");
-  const [genres, setGenres] = useState<string[]>([]);
-  const [authors, setAuthors] = useState<string[]>([]);
+  const [selectedGenre, setSelectedGenre] = useState<string>("");
+  const [selectedAuthor, setSelectedAuthor] = useState<string>("");
+  const [genres, setGenres] = useState<GenreType[]>([]);
+  const [authors, setAuthors] = useState<AuthorType[]>([]);
 
   // Pagination state
   const [page, setPage] = useState<number>(1);
@@ -25,39 +29,51 @@ function BookFocusCards() {
   const [totalBooks, setTotalBooks] = useState<number>(0);
 
   useEffect(() => {
-    async function loadBooks() {
+    async function loadData() {
       setLoading(true);
       try {
+        const [genresData, authorsData] = await Promise.all([
+          apiClient.fetchAllGenres(),
+          apiClient.fetchAllAuthors(),
+        ]);
+        setGenres(genresData);
+        setAuthors(authorsData);
+
         const { books: fetchedBooks, totalBooks } =
-          await apiClient.fetchBooksWithGenre(genre, author, page, limit);
+          await apiClient.fetchBooksWithGenre(
+            selectedGenre,
+            selectedAuthor,
+            page,
+            limit
+          );
         setBooks(fetchedBooks);
         setTotalBooks(totalBooks);
         setError(null);
-
-        // Update genres and authors
-        const uniqueAuthors = Array.from(
-          new Set(fetchedBooks.map((book) => book.author))
-        );
-        setAuthors(uniqueAuthors);
-        const uniqueGenres = Array.from(
-          new Set(fetchedBooks.map((book) => book.genre))
-        );
-        setGenres(uniqueGenres);
       } catch (error) {
-        console.error("Failed to load books", error);
-        setError("Failed to load books. Please try again later.");
+        console.error("Failed to load data", error);
+        setError("Failed to load data. Please try again later.");
       } finally {
         setLoading(false);
       }
     }
 
-    loadBooks();
-  }, [genre, author, page, limit]);
+    loadData();
+  }, [selectedGenre, selectedAuthor, page, limit]);
 
   const totalPages = Math.ceil(totalBooks / limit);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
+  };
+
+  const handleGenreChange = (genreId: string) => {
+    setSelectedGenre(genreId);
+    setPage(1); // Reset to first page when changing filters
+  };
+
+  const handleAuthorChange = (authorId: string) => {
+    setSelectedAuthor(authorId);
+    setPage(1); // Reset to first page when changing filters
   };
 
   // Map books to the card format for FocusCards
@@ -66,7 +82,7 @@ function BookFocusCards() {
     title: book.title,
     src:
       book.coverPageUrl || "https://via.placeholder.com/300x450?text=No+Image",
-    description: `By ${book.author}`,
+    author: `By ${book.author}`,
   }));
 
   if (loading) {
@@ -82,17 +98,16 @@ function BookFocusCards() {
       <div className="mb-8 flex items-center space-x-4">
         <GenreFilter
           genres={genres}
-          selectedGenre={genre}
-          onGenreChange={setGenre}
+          selectedGenre={selectedGenre}
+          onGenreChange={handleGenreChange}
         />
         <AuthorFilter
           authors={authors}
-          selectedAuthor={author}
-          onAuthorChange={setAuthor}
+          selectedAuthor={selectedAuthor}
+          onAuthorChange={handleAuthorChange}
         />
       </div>
 
-      {/* Title */}
       <h1 className="text-4xl font-bold text-white mb-10">Books Mania</h1>
       <div className="mb-5">
         <UniversalSearchBar />

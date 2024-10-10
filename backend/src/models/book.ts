@@ -11,11 +11,13 @@ const bookSchema = new Schema({
     required: true,
   },
   author: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "Author",
     required: true,
   },
   genre: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "Genre",
     required: true,
   },
   pdfUrl: {

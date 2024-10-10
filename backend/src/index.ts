@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import "dotenv/config";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -7,6 +7,8 @@ import authRoutes from "./routes/auth";
 import discussionRoutes from "./routes/discussions";
 import commentRoutes from "./routes/comments";
 import bookRoutes from "./routes/books";
+import authorRoutes from "./routes/authors";
+import genreRoutes from "./routes/genres";
 import MongoStore from "connect-mongo";
 import reviewRoutes from "./routes/reviews";
 import session from "express-session";
@@ -67,6 +69,8 @@ app.use("/api/books", reviewRoutes);
 app.use("/api/discussions", discussionRoutes);
 app.use("/api/discussions", commentRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/genres", genreRoutes);
+app.use("/api/authors", authorRoutes);
 /* AT THE END */
 //catchall path : solves reload issues during production
 app.get("*", (req, res) => {
