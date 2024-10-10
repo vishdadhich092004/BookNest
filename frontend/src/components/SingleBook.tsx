@@ -67,7 +67,7 @@ const SingleBook = () => {
     userId,
     genre,
   } = data as BookType;
-  console.log(data);
+
   const handleBookRead = () => {
     markBookAsReadMutation.mutate();
   };
@@ -76,6 +76,7 @@ const SingleBook = () => {
     if (isAuthenticated) setIsBookReaderOpen(true);
     else navigate("/sign-in");
   };
+
   const closeBookReader = () => setIsBookReaderOpen(false);
 
   const isBookAlreadyRead = user?.readBooks.includes(bookId!);
@@ -84,7 +85,7 @@ const SingleBook = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
 
   return (
-    <div className="min-h-screen  text-white pt-16 pb-12">
+    <div className="min-h-screen text-white pt-16 pb-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           to="/books"
@@ -101,7 +102,7 @@ const SingleBook = () => {
           <div className="flex flex-col lg:flex-row relative">
             <div className="absolute top-4 right-4 z-10">
               <Link
-                to={""}
+                to={`/genres/${genre._id}`}
                 className="bg-gradient-to-r from-indigo-600 to-indigo-400 text-white px-6 py-1 rounded-full flex items-center shadow-md hover:from-indigo-500 hover:to-indigo-300 transition-all duration-300 transform hover:scale-105"
               >
                 {genre.name}
@@ -119,7 +120,12 @@ const SingleBook = () => {
               <h1 className="text-4xl font-bold text-white mb-4">{title}</h1>
               <div className="flex items-center mb-6">
                 <Signature className="mr-2 text-indigo-400" size={20} />
-                <p className="text-xl text-gray-300">{author.name}</p>
+                <Link
+                  to={`/authors/${author._id}`}
+                  className="text-xl text-gray-300 hover:text-indigo-400 transition-all duration-300"
+                >
+                  {author.name}
+                </Link>
               </div>
               <div className="mb-8">
                 <p

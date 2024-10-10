@@ -36,8 +36,8 @@ const EditDiscussion = () => {
         setValue("description", data.description);
         setValue("bookId", data.bookId?._id || "non-book");
       },
-      onError: () => {
-        showToast({ message: "Error fetching discussion", type: "ERROR" });
+      onError: (error: Error) => {
+        showToast({ message: error.message, type: "ERROR" });
       },
     }
   );

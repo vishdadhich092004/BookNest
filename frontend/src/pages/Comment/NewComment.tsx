@@ -24,7 +24,7 @@ const CommentForm = () => {
       apiClient.newComment(commentFormData, discussionId!),
     {
       onSuccess: () => {
-        showToast({ message: "Comment Successful", type: "SUCCESS" });
+        showToast({ message: "Comment Submitted", type: "SUCCESS" });
         navigate(`/discussions/${discussionId}`);
       },
       onError: () => {

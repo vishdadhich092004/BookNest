@@ -113,7 +113,8 @@ const CollisionMechanism = React.forwardRef<
       repeatDelay?: number;
     };
   }
->(({ parentRef, containerRef, beamOptions = {} }) => {
+>(({ parentRef, containerRef, beamOptions = {} }, ref) => {
+  // Added 'ref' parameter here
   const beamRef = useRef<HTMLDivElement>(null);
   const [collision, setCollision] = useState<{
     detected: boolean;
@@ -176,8 +177,8 @@ const CollisionMechanism = React.forwardRef<
   return (
     <>
       <motion.div
+        ref={ref || beamRef} // Use the 'ref' parameter here
         key={beamKey}
-        ref={beamRef}
         animate="animate"
         initial={{
           translateY: beamOptions.initialY || "-200px",

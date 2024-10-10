@@ -31,8 +31,8 @@ const NewDiscussion = () => {
       showToast({ message: "New Discussion created", type: "SUCCESS" });
       navigate("/discussions");
     },
-    onError: () => {
-      showToast({ message: "Error creating Discussion", type: "ERROR" });
+    onError: (error: Error) => {
+      showToast({ message: error.message, type: "ERROR" });
     },
   });
 

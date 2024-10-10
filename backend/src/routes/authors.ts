@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/", authorControllers.getAllAuthors);
 
 // Get a single author by ID
-router.get("/:genreId", authorControllers.getAnAuthor);
+router.get("/:authorId", authorControllers.getAnAuthor);
 
 // Create a new author
 // router.post("/", async (req, res) => {

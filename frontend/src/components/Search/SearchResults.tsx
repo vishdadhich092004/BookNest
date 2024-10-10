@@ -68,25 +68,25 @@ const SearchResultsPage = () => {
     switch (activeTab) {
       case "books":
         return results.books.length > 0 ? (
-          <BooksTab books={results.books} />
+          <BooksTab key={1} books={results.books} />
         ) : (
           noDataMessage()
         );
       case "discussions":
         return results.discussions.length > 0 ? (
-          <DiscussionsTab discussions={results.discussions} />
+          <DiscussionsTab key={2} discussions={results.discussions} />
         ) : (
           noDataMessage()
         );
       case "comments":
         return results.comments.length > 0 ? (
-          <CommentsTab comments={results.comments} />
+          <CommentsTab key={3} comments={results.comments} />
         ) : (
           noDataMessage()
         );
       case "reviews":
         return results.reviews.length > 0 ? (
-          <ReviewsTab reviews={results.reviews} />
+          <ReviewsTab key={4} reviews={results.reviews} />
         ) : (
           noDataMessage()
         );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { LibraryBig, User, LogOut, Settings } from "lucide-react";
+import { LibraryBig, User, LogOut } from "lucide-react";
 import SignOutButton from "./Buttons/SignOutButton";
 import { useAuth } from "../contexts/AuthContext";
 import UserDisplay from "./UserDisplay";
@@ -124,7 +124,7 @@ const Header: React.FC = () => {
               )}
             </div>
           ) : (
-            <SignInButton />
+            <SignInButton onClick={toggleMenu} />
           )}
         </div>
       </div>
@@ -158,20 +158,18 @@ const Header: React.FC = () => {
                   <User className="w-5 h-5 mr-2 text-indigo-400" />
                   My Profile
                 </Link>
-                <Link
-                  to="/settings"
-                  className="flex items-center text-gray-300 hover:text-white transition-colors duration-300"
-                  onClick={toggleMenu}
-                >
-                  <Settings className="w-5 h-5 mr-2 text-indigo-400" />
-                  Settings
-                </Link>
               </>
             )}
             {isAuthenticated ? (
-              <SignOutButton>Sign Out</SignOutButton>
+              <SignOutButton
+                className="flex items-center w-full px-4 py-2 text-sm text-white hover:bg-gray-700 hover:text-indigo-400 transition-colors duration-150"
+                onClick={toggleMenu}
+              >
+                <LogOut className="w-4 h-4 mr-3 text-indigo-400" />
+                Sign Out
+              </SignOutButton>
             ) : (
-              <SignInButton />
+              <SignInButton onClick={toggleMenu} />
             )}
           </nav>
         </div>

@@ -30,8 +30,8 @@ function SignIn() {
       await queryClient.invalidateQueries("validate-token");
       navigate("/");
     },
-    onError: () => {
-      showToast({ message: "Error", type: "ERROR" });
+    onError: (error: Error) => {
+      showToast({ message: error.message, type: "ERROR" });
     },
   });
 

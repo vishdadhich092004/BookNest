@@ -7,7 +7,7 @@ import {
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import crypto from "crypto";
-import { s3 } from "../config/awsS3";
+import { getSignedUrlsForBook, s3 } from "../config/awsS3";
 import Book from "../models/book";
 import Review from "../models/review";
 import { getSignedUrl as s3GetSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -19,23 +19,6 @@ import { Genre } from "../models/genre";
 const bucketName = process.env.AWS_BUCKET_NAME!;
 
 // Reusable function to generate signed URLs for S3 objects
-async function generateSignedUrl(
-  key: string,
-  expiresIn = 3600
-): Promise<string> {
-  const params = { Bucket: bucketName, Key: key };
-  const command = new GetObjectCommand(params);
-  return s3GetSignedUrl(s3, command, { expiresIn });
-}
-
-// Reusable function to get signed URLs for a book
-async function getSignedUrlsForBook(book: BookType) {
-  const [pdfUrl, coverPageUrl] = await Promise.all([
-    generateSignedUrl(book.pdfUrl),
-    generateSignedUrl(book.coverPageUrl),
-  ]);
-  return { pdfUrl, coverPageUrl };
-}
 
 // Reusable function to upload file to S3
 async function uploadFileToS3(

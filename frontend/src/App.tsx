@@ -17,6 +17,8 @@ import UserPage from "./pages/UserPage";
 import SearchResults from "./components/Search/SearchResults";
 import NotFound from "./pages/NotFound";
 import AboutMe from "./pages/AboutMe";
+import GenreBooksPage from "./pages/GenreBooksPage";
+import AuthorBooksPage from "./pages/AuthorBooksPage";
 function App() {
   const { isAuthenticated } = useAuth();
   return (
@@ -140,6 +142,22 @@ function App() {
           element={
             <Layout>
               <SingleBook />
+            </Layout>
+          }
+        />
+        <Route
+          path="/genres/:genreId"
+          element={
+            <Layout>
+              <GenreBooksPage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/authors/:authorId"
+          element={
+            <Layout>
+              <AuthorBooksPage />
             </Layout>
           }
         />

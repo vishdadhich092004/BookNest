@@ -48,6 +48,7 @@ const SingleDiscussion = () => {
           discussionId,
         ]);
       },
+
       onError: () => {
         showToast({
           message: `${isAuthenticated ? "Already Upvoted" : "Please Sign In"}`,

@@ -28,11 +28,11 @@ const ReviewForm = () => {
       apiClient.newReview(reviewFormData, bookId!),
     {
       onSuccess: () => {
-        showToast({ message: "Review Successful", type: "SUCCESS" });
+        showToast({ message: "Review Submitted", type: "SUCCESS" });
         navigate(`/books/${bookId}`);
       },
-      onError: () => {
-        showToast({ message: "Error submitting review", type: "ERROR" });
+      onError: (error: Error) => {
+        showToast({ message: error.message, type: "ERROR" });
       },
     }
   );

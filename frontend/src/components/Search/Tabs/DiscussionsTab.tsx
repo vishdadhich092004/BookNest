@@ -18,7 +18,11 @@ const DiscussionsTab = ({ discussions }: DiscussionsTypeProps) => {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {discussions.map((discussion) => (
-        <Link to={`/discussions/${discussion._id}`} className="block group">
+        <Link
+          key={discussion._id}
+          to={`/discussions/${discussion._id}`}
+          className="block group"
+        >
           <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/10 transition-all duration-300 h-full flex flex-col">
             <div className="p-6 flex-grow">
               <div className="flex items-center mb-4">

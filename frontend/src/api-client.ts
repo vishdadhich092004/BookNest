@@ -436,3 +436,18 @@ export const fetchAllAuthors = async (): Promise<AuthorType[]> => {
   }
   return response.json();
 };
+
+export const fetchAuthorWithBooks = async (authorId: string) => {
+  const response = await fetch(`${BASE_URL}/api/authors/${authorId}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch author with books");
+  }
+  return response.json();
+};
+export const fetchGenreWithBooks = async (genreId: string) => {
+  const response = await fetch(`${BASE_URL}/api/genres/${genreId}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch genre with books");
+  }
+  return response.json();
+};
