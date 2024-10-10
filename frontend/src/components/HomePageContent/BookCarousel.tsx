@@ -13,7 +13,7 @@ function BooksCarousel() {
   if (isLoading) return <Loader />;
 
   const transformedBooks = allBooks?.map((book: BookType) => ({
-    category: book.genre || "Unknown", // Use a default value if genre is not available
+    category: book.genre.name || "Unknown", // Use a default value if genre is not available
     title: book.title,
     src: book.coverPageUrl || "",
     content: <BookCardHome book={book} />, // Use a default value if coverImgUrl is not available
