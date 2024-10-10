@@ -87,7 +87,10 @@ export const getAllBooks = async (req: Request, res: Response) => {
     const pageNumber = page ? Number(page) : null;
     const limitNumber = limit ? Number(limit) : null;
 
-    let booksQuery = Book.find(filter).sort({ _id: -1 }).lean();
+    let booksQuery = Book.find(filter)
+      .sort({ _id: -1 })
+      .lean()
+      .populate("genre");
 
     if (pageNumber && limitNumber) {
       booksQuery = booksQuery
