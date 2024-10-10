@@ -13,6 +13,8 @@ import Review from "../models/review";
 import { getSignedUrl as s3GetSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { validationResult } from "express-validator";
 import { BookType } from "../shared/types";
+import { Author } from "../models/author";
+import { Genre } from "../models/genre";
 
 const bucketName = process.env.AWS_BUCKET_NAME!;
 
@@ -155,12 +157,32 @@ export const createNewBook = async (req: AuthRequest, res: Response) => {
       uploadFileToS3(files["coverImage"][0], "images"),
     ]);
 
-    const { title, description, author, genre } = req.body;
+    const {
+      title,
+      description,
+      author: authorName,
+      genre: genreName,
+    } = req.body;
+
+    // Handle Genre
+    let genre = await Genre.findOne({ name: genreName });
+    if (!genre) {
+      genre = new Genre({ name: genreName });
+      await genre.save();
+    }
+
+    // Handle Author
+    let author = await Author.findOne({ name: authorName });
+    if (!author) {
+      author = new Author({ name: authorName });
+      await author.save();
+    }
+
     const newBook = new Book({
       title,
       description,
-      author,
-      genre,
+      author: author._id,
+      genre: genre._id,
       pdfUrl: pdfName,
       coverPageUrl: coverImgName,
       userId: req.user?.userId,
@@ -168,10 +190,18 @@ export const createNewBook = async (req: AuthRequest, res: Response) => {
 
     await newBook.save();
 
-    res.status(200).json({ message: "Book uploaded successfully" });
+    // Update genre and author with the new book
+    await Genre.findByIdAndUpdate(genre._id, { $push: { books: newBook._id } });
+    await Author.findByIdAndUpdate(author._id, {
+      $push: { books: newBook._id },
+    });
+
+    res
+      .status(200)
+      .json({ message: "Book uploaded successfully", bookId: newBook._id });
   } catch (error) {
-    console.error("Error uploading files:", error);
-    res.status(500).json({ error: "Failed to upload files" });
+    console.error("Error creating new book:", error);
+    res.status(500).json({ error: "Failed to create new book" });
   }
 };
 

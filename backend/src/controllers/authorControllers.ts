@@ -2,7 +2,7 @@ import { Author } from "../models/author";
 import { Request, Response } from "express";
 export const getAllAuthors = async (req: Request, res: Response) => {
   try {
-    const authors = await Author.find({});
+    const authors = await Author.find({}).sort({ _id: -1 }).lean();
     res.json(authors);
   } catch (error) {
     res.status(500).json({ message: "Error fetching authors", error });
