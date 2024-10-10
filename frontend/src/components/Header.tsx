@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { LibraryBig, User, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
+import { BsDoorOpenFill } from "react-icons/bs";
 import SignOutButton from "./Buttons/SignOutButton";
 import { useAuth } from "../contexts/AuthContext";
 import UserDisplay from "./UserDisplay";
@@ -55,8 +56,8 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
         {/* Logo with Icon */}
         <div className="flex items-center space-x-2 text-white text-2xl sm:text-3xl font-bold tracking-wider">
-          <LibraryBig
-            className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-400"
+          <BsDoorOpenFill
+            className="w-7 h-7 sm:w-8 sm:h-8 "
             aria-label="Library Icon"
           />
           <Link
