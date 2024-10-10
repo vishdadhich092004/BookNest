@@ -39,7 +39,7 @@ const ReviewForm = () => {
 
   const buttonStyles = cn(
     "w-full text-white py-2 rounded-full font-semibold text-sm sm:text-base",
-    "transition-all duration-300 transform hover:scale-105",
+
     isSubmitSuccessful
       ? "bg-gray-400"
       : "bg-gradient-to-r from-purple-400 to-pink-600 hover:from-purple-600 hover:to-pink-600"
@@ -62,7 +62,7 @@ const ReviewForm = () => {
         <label className="block text-white text-sm font-bold mb-2">
           Review
           <textarea
-            className="w-full px-3 py-2 text-white bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className=" mt-2 w-full px-3 py-2 text-white bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             rows={4}
             {...register("text", { required: "This field cannot be empty" })}
           ></textarea>
