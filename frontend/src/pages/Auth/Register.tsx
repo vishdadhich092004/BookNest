@@ -29,7 +29,7 @@ function Register() {
 
   const mutation = useMutation(apiClient.register, {
     onSuccess: async () => {
-      showToast({ message: "DOne!", type: "SUCCESS" });
+      showToast({ message: "User Created", type: "SUCCESS" });
       await queryClient.invalidateQueries("validate-token");
       navigate("/");
     },
