@@ -4,8 +4,6 @@ import { check } from "express-validator";
 import * as reviewControllers from "../controllers/reviewControllers";
 const router = express.Router();
 
-// COMMENTS
-
 // NEW Review POST ROUTE
 router.post(
   "/:bookId/reviews",

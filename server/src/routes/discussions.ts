@@ -1,29 +1,9 @@
-import express, { NextFunction, Request, response, Response } from "express";
-import { AuthRequest, verifyToken } from "../middleware/auth";
-import Discussion from "../models/discussion";
-import { check, validationResult } from "express-validator";
-import Comment from "../models/comment";
+import express from "express";
+import { verifyToken } from "../middleware/auth";
+import { check } from "express-validator";
 import * as discussionControllers from "../controllers/discussionControllers";
+import { checkDiscussionOwnership } from "../middleware/checkOwnership";
 const router = express.Router();
-
-const checkOwnership = async (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { discussionId } = req.params;
-    const discussion = await Discussion.findById(discussionId);
-    if (!discussion)
-      return res.status(404).json({ message: "Discussion Not Found" });
-
-    if (discussion.userId.toString() !== req.user?.userId)
-      return res.status(403).json({ message: "You dont have permission" });
-    next();
-  } catch (e) {
-    return res.status(500).json({ message: "Error Checking Ownership", e });
-  }
-};
 
 // new discussion create - post route
 router.post(
@@ -36,7 +16,7 @@ router.post(
   discussionControllers.createNewDiscussion
 );
 
-// return all the discussions
+// fetch all the discussions
 router.get("/", discussionControllers.getAllDiscussions);
 
 // find one discussion by discussionId
@@ -46,34 +26,40 @@ router.get("/:discussionId", discussionControllers.getADiscussion);
 router.put(
   "/:discussionId/edit",
   verifyToken,
-  checkOwnership,
+  checkDiscussionOwnership,
   discussionControllers.editDiscussion
 );
 
+// delete a discussion
 router.delete(
   "/:discussionId",
   verifyToken,
-  checkOwnership,
+  checkDiscussionOwnership,
   discussionControllers.deleteDiscussion
 );
 
+// like a discussion
 router.post(
   "/:discussionId/like",
   verifyToken,
   discussionControllers.likeDiscussion
 );
 
+// unlike a discussion
 router.post(
   "/:discussionId/unlike",
   verifyToken,
   discussionControllers.unlikeDiscussion
 );
 
+// dislike a discussion
 router.post(
   "/:discussionId/dislike",
   verifyToken,
   discussionControllers.dislikeDiscussion
 );
+
+// undislike a discussion
 router.post(
   "/:discussionId/undislike",
   verifyToken,

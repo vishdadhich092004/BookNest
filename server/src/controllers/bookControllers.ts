@@ -2,49 +2,22 @@ import { AuthRequest } from "../middleware/auth";
 import User from "../models/user";
 import { Request, Response } from "express";
 import {
-  PutObjectCommand,
-  GetObjectCommand,
-  DeleteObjectCommand,
-} from "@aws-sdk/client-s3";
-import crypto from "crypto";
-import { getSignedUrlsForBook, s3 } from "../config/awsS3";
+  deleteFileFromS3,
+  getSignedUrlsForBook,
+  uploadFileToS3,
+} from "../config/awsS3";
 import Book from "../models/book";
 import Review from "../models/review";
-import { getSignedUrl as s3GetSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { validationResult } from "express-validator";
-import { BookType } from "../shared/types";
 import { Author } from "../models/author";
 import { Genre } from "../models/genre";
 
-const bucketName = process.env.AWS_BUCKET_NAME!;
-
-// Reusable function to generate signed URLs for S3 objects
-
-// Reusable function to upload file to S3
-async function uploadFileToS3(
-  file: Express.Multer.File,
-  prefix: string
-): Promise<string> {
-  const randomName = crypto.randomBytes(16).toString("hex");
-  const key = `books/${prefix}/${randomName}`;
-  const params = {
-    Bucket: bucketName,
-    Key: key,
-    Body: file.buffer,
-    ContentType: file.mimetype,
-  };
-  await s3.send(new PutObjectCommand(params));
-  return key;
-}
-
-// Reusable function to delete file from S3
-async function deleteFileFromS3(key: string): Promise<void> {
-  const params = { Bucket: bucketName, Key: key };
-  await s3.send(new DeleteObjectCommand(params));
-}
-
+// mark a book as read
 export const markBookAsRead = async (req: AuthRequest, res: Response) => {
   const { bookId } = req.params;
+  if (!bookId) {
+    return res.status(404).json({ message: "Book Id undefined" });
+  }
   const userId = req.user?.userId;
   try {
     const user = await User.findByIdAndUpdate(
@@ -58,12 +31,19 @@ export const markBookAsRead = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// delete a book
 export const deleteBook = async (req: Request, res: Response) => {
   try {
     const { bookId } = req.params;
+    // check for the empty book Id
+    if (!bookId) {
+      return res.status(404).json({ message: "Book Id is undefined" });
+    }
+    // find the book from the book ID
     const book = await Book.findById(bookId);
     if (!book) return res.status(404).json({ message: "Book not found" });
 
+    // perform all the 4 operations
     await Promise.all([
       deleteFileFromS3(book.pdfUrl),
       deleteFileFromS3(book.coverPageUrl),
@@ -77,6 +57,7 @@ export const deleteBook = async (req: Request, res: Response) => {
   }
 };
 
+// fetch all the books wiht pagination
 export const getAllBooks = async (req: Request, res: Response) => {
   try {
     const { genre, author, page, limit } = req.query;
@@ -104,15 +85,13 @@ export const getAllBooks = async (req: Request, res: Response) => {
       books.map(async (book) => {
         const { signedCoverPageUrl, signedPdfUrl } = await getSignedUrlsForBook(
           {
-            pdfUrl: book.pdfUrl,
             coverPageUrl: book.coverPageUrl,
+            pdfUrl: book.pdfUrl,
           }
         );
-        return {
-          ...book,
-          pdfUrl: signedPdfUrl,
-          coverPageUrl: signedCoverPageUrl,
-        };
+        book.coverPageUrl = signedCoverPageUrl;
+        book.pdfUrl = signedPdfUrl;
+        return book;
       })
     );
 
@@ -132,6 +111,7 @@ export const getAllBooks = async (req: Request, res: Response) => {
   }
 };
 
+// new book
 export const createNewBook = async (req: AuthRequest, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -159,14 +139,14 @@ export const createNewBook = async (req: AuthRequest, res: Response) => {
       genre: genreName,
     } = req.body;
 
-    // Handle Genre
+    // create a new genre if already not present
     let genre = await Genre.findOne({ name: genreName });
     if (!genre) {
       genre = new Genre({ name: genreName });
       await genre.save();
     }
 
-    // Handle Author
+    // create a new authr if already not present
     let author = await Author.findOne({ name: authorName });
     if (!author) {
       author = new Author({ name: authorName });
@@ -200,6 +180,7 @@ export const createNewBook = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// fetch a book by bookId
 export const getABook = async (req: Request, res: Response) => {
   try {
     const { bookId } = req.params;
@@ -209,8 +190,7 @@ export const getABook = async (req: Request, res: Response) => {
         populate: { path: "userId", model: "User" },
       })
       .populate("genre")
-      .populate("author")
-      .exec();
+      .populate("author");
 
     if (!book) return res.status(404).json({ message: "No Book Found" });
 

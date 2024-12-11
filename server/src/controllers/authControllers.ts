@@ -5,10 +5,10 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { validationResult } from "express-validator";
 
-const frontendUrl =
+const redirectUrl =
   process.env.NODE_ENV === "production"
-    ? "https://booknest.life"
-    : "http://localhost:5173";
+    ? process.env.DEPLOYED_URL
+    : process.env.FRONTEND_URL;
 
 export const validateToken = async (req: AuthRequest, res: Response) => {
   try {
@@ -39,7 +39,6 @@ export const googleCallback = (req: Request, res: Response) => {
   const token = jwt.sign(
     {
       userId: user._id,
-      role: user.role,
     },
     process.env.JWT_SECRET_KEY as string,
     { expiresIn: "1d" }
@@ -51,7 +50,7 @@ export const googleCallback = (req: Request, res: Response) => {
     maxAge: 24 * 60 * 60 * 1000,
   });
 
-  res.redirect(`${frontendUrl}`);
+  res.redirect(`${redirectUrl}`);
 };
 
 export const login = async (req: Request, res: Response) => {
@@ -73,7 +72,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user._id },
       process.env.JWT_SECRET_KEY as string,
       { expiresIn: "1d" }
     );

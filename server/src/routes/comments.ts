@@ -1,8 +1,6 @@
-import express, { Request, Response } from "express";
-import { AuthRequest, verifyToken } from "../middleware/auth";
-import Discussion from "../models/discussion";
-import Comment from "../models/comment";
-import { check, validationResult } from "express-validator";
+import express from "express";
+import { verifyToken } from "../middleware/auth";
+import { check } from "express-validator";
 import * as commentControllers from "../controllers/commentControllers";
 const router = express.Router();
 

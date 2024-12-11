@@ -3,8 +3,8 @@ import { validationResult } from "express-validator";
 import Discussion from "../models/discussion";
 import { AuthRequest } from "../middleware/auth";
 import Comment from "../models/comment";
-import Book from "../models/book";
 
+// new discussion
 export const createNewDiscussion = async (req: AuthRequest, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -15,13 +15,13 @@ export const createNewDiscussion = async (req: AuthRequest, res: Response) => {
     const userId = req.user?.userId;
     if (!userId) return res.status(400).json({ message: "User Access Denied" });
 
-    const { title, description, bookId } = req.body; // Expecting bookId from request body
+    const { title, description, bookId } = req.body;
 
     const discussion = new Discussion({
       userId,
       title,
       description,
-      bookId: bookId ? bookId : null, // Store bookId as reference
+      bookId: bookId ? bookId : null,
     });
 
     // res.send(discussion);
@@ -33,6 +33,7 @@ export const createNewDiscussion = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// fetch all discussions
 export const getAllDiscussions = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
@@ -46,7 +47,6 @@ export const getAllDiscussions = async (req: Request, res: Response) => {
       .sort({ _id: -1 })
       .populate("userId")
       .populate("bookId");
-    // Assuming you want to populate user information
 
     res.status(200).json({
       discussions: allDiscussions,
@@ -59,6 +59,7 @@ export const getAllDiscussions = async (req: Request, res: Response) => {
   }
 };
 
+// fetch a discussion using dicussion id
 export const getADiscussion = async (req: Request, res: Response) => {
   try {
     const discussion = await Discussion.findById(req.params.discussionId)
@@ -207,6 +208,7 @@ export const undislikeDiscussion = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// edit discussion
 export const editDiscussion = async (req: AuthRequest, res: Response) => {
   try {
     const EditDiscussionFormData = req.body;

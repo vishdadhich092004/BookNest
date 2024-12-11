@@ -4,10 +4,10 @@ import User from "../models/user";
 
 const backendUrl =
   process.env.NODE_ENV === "production"
-    ? "https://booknest.life"
-    : "http://localhost:4000";
+    ? process.env.DEPLOYED_URL
+    : process.env.BACKEND_URL;
 
-const callbackURL = `${backendUrl}/api/auth/google/callback`;
+const callbackURL = `/api/auth/google/callback`;
 passport.use(
   new GoogleStrategy(
     {

@@ -1,30 +1,11 @@
 import express, { NextFunction, Response } from "express";
 import multer from "multer";
-import Book from "../models/book";
 import "dotenv/config";
 import { check } from "express-validator";
-import { AuthRequest, verifyToken } from "../middleware/auth";
+import { verifyToken } from "../middleware/auth";
 import * as bookController from "../controllers/bookControllers";
-
+import { checkBookOwnership } from "../middleware/checkOwnership";
 const router = express.Router();
-
-const checkOwnership = async (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { bookId } = req.params;
-    const book = await Book.findById(bookId);
-    if (!book) return res.status(404).json({ message: "Book Not Found" });
-
-    if (book.userId.toString() !== req.user?.userId)
-      return res.status(403).json({ message: "You dont have permission" });
-    next();
-  } catch (e) {
-    return res.status(500).json({ message: `Error Checking Ownership ${e}` });
-  }
-};
 
 // Multer configuration for file upload
 const storage = multer.memoryStorage();
@@ -35,6 +16,7 @@ const cpUpload = upload.fields([
   { name: "coverImage", maxCount: 1 },
 ]);
 
+// new book - post route
 router.post(
   "/new",
   verifyToken,
@@ -46,17 +28,21 @@ router.post(
   bookController.createNewBook
 );
 
+// fetch a book by bookId
 router.get("/:bookId", bookController.getABook);
 
+// fetch all the books
 router.get("/", bookController.getAllBooks);
 
+// delete a book
 router.delete(
   "/:bookId",
   verifyToken,
-  checkOwnership,
+  checkBookOwnership,
   bookController.deleteBook
 );
 
+// mark a book as read
 router.post("/:bookId/mark-read", verifyToken, bookController.markBookAsRead);
 
 export default router;

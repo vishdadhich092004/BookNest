@@ -4,7 +4,7 @@ export type UserType = {
   password?: string;
   firstName: string;
   lastName?: string;
-  comments?: string; // Note: This is string in UserType but ObjectId in the schema
+  comments?: string;
   role: "admin" | "user";
   permissions: string[];
   googleId?: string;

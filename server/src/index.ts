@@ -1,6 +1,5 @@
 import express from "express";
 import "dotenv/config";
-import mongoose from "mongoose";
 import cors from "cors";
 import userRoutes from "./routes/users";
 import authRoutes from "./routes/auth";
@@ -9,22 +8,17 @@ import commentRoutes from "./routes/comments";
 import bookRoutes from "./routes/books";
 import authorRoutes from "./routes/authors";
 import genreRoutes from "./routes/genres";
-import MongoStore from "connect-mongo";
 import reviewRoutes from "./routes/reviews";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import path from "path";
 import searchRoutes from "./routes/search";
 import passport from "./config/passport";
+import { db } from "./services/db";
 const app = express();
-mongoose
-  .connect(process.env.MONGO_URL as string)
-  .then(() => {
-    console.log("Mongo Connection Successful");
-  })
-  .catch((err) => {
-    console.log("Mongo Connection Issues", err);
-  });
+
+// initialise the db
+db();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,10 +35,7 @@ app.use(
 // passport
 app.use(
   session({
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URL,
-    }),
-    secret: process.env.SESSION_SECRET_KEY!, // Use a separate secret for sessions
+    secret: process.env.SESSION_SECRET_KEY!, // Used a separate secret for sessions
     resave: false,
     saveUninitialized: false,
     cookie: {

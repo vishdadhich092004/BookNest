@@ -5,6 +5,7 @@ import passport from "../config/passport";
 import * as authControllers from "../controllers/authControllers";
 const router = express.Router();
 
+// login : post route
 router.post(
   "/login",
   [
@@ -14,6 +15,7 @@ router.post(
   authControllers.login
 );
 
+// possport routes
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })

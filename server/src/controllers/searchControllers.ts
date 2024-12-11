@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import { Request, Response } from "express";
 import Book from "../models/book";
 import Discussion from "../models/discussion";
 import Comment from "../models/comment";
@@ -13,22 +13,7 @@ function generateFuzzyRegex(term: string): RegExp {
   return new RegExp(fuzzyTerm, "i");
 }
 
-// Helper function to calculate relevance score
-function calculateScore(text: string, searchTerm: string): number {
-  const normalizedText = text.toLowerCase();
-  const normalizedTerm = searchTerm.toLowerCase();
-
-  let score = 0;
-  if (normalizedText.includes(normalizedTerm)) score += 10;
-  if (normalizedText.startsWith(normalizedTerm)) score += 5;
-
-  const words = normalizedText.split(/\s+/);
-  score += words.filter((word) => word.startsWith(normalizedTerm)).length * 3;
-
-  return score;
-}
-
-// Generic function to search and score a collection
+// Generic function to search a collection
 async function searchCollection(
   model: any,
   searchFields: string[],
@@ -49,20 +34,7 @@ async function searchCollection(
     });
   }
 
-  results = await results.lean().exec();
-
-  const scoredResults = results.map((item: any) => ({
-    ...item,
-    score: Math.max(
-      ...searchFields.map((field) =>
-        calculateScore(item[field] || "", searchTerm)
-      )
-    ),
-  }));
-
-  return scoredResults
-    .sort((a: any, b: any) => b.score - a.score)
-    .slice(0, limit);
+  return results.limit(limit).lean().exec();
 }
 
 export const search = async (req: Request, res: Response) => {

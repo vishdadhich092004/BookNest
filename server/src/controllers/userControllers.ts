@@ -81,7 +81,7 @@ export const getUserBooks = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user?.userId; // Assuming you attach the user ID to the request in verifyToken
+    const userId = req.user?.userId;
 
     // Delete the user
     await User.findByIdAndDelete(userId);

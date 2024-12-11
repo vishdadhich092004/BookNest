@@ -40,12 +40,6 @@ const userSchema = new Schema({
   picture: String,
   favoriteGenres: [String],
   readBooks: [{ type: Schema.Types.ObjectId, ref: "Book" }],
-  ratedBooks: [
-    {
-      bookId: { type: Schema.Types.ObjectId, ref: "Book" },
-      rating: Number,
-    },
-  ],
   profileAvatar: {
     type: String, // Store the SVG string
     default: userProfileSVGs[0], // You can set a default or randomize it if needed

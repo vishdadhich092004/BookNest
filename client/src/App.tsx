@@ -24,6 +24,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
+          path="*"
+          element={
+            <Layout>
+              <NotFound />
+            </Layout>
+          }
+        />
+        <Route
           path="/"
           element={
             <Layout>
@@ -181,15 +189,6 @@ function App() {
             }
           />
         )}
-
-        <Route
-          path="*"
-          element={
-            <Layout>
-              <NotFound />
-            </Layout>
-          }
-        />
       </Routes>
     </BrowserRouter>
   );

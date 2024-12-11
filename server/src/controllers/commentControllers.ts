@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import Discussion from "../models/discussion";
 import Comment from "../models/comment";
 
+// new comment
 export const createNewComment = async (req: AuthRequest, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -37,36 +38,39 @@ export const createNewComment = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// like a comment
 export const likeComment = async (req: AuthRequest, res: Response) => {
   const { discussionId, commentId } = req.params;
   const userId = req.user?.userId;
-  if (!userId) return res.status(400).json({ message: "User Access Denied" });
+  if (!userId) return res.status(400).json({ message: "User not signed in" });
   try {
     const discussion = await Discussion.findById(discussionId);
     if (!discussion)
-      return res.status(404).json({ message: "No Discussion Found" });
+      return res.status(404).json({
+        message: `No Discussion Found`,
+      });
 
     const comment = await Comment.findById(commentId);
     if (!comment) return res.status(404).json({ message: "No Comment Found" });
 
     if (comment.likes.includes(userId))
       return res.status(400).json({ message: "Already liked" });
-
+    // like the comment
     comment.likes.push(userId);
+    // remove the dislike if present
     comment.dislikes = comment.dislikes.filter(
       (commentId) => commentId.toString() !== userId
     );
     await comment.save();
     await discussion.save();
 
-    res
-      .status(200)
-      .json({ message: "Post Liked", likes: comment.likes.length });
+    res.status(200).json({ message: "Post Liked" });
   } catch (e) {
     res.status(500).json({ message: `Something went wrong , ${e}` });
   }
 };
 
+// unlike comment
 export const unlikeComment = async (req: AuthRequest, res: Response) => {
   const { discussionId, commentId } = req.params;
   const userId = req.user?.userId;
@@ -90,13 +94,13 @@ export const unlikeComment = async (req: AuthRequest, res: Response) => {
 
     res.status(200).json({
       message: "Post Unliked",
-      likes: comment.likes.length,
     });
   } catch (e) {
     res.status(500).json({ message: `Something went wrong , ${e}` });
   }
 };
 
+// dislike a comment
 export const dislikeComment = async (req: AuthRequest, res: Response) => {
   const { discussionId, commentId } = req.params;
   const userId = req.user?.userId;
@@ -126,6 +130,7 @@ export const dislikeComment = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// undislike a comment
 export const undislikeComment = async (req: AuthRequest, res: Response) => {
   const { discussionId, commentId } = req.params;
   const userId = req.user?.userId;
@@ -155,6 +160,7 @@ export const undislikeComment = async (req: AuthRequest, res: Response) => {
   }
 };
 
+// fetch all comments for a discussion
 export const getAllComments = async (req: Request, res: Response) => {
   const { discussionId } = req.params;
   try {
