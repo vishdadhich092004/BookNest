@@ -7,7 +7,7 @@ const backendUrl =
     ? process.env.DEPLOYED_URL
     : process.env.BACKEND_URL;
 
-const callbackURL = `/api/auth/google/callback`;
+const callbackURL = `${backendUrl}/api/auth/google/callback`;
 passport.use(
   new GoogleStrategy(
     {
