@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { useParams, Link } from "react-router-dom";
-import { useAppContext } from "../contexts/AppContext";
-import * as apiClient from "../api-client";
+import { useAppContext } from "../../contexts/AppContext";
+import * as apiClient from "../../api-client";
 import { MessageCircle, Book, User, LucideIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "../lib/utills";
+import { cn } from "../../lib/utills";
 import {
   BookType,
   CommentType,
   DiscussionType,
-} from "../../../server/src/shared/types";
-import DeleteUserButton from "../components/Buttons/DeleteUserButton";
-import BooksSection from "../components/UserCards/BooksSection";
-import CommentsSection from "../components/UserCards/CommentsSection";
-import DiscussionsSection from "../components/UserCards/DiscussionsSection";
-import Loader from "../components/Loader";
+} from "../../../../server/src/shared/types";
+import DeleteUserButton from "../../components/Buttons/DeleteUserButton";
+import BooksSection from "../../components/UserCards/BooksSection";
+import CommentsSection from "../../components/UserCards/CommentsSection";
+import DiscussionsSection from "../../components/UserCards/DiscussionsSection";
+import Loader from "../../components/Loader";
 
 function UserPage() {
   const { userId } = useParams<{ userId: string }>();

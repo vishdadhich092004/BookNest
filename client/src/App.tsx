@@ -11,13 +11,13 @@ import NewBook from "./pages/Book/NewBook";
 import AllBooks from "./pages/Book/AllBooks";
 import NewReview from "./pages/Review/NewReview";
 import SingleBook from "./components/SingleBook";
-import HomePage from "./pages/HomePage";
+import HomePage from "./pages/Home/HomePage";
 import { useAuth } from "./contexts/AuthContext";
-import UserPage from "./pages/UserPage";
+import UserPage from "./pages/User/UserPage";
 import SearchResults from "./components/Search/SearchResults";
 import NotFound from "./pages/NotFound";
-import GenreBooksPage from "./pages/GenreBooksPage";
-import AuthorBooksPage from "./pages/AuthorBooksPage";
+import GenreBooksPage from "./pages/Genre/GenreBooksPage";
+import AuthorBooksPage from "./pages/Author/AuthorBooksPage";
 function App() {
   const { isAuthenticated } = useAuth();
   return (

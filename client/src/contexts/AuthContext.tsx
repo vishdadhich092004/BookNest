@@ -9,16 +9,12 @@ type User = {
   email: string;
   firstName: string;
   lastName: string;
-  role: string; // Added role to User type
-  permissions: string[];
   readBooks: string[];
 };
 
 type AuthContextType = {
   user: User | null;
   isAuthenticated: boolean;
-  roles: string[];
-  permissions: string[];
   refetchUser: () => void; // Added refetchUser to context
 };
 
@@ -45,8 +41,6 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   );
 
   const user = data?.user || null;
-  const roles = user ? [user.role] : [];
-  const permissions = user ? user.permissions : [];
   const isAuthenticated = Boolean(user);
 
   return (
@@ -54,8 +48,6 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
       value={{
         user,
         isAuthenticated,
-        roles,
-        permissions,
         refetchUser: refetch,
       }}
     >

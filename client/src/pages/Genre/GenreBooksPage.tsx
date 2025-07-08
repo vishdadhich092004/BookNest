@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import * as apiClient from "../api-client";
-import { FocusCards } from "../components/aceternity-ui/focus-cards";
-import { AuthorType, BookType } from "../../../server/src/shared/types";
-import Loader from "../components/Loader";
-import NoResultCard from "../components/Search/Tabs/NoResultCard";
-import NotFound from "./NotFound";
+import * as apiClient from "../../api-client";
+import { FocusCards } from "../../components/aceternity-ui/focus-cards";
+import Loader from "../../components/Loader";
+import NoResultCard from "../../components/Search/Tabs/NoResultCard";
+import NotFound from "../NotFound";
+import { BookType, GenreType } from "../../../../server/src/shared/types";
 
-const AuthorBooksPage = () => {
-  const { authorId } = useParams<{ authorId: string }>();
-  const [author, setAuthor] = useState<AuthorType | null>();
+const GenreBooksPage = () => {
+  const { genreId } = useParams<{ genreId: string }>();
+  const [genre, setGenre] = useState<GenreType | null>(null);
   const [books, setBooks] = useState<BookType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -19,10 +19,8 @@ const AuthorBooksPage = () => {
     async function loadData() {
       setLoading(true);
       try {
-        const { author, books } = await apiClient.fetchAuthorWithBooks(
-          authorId!
-        );
-        setAuthor(author);
+        const { genre, books } = await apiClient.fetchGenreWithBooks(genreId!);
+        setGenre(genre);
         setBooks(books);
         setError(null);
       } catch (error) {
@@ -33,7 +31,7 @@ const AuthorBooksPage = () => {
       }
     }
     loadData();
-  }, [authorId]);
+  }, [genreId]);
   if (loading) return <Loader />;
   if (error) return <NotFound />;
 
@@ -44,6 +42,7 @@ const AuthorBooksPage = () => {
       book.coverPageUrl || "https://via.placeholder.com/300x450?text=No+Image",
   }));
 
+  console.log(books);
   return (
     <div className="max-w-7xl mx-auto mt-8 px-6">
       <Link
@@ -58,18 +57,18 @@ const AuthorBooksPage = () => {
       </Link>
 
       <h1 className="text-4xl font-bold text-white mb-10">
-        Books by {author?.name}
+        {genre?.name || "Similar"} Books
       </h1>
 
       {books.length === 0 ? (
         <NoResultCard />
       ) : (
         <>
-          <FocusCards key={authorId} cards={cards} />
+          <FocusCards key={genreId} cards={cards} />
         </>
       )}
     </div>
   );
 };
 
-export default AuthorBooksPage;
+export default GenreBooksPage;

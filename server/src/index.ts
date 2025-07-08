@@ -67,6 +67,6 @@ app.use("/api/authors", authorRoutes);
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
 });
-app.listen(4000, () => {
+app.listen(4040, () => {
   console.log("Port 4000 Activated!");
 });
